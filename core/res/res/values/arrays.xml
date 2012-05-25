@@ -113,7 +113,7 @@
     <array name="shutdown_reboot_options" translatable="false">
         <item>@string/reboot_reboot</item>
         <item>@string/reboot_recovery</item>
-        <item>@string/reboot_bootloader</item>
+    <!--    <item>@string/reboot_bootloader</item>   -->
     </array>
 
     <!-- Do not translate. Defines the shutdown actions passed to the kernel.

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mobilization>
+    <mobilization id="CHINA MOBILE">CMCC</mobilization>
+    <mobilization id="China Unicom">CUCC</mobilization>
+    <mobilization id="CHN-UNICOM">CUCC</mobilization>
+    <mobilization id="China Telecom">CTM</mobilization>
+    <mobilization id="CMCC">CMCC</mobilization>
+    <mobilization id="Far EasTone">Far EasTone</mobilization>
+    <mobilization id="FET">Far EasTone</mobilization>
+	<mobilization id="中国移动">CMCC</mobilization>
+	<mobilization id="中国联通">CUCC</mobilization>
+	<mobilization id="中国电信">CTM</mobilization>
+	<mobilization id="CHN-CUGSM">CUCC</mobilization>
+	<mobilization id="China Mobile CMCC">CMCC</mobilization>
+	<mobilization id="China Mobile 动感地带">CMCC</mobilization>
+	<mobilization id="CHINA MOBILE 中国移动">CMCC</mobilization>
+</mobilization>

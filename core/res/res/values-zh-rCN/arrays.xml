@@ -24,15 +24,64 @@
         <item>39937795</item>
         <item>116387224</item>
     </integer-array>
-    <!-- Defines the shutdown options shown in the reboot dialog. -->
-    <array name="shutdown_reboot_options">
-        <item>重启模式</item>
-        <item>刷机模式</item>
-        <item>引导模式</item>
-    </array>
     <!-- Do not translate. -->
     <integer-array name="maps_starting_zoom">
         <item>2</item>
     </integer-array>
-
+    <string-array name="shutdown_reboot_options">
+        <item>重启模式</item>
+        <item>刷机模式</item>
+    <!--    <item>引导模式</item>   -->
+    </string-array>
+	
+	<!--Begin, chinese day for lockscreen, add by fulianwu 2011-12-27 -->
+	<string-array name="chineseMonthNames" translatable="false">
+        <item>正</item>
+        <item>二</item>
+        <item>三</item>
+		<item>四</item>
+		<item>五</item>
+		<item>六</item>
+		<item>七</item>
+		<item>八</item>
+		<item>九</item>
+		<item>十</item>
+		<item>十一</item>
+		<item>十二</item>
+    </string-array>
+	
+	<string-array name="chineseDateNames" translatable="false">
+        <item>初一</item>
+        <item>初二</item>
+        <item>初三</item>
+		<item>初四</item>
+		<item>初五</item>
+		<item>初六</item>
+		<item>初七</item>
+		<item>初八</item>
+		<item>初九</item>
+		<item>初十</item>
+		<item>十一</item>
+		<item>十二</item>
+		<item>十三</item>
+		<item>十四</item>
+		<item>十五</item>
+		<item>十六</item>
+		<item>十七</item>
+		<item>十八</item>
+		<item>十九</item>
+		<item>二十</item>
+		<item>廿一</item>
+		<item>廿二</item>
+		<item>廿三</item>
+		<item>廿四</item>
+		<item>廿五</item>
+		<item>廿六</item>
+		<item>廿七</item>
+		<item>廿八</item>
+		<item>廿九</item>
+		<item>三十</item>
+    </string-array>
+	<!--End-->
+	
 </resources>

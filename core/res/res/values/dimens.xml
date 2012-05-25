@@ -42,4 +42,13 @@
     <dimen name="password_keyboard_key_height">56dip</dimen>
     <!-- Default correction for the space key in the password keyboard -->
     <dimen name="password_keyboard_spacebar_vertical_correction">4dip</dimen>
+
+    <!-- Begin, Added by zhumeiquan for preference title & summary size, 20120411 -->
+	<dimen name="preference_title_size">18sp</dimen>
+	<dimen name="preference_summary_size">14dip</dimen>
+    <!-- End -->
+	
+	<!-- Begin add by panqianbo for new ui 20120423 -->
+	<dimen name="progressbar_min_height">16dip</dimen>
+	<!-- End -->
 </resources>

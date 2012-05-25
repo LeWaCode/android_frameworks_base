@@ -142,7 +142,11 @@ LOCAL_SRC_FILES:= \
 	android_backup_FileBackupHelperBase.cpp \
 	android_backup_BackupHelperDispatcher.cpp \
 	android_content_res_ObbScanner.cpp \
-    android_content_res_Configuration.cpp
+	android_content_res_Configuration.cpp
+
+LOCAL_PREBUILT_OBJ_FILES += \
+    android_phone_vocrec_qualcomm.o \
+    android_animation_PropertyValuesHolder.o
 
 ifeq ($(BOARD_HAVE_FM_RADIO),true)
     ## There's a difference. BOARD_HAVE_FM_RADIO enabled the runtime
@@ -211,6 +215,7 @@ LOCAL_C_INCLUDES += \
 	external/icu4c/i18n \
 	external/icu4c/common \
 	external/jpeg \
+	external/lame \
 	frameworks/opt/emoji
 
 LOCAL_SHARED_LIBRARIES += \
@@ -242,7 +247,8 @@ LOCAL_SHARED_LIBRARIES += \
 	libmedia \
 	libwpa_client \
 	libjpeg \
-	libnfc_ndef
+	libnfc_ndef \
+	liblame 
 
 LOCAL_STATIC_LIBRARIES := libreboot
 

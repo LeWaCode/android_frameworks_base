@@ -93,6 +93,8 @@ extern int register_android_util_FloatMath(JNIEnv* env);
 extern int register_android_hardware_fm_fmradio(JNIEnv* env);
 #endif
 
+extern int register_android_phone_vocrec(JNIEnv* env); // added by lewa, 2012-03-08
+
 namespace android {
 
 /*
@@ -177,6 +179,7 @@ extern int register_android_view_MotionEvent(JNIEnv* env);
 extern int register_android_content_res_ObbScanner(JNIEnv* env);
 extern int register_android_content_res_Configuration(JNIEnv* env);
 extern int register_android_content_res_PackageRedirectionMap(JNIEnv* env);
+extern int register_android_animation_PropertyValuesHolder(JNIEnv *env); //added by lewa
 
 static AndroidRuntime* gCurRuntime = NULL;
 
@@ -1276,6 +1279,7 @@ static const RegJNIRec gRegJNI[] = {
 #if defined(HAVE_FM_RADIO) || defined (BOARD_HAVE_FM_RADIO)
     REG_JNI(register_android_hardware_fm_fmradio),
 #endif
+    REG_JNI(register_android_phone_vocrec), // added by lewa, 2012-03-08
     REG_JNI(register_android_hardware_SensorManager),
     REG_JNI(register_android_media_AudioRecord),
     REG_JNI(register_android_media_AudioSystem),
@@ -1310,6 +1314,7 @@ static const RegJNIRec gRegJNI[] = {
     REG_JNI(register_android_content_res_Configuration),
 
     REG_JNI(register_android_content_res_PackageRedirectionMap),
+    REG_JNI(register_android_animation_PropertyValuesHolder), // added by lewa
 };
 
 /*

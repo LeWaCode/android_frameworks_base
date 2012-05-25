@@ -1,23 +1,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="7dp"
-        android:paddingLeft="5dp"
-        >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="5dip"
+    android:paddingRight="5dip"
+    android:layout_gravity="center_vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="3dp"
-        >
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <!--com.android.server.status.AnimatedImageView android:id="@+id/icon" -->
         <ImageView android:id="@+id/icon"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/arrow_down_float"/>
+            android:layout_marginRight="5dip"
+            android:scaleType="fitCenter"            
+            android:background="@drawable/notification_app_bg"
+            android:src="@drawable/arrow_down_float" />
         <TextView android:id="@+id/title"
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent.Title"
             android:layout_width="match_parent"
@@ -26,31 +24,25 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
-            android:paddingLeft="4dp"
-            />
+            android:textColor="#000000" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView android:id="@+id/text"
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dip"
             android:layout_weight="1"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
-            android:paddingLeft="4dp"
-            />
+            android:textColor="#515151" />
         <android.widget.DateTimeView android:id="@+id/time"
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent"
-            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:paddingRight="5dp"
-            />
+            android:textColor="#515151" />
     </LinearLayout>
 </LinearLayout>

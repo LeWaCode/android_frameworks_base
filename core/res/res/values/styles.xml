@@ -18,16 +18,20 @@
     <!-- Global Theme Styles -->
     <eat-comment />
     
-
     <style name="WindowTitleBackground">
         <item name="android:background">@android:drawable/title_bar</item>
     </style>
 
     <style name="WindowTitle">
         <item name="android:singleLine">true</item>
-        <item name="android:textAppearance">@style/TextAppearance.WindowTitle</item>
-        <item name="android:shadowColor">#BB000000</item>
-        <item name="android:shadowRadius">2.75</item>
+        <item name="android:paddingLeft">8sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">20dip</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:shadowColor">#ff18496d</item>
+        <item name="android:shadowDx">1.0</item>
+        <item name="android:shadowDy">-1.2</item>
+        <item name="android:shadowRadius">1.0</item>
     </style>
 
     <style name="DialogWindowTitle">
@@ -246,7 +250,7 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmallInverse</item>
-        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:textColor">@android:color/primary_text_dark</item>
         <item name="android:gravity">center_vertical|center_horizontal</item>
     </style>
 
@@ -268,7 +272,8 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:textAppearance">?android:attr/textAppearance</item>
-        <item name="android:textColor">?android:attr/textColorPrimaryDisableOnly</item>
+        <item name="android:textColor">@android:color/primary_text_dark_disable_only_holo</item>
+        <!--<item name="android:textColor">?android:attr/textColorPrimaryDisableOnly</item>-->
         <item name="android:gravity">center_vertical|left</item>
     </style>
 
@@ -339,10 +344,10 @@
 
     <style name="Widget.ProgressBar.Horizontal">
         <item name="android:indeterminateOnly">false</item>
-        <item name="android:progressDrawable">@android:drawable/progress_horizontal</item>
+        <item name="android:progressDrawable">@android:drawable/progress_horizontal_holo_dark</item>
         <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
-        <item name="android:minHeight">20dip</item>
-        <item name="android:maxHeight">20dip</item>
+        <item name="android:minHeight">16dip</item>
+        <item name="android:maxHeight">16dip</item>
     </style>
 
     <style name="Widget.SeekBar">
@@ -404,7 +409,7 @@
     </style>
 
     <style name="Widget.TextView.ListSeparator.White">
-        <item name="android:textColor">?textColorPrimaryInverse</item>
+        <item name="android:textColor">?textColorPrimary</item>
         <item name="android:background">@android:drawable/light_header_dither</item>
     </style>
 
@@ -493,14 +498,20 @@
 
     <style name="Widget.ListView" parent="Widget.AbsListView">
         <item name="android:listSelector">@android:drawable/list_selector_background</item>
-        <item name="android:cacheColorHint">?android:attr/colorBackgroundCacheHint</item>
+        <!--modify by panqianbo-->
+        <!--<item name="android:cacheColorHint">?android:attr/colorBackgroundCacheHint</item>-->
+        <item name="android:cacheColorHint">@android:color/transparent</item>
         <item name="android:divider">@android:drawable/divider_horizontal_dark_opaque</item>
+        <!--End-->
     </style>
     
     <style name="Widget.ListView.White" parent="Widget.AbsListView">
         <item name="android:listSelector">@android:drawable/list_selector_background</item>
-        <item name="android:cacheColorHint">?android:attr/colorBackgroundCacheHint</item>
-        <item name="android:divider">@android:drawable/divider_horizontal_bright_opaque</item>
+        <!--modify by panqianbo-->
+        <!--<item name="android:cacheColorHint">@android:color/background_dark</item>-->
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+        <!--End-->
+        <item name="android:divider">@android:drawable/divider_horizontal_bright</item>
     </style>    
 
     <style name="Widget.ListView.DropDown">
@@ -674,7 +685,7 @@
     </style>
 
     <style name="TextAppearance.Theme.Dialog.AppError">
-        <item name="android:textColor">#ffffc0c0</item>
+        <item name="android:textColor">#ff6e6e6e</item>
     </style>
 
     <style name="TextAppearance.Widget">
@@ -685,7 +696,7 @@
     </style>
 
     <style name="TextAppearance.Widget.IconMenu.Item" parent="TextAppearance.Small">
-        <item name="android:textColor">?textColorPrimary</item>
+        <item name="android:textColor">?textColorPrimaryInverse</item>
     </style>
 
     <style name="TextAppearance.Widget.EditText">
@@ -762,7 +773,7 @@
 
     <style name="TextAppearance.WindowTitle">
         <item name="android:textColor">#fff</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -874,4 +885,58 @@
         <item name="windowEnterAnimation">@android:anim/fade_in</item>
         <item name="windowExitAnimation">@android:anim/fade_out</item>
     </style>
+
+    <!-- LewaCheckBox style -->
+    <style name="Widget.CompoundButton.LewaCheckBox">
+        <item name="android:background">@android:drawable/lewa_btn_check_label_background</item>
+        <item name="android:button">@android:drawable/lewa_btn_check</item>
+    </style>
+    <!-- End -->
+    <!--Begin added by panqianbo for new style, 20120320-->
+	    <style name="Animation.AlertDialog">
+        <item name="windowEnterAnimation">@android:anim/alert_dialog_enter</item>
+        <item name="windowExitAnimation">@android:anim/alert_dialog_exit</item>
+    </style>
+    <style name="Widget.Holo" parent="Widget">
+    </style>
+
+     <style name="Widget.Holo.SeekBar">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@android:drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:indeterminateDrawable">@android:drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:minHeight">13dip</item>
+        <item name="android:maxHeight">13dip</item>
+        <item name="android:thumb">@android:drawable/scrubber_control_selector_holo</item>
+        <item name="android:thumbOffset">16dip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingLeft">16dip</item>
+        <item name="android:paddingRight">16dip</item>
+    </style>
+    <style name="Widget.Button.Holo">
+        <item name="android:background">@android:drawable/btn_default_holo</item>
+        <item name="android:textColor">@android:color/primary_text_holo_dark</item>
+    </style>
+    
+    <style name="TextAppearance.AlertDialogTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">#ff6e6e6e</item>
+        <item name="android:shadowColor">#ffffffff</item>
+        <item name="android:shadowDx">1.0</item>
+        <item name="android:shadowDy">1.2</item>
+        <item name="android:shadowRadius">1.0</item>
+   </style>
+   <style name="TextAppearance.Holo">
+        <item name="android:textColor">@android:color/primary_text_holo_dark</item>
+    </style>
+
+   <style name="TextAppearance.Medium.Holo">
+        <item name="android:textColor">@android:color/primary_text_holo_dark</item>
+   </style>
+   <style name="TextAppearance.Large.Holo">
+        <item name="android:textColor">@android:color/primary_text_holo_dark</item>
+    </style>
+    <style name="TextAppearance.Small.Holo">
+       <item name="android:textColor">@android:color/primary_text_holo_dark</item>
+    </style>
+   <!--End-->
 </resources>

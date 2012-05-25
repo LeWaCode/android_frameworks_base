@@ -20,42 +20,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
-    android:paddingRight="?android:attr/scrollbarSize">
+    android:orientation="vertical" >
     
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16sp"
-        android:layout_marginRight="6sp"
-        android:layout_marginTop="6sp"
-        android:layout_marginBottom="6sp"
-        android:layout_weight="1">
-    
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content">    
         <TextView android:id="@+android:id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="5dip"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="?android:attr/textColorSecondary" />
-            
-        <TextView android:id="@+android:id/summary"
+            android:textColor="@android:color/secondary_text_light"
+            android:textSize="@android:dimen/preference_title_size"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal" />
+
+        <!-- Preference should place its actual preference widget here. -->
+        <LinearLayout android:id="@+android:id/widget_frame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@android:id/title"
-            android:layout_alignLeft="@android:id/title"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"
-            android:maxLines="2" />
-
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true">
+        </LinearLayout>
     </RelativeLayout>
     
-    <!-- Preference should place its actual preference widget here. -->
-    <LinearLayout android:id="@+android:id/widget_frame"
+    <TextView android:id="@+android:id/summary"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical" />
-
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/secondary_text_light"
+        android:textSize="@android:dimen/preference_summary_size"  
+        android:maxLines="4" />
 </LinearLayout>

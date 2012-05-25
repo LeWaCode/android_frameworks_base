@@ -572,7 +572,7 @@
   <public type="attr" name="listChoiceIndicatorMultiple" id="0x0101021a" />
   <public type="attr" name="versionCode" id="0x0101021b" />
   <public type="attr" name="versionName" id="0x0101021c" />
-
+  
   <public type="id" name="background" id="0x01020000" />
   <public type="id" name="checkbox" id="0x01020001" />
   <public type="id" name="content" id="0x01020002" />
@@ -712,6 +712,11 @@
   <public type="dimen" name="thumbnail_height" id="0x01050001" />
   <public type="dimen" name="thumbnail_width" id="0x01050002" />
 
+  <!-- Begin, added by zhumeiquan for preference size, 20120411 -->
+  <public type="dimen" name="preference_title_size" id="0x01050003" />
+  <public type="dimen" name="preference_summary_size" id="0x01050004" />
+  <!-- End -->
+
   <public type="color" name="darker_gray" id="0x01060000" />
   <public type="color" name="primary_text_dark" id="0x01060001" />
   <public type="color" name="primary_text_dark_nodisable" id="0x01060002" />
@@ -730,7 +735,10 @@
   <public type="color" name="background_light" id="0x0106000f" />
   <public type="color" name="tertiary_text_dark" id="0x01060010" />
   <public type="color" name="tertiary_text_light" id="0x01060011" />
-
+  <!-- Begin, zhuemiquan -->  
+  <public type="color" name="preference_primary_text_light" id="0x01060012" />
+  <public type="color" name="preference_secondary_text_light" id="0x01060013" />
+  <!-- End -->
   <public type="array" name="emailAddressTypes" id="0x01070000" />
   <public type="array" name="imProtocols" id="0x01070001" />
   <public type="array" name="organizationTypes" id="0x01070002" />
@@ -848,7 +856,7 @@
   <public type="drawable" name="progress_horizontal" id="0x0108006c" />
   <public type="drawable" name="progress_indeterminate_horizontal" id="0x0108006d" />
   <public type="drawable" name="radiobutton_off_background" id="0x0108006e" />
-  <public type="drawable" name="radiobutton_on_background" id="0x0108006f" />
+  <public type="drawable" name="radiobutton_on_background" id="0x0108006f" />  
   <public type="drawable" name="spinner_background" id="0x01080070" />
   <public type="drawable" name="spinner_dropdown_background" id="0x01080071" />
   <public type="drawable" name="star_big_on" id="0x01080072" />
@@ -898,6 +906,10 @@
   <public type="drawable" name="ic_dialog_info" id="0x0108009b" />
   <public type="drawable" name="ic_menu_sort_alphabetically" id="0x0108009c" />
   <public type="drawable" name="ic_menu_sort_by_size" id="0x0108009d" />
+  <public type="drawable" name="btn_circle_normal" id="0x0108009e" />
+  <public type="drawable" name="ic_btn_round_more_normal" id="0x0108009f" />
+  <public type="drawable" name="list_selector_background_pressed" id="0x010800a0" />
+  <public type="drawable" name="list_selector_background_focus" id="0x010800a1" />
 
   <public type="layout" name="activity_list_item" id="0x01090000" />
   <public type="layout" name="expandable_list_content" id="0x01090001" />
@@ -1275,5 +1287,12 @@
   <public type="style" name="TextAppearance.StatusBar.Icon" id="0x01030066" />
   <public type="style" name="TextAppearance.StatusBar.EventContent" id="0x01030067" />
   <public type="style" name="TextAppearance.StatusBar.EventContent.Title" id="0x01030068" />
-  
+
+  <!-- Being, Added by zhumeiquan for Settings preference, 20111109 -->
+  <public type="attr" name="lewaCheckboxStyle" id="0x010102cc" />
+  <!-- End -->
+  <public type="drawable" name="item_background_holo_dark" id="0x010800b2" />
+  <public type="drawable" name="item_background_holo_dark_left" id="0x010800b3" />
+  <public type="drawable" name="item_background_holo_dark_right" id="0x010800b4" />
+  <public type="drawable" name="item_background_holo_dark_middle" id="0x010800b5" />
 </resources>

@@ -238,7 +238,8 @@ private:
         FileType type;
         bool asSkin;
     };
-
+// modify for lewatheme by luoyongxing
+	 bool isLewaThemePath(const char *path);
     void updateResTableFromAssetPath(ResTable* rt, const asset_path& ap, void* cookie) const;
     Asset* openInPathLocked(const char* fileName, AccessMode mode,
         const asset_path& path);

@@ -22,6 +22,7 @@ import android.app.ProfileGroup;
 import android.app.ProfileManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.database.ContentObserver;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,7 +32,9 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 
+import java.util.Iterator;
 import java.util.HashMap;
 
 /**
@@ -155,6 +158,8 @@ public class AudioManager {
     public static final int STREAM_NOTIFICATION = AudioSystem.STREAM_NOTIFICATION;
     /** @hide The audio stream for phone calls when connected to bluetooth */
     public static final int STREAM_BLUETOOTH_SCO = AudioSystem.STREAM_BLUETOOTH_SCO;
+    /** @hide The audio stream for FM */
+    public static final int STREAM_FM = AudioSystem.STREAM_FM;
     /** @hide The audio stream for enforced system sounds in certain countries (e.g camera in Japan) */
     public static final int STREAM_SYSTEM_ENFORCED = AudioSystem.STREAM_SYSTEM_ENFORCED;
     /** The audio stream for DTMF Tones */

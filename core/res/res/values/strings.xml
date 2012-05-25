@@ -495,6 +495,13 @@
       messages. Malicious applications may cost you money by sending
       messages without your confirmation.</string>
 
+     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_sendSmsNoConfirmation">send SMS messages with no confirmation</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_sendSmsNoConfirmation">Allows application to send SMS
+      messages. Malicious applications may cost you money by sending
+      messages without your confirmation.</string>
+      
     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permlab_readSms">read SMS or MMS</string>
     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
@@ -2049,7 +2056,7 @@
     <!-- Button allowing the user to close an application that is not responding. This will kill the application. -->
     <string name="force_close">Force close</string>
     <!-- Button allowing the user to send a bug report for application which has encountered an error. -->
-    <string name="report">Report</string>
+    <string name="report">Notify Lewa</string>
     <!-- Button allowing the user to open the application settings screen to edit permissions. -->
     <string name="edit_perms">Edit permissions</string>
     <!-- Button allowing the user reset the revoked permissions for application which has encountered an error. -->
@@ -2237,7 +2244,6 @@
 
     <string name="adb_net_enabled_notification_title">Network debugging enabled</string>
     <string name="adb_net_enabled_notification_message">Select to disable network debugging.</string>
-
     <!-- Used to replace %s in urls retreived from the signin server with locales.  For Some        -->
     <!-- devices we don't support all the locales we ship to and need to replace the '%s' with a    -->
     <!-- locale string based on mcc values.  By default (0-length string) we don't replace the %s   -->
@@ -2455,36 +2461,42 @@
     <!-- Text for message for an unknown external media state [CHAR LIMIT=NONE] -->
     <string name="media_unknown_state">External media in unknown state.</string>
 
-    <!--Application killed toast -->
-    <string name="app_killed_message">Application killed</string>
+    <!-- Begin, Added by wangfan, 20120407 -->
+    <string name="fc_window_sorry"> Sorry!</string>
+    <string name="fc_window_error_default">"Unknown Application" has crashed!</string>
+    <string name="fc_window_you_want">Don\'t worry,what to do next?</string>
+    <string name="fc_window_close">force close</string>
+    <string name="fc_window_report">report lewa</string>
+    <string name="fc_app_info_front">"</string>
+    <string name="fc_app_info_rear">"has crashed!</string>
+    <!-- End -->
 
-    <!-- Phone goggles -->
+    <!-- Begin, Added by zhumeiquan, 20120227 -->       
+    <string name="progress_scanning">Scanning</string>    
     <string name="phone_goggles_problem_count">Problem #%1$d: </string>
     <string name="phone_goggles_description">Solve the %1$d following maths problems in less than %2$d seconds in order to perform your communication.</string>
-    <plurals name="phone_goggles_countdown">
-        <item quantity="one">%d second left</item>
-        <item quantity="other">%d seconds left</item>
-    </plurals>
-
     <!-- Title of an application permission that lets an application view/edit revoked permissions. -->
     <string name="permlab_revokePermissions">Allows view and edit of revoked permissions. Not for use by normal applications.</string>
     <!-- Description of an application permission that lets lets an application view/edit revoked permissions. -->
     <string name="permdesc_revokePermissions">Allows read and write for revoked permissions. Not for use by normal applications.</string>
+    <string name="app_killed_message">Application killed</string>  
+    <string name="lock_screen_miss_call">%1$d Missed Call</string>
+    <string name="lock_screen_new_msg">%1$d New Message</string>
+    <string name="lock_screen_miss_calls">%1$d Missed Calls</string>
+    <string name="lock_screen_new_msgs">%1$d New Messages</string>
+    <string name="lock_screen_drag_down">Drag down to unlock</string>
+    <string name="lock_screen_drag_here">Drag to here to unlock</string>	
+		<string name="lock_screen_dismiss">Dismiss</string>
+		<string name="lock_screen_snooze">Snooze</string>
+		<string name="lock_screen_pm">PM</string>
+		<string name="lock_screen_am">AM</string>
+    <string name="fixed_line">Fixed line</string>    
+    <string name="ringtone_custom">Custom...</string>
+    <string name="ringtone_silent_summary">Silent</string>
+    <plurals name="phone_goggles_countdown">
+        <item quantity="one">%d second left</item>
+        <item quantity="other">%d seconds left</item>
+    </plurals>
+    <!-- End -->
 
-    <string name="keyguard_finger_please_swipe">Swipe finger over sensor to unlock</string>
-    <string name="keyguard_finger_ui_timeout">UI timeout!</string>
-    <string name="keyguard_finger_failed_to_unlock">Failed to unlock!</string>
-    <string name="keyguard_finger_screen_off">Screen off</string>
-    <string name="keyguard_finger_screen_on">Screen on</string>
-    <string name="keyguard_finger_match">Finger match, unlock screen...</string>
-    <string name="keyguard_finger_not_match">Finger did not match...</string>
-    <string name="keyguard_finger_swipe_too_far_right">Swipe in the center.</string>
-    <string name="keyguard_finger_swipe_too_far_left">Swipe in the center.</string>
-    <string name="keyguard_finger_swipe_too_fast">Swipe was too fast.</string>
-    <string name="keyguard_finger_swipe_too_short">Swipe was too short.</string>
-    <string name="keyguard_finger_swipe_too_slow">Swipe was too slow.</string>
-    <string name="keyguard_finger_swipe_too_skewed">Swipe was too skewed.</string>
-    <string name="lockscreen_too_many_failed_fingers_dialog_message">Your fingerprint failed to identify you %1$d times.\n\nPlease try again in %2$d seconds.</string>
-    <string name="lockscreen_failed_fingers_almost_glogin">Your fingerprint failed to identify you %1$d times. After %2$d more unsuccessful identifications, you will be asked to unlock your phone using your Google sign-in.\n\n Please try again in %3$d seconds.</string>
-    <string name="lockscreen_forgot_finger_button_text">Forgot finger?</string>
 </resources>

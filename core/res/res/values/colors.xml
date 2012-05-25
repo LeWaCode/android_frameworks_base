@@ -18,8 +18,8 @@
 */
 -->
 <resources>
-	<drawable name="screen_background_light">#ffffffff</drawable>
-	<drawable name="screen_background_dark">#ff000000</drawable>
+	<drawable name="screen_background_light">#ffebebeb</drawable>
+	<drawable name="screen_background_dark">#ff303030</drawable>
     <drawable name="status_bar_closed_default_background">#ff000000</drawable>
     <drawable name="status_bar_opened_default_background">#ff000000</drawable>
     <drawable name="search_bar_default_color">#ff000000</drawable>
@@ -36,25 +36,31 @@
     <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
     <color name="transparent">#00000000</color>
-    <color name="background_dark">#ff000000</color>
+    <color name="background_dark">#ff000000</color>                 <!--CacheColorHint -->
+    <color name="background_light">#ffffffff</color>
+    
     <color name="bright_foreground_dark">#ffffffff</color>
     <color name="bright_foreground_dark_disabled">#80ffffff</color>
     <color name="bright_foreground_dark_inverse">#ff000000</color>
+    
     <color name="dim_foreground_dark">#bebebe</color>
     <color name="dim_foreground_dark_disabled">#80bebebe</color>
     <color name="dim_foreground_dark_inverse">#323232</color>
     <color name="dim_foreground_dark_inverse_disabled">#80323232</color>
-    <color name="hint_foreground_dark">#808080</color>
-    <color name="background_light">#ffffffff</color>
+
+
     <color name="bright_foreground_light">#ff000000</color>
     <color name="bright_foreground_light_inverse">#ffffffff</color>
     <color name="bright_foreground_light_disabled">#80000000</color>
+    
     <color name="dim_foreground_light">#323232</color>
     <color name="dim_foreground_light_disabled">#80323232</color>
     <color name="dim_foreground_light_inverse">#bebebe</color>
     <color name="dim_foreground_light_inverse_disabled">#80bebebe</color>
+    
+    <color name="hint_foreground_dark">#808080</color>
     <color name="hint_foreground_light">#808080</color>
-
+	
     <drawable name="stat_notify_sync_noanim">@drawable/stat_notify_sync_anim0</drawable>
     <drawable name="stat_sys_download_done">@drawable/stat_sys_download_anim0</drawable>
     <drawable name="stat_sys_upload_done">@drawable/stat_sys_upload_anim0</drawable>
@@ -97,5 +103,13 @@
     <color name="keyguard_text_color_soundon">#e69310</color>
     <color name="keyguard_text_color_decline">#fe0a5a</color>
 
+    <!-- Begin , Added by zhumeiquan for settings background, 20120330 -->
+	<drawable name="settings_background">#eeeeee</drawable>
+	<!-- End -->
+    <!--Begin added by panqianbo for new style, 20120320-->
+    <color name="bright_foreground_holo_dark">#ff6e6e6e</color>
+    <color name="bright_foreground_holo_dark_disabled">#ff999999</color>
+    <color name="bright_foreground_holo_dark_inverse">#ff000000</color>
+    <!--End-->
 </resources>
 

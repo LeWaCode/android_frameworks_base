@@ -17,9 +17,14 @@
 ** limitations under the License.
 */
 -->
-<ListView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@android:id/list"
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
     android:layout_width="match_parent" 
-    android:layout_height="match_parent"
+    android:layout_height="match_parent"    
+    android:fadingEdge="none"
+    android:listSelector="@android:color/transparent"
+    android:cacheColorHint="@null" 
+    android:divider="@null" 
     android:drawSelectorOnTop="false"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     />

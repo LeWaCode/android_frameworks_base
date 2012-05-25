@@ -90,7 +90,29 @@ AssetManager::~AssetManager(void)
     delete[] mLocale;
     delete[] mVendor;
 }
-
+bool AssetManager::isLewaThemePath(const char *path)
+{
+   char *t;
+   char *r = "/data/system/face";
+   bool math = true;
+   
+   t = (char *)path;
+   
+   while(*t != 0 && *r != 0){
+      if(*t != *r)
+      {
+         math = false;
+         break;  
+      }
+      t++;
+      r++;
+   }
+   if(math == true){
+      return true;
+   }else{
+      return false;
+   }
+}
 bool AssetManager::addAssetPath(const String8& path, void** cookie, bool asSkin)
 {
     AutoMutex _l(mLock);
@@ -108,6 +130,9 @@ bool AssetManager::addAssetPath(const String8& path, void** cookie, bool asSkin)
     } else {
         ap.path = path;
         ap.type = ::getFileType(path.string());
+        if(isLewaThemePath(path.string())){
+            ap.asSkin = true;
+        }
         if (ap.type != kFileTypeDirectory && ap.type != kFileTypeRegular) {
             LOGW("Asset path %s is neither a directory nor file (type=%d).",
                  path.string(), (int)ap.type);
@@ -356,7 +381,11 @@ Asset* AssetManager::openNonAsset(void* cookie, const char* fileName, AccessMode
             fileName, mode, mAssetPaths.itemAt(which));
         if (pAsset != NULL) {
             return pAsset != kExcludedAsset ? pAsset : NULL;
+        }else{
+            LOGW("AssetManager openNonAssetInPathLocked failed! which=%d, fileName=%s", which,fileName);
         }
+    }else{
+      LOGW("AsstManager openNonAsset failed! which=%d, pathsSize=%d", which, mAssetPaths.size());
     }
 
     return NULL;
@@ -581,6 +610,8 @@ Asset* AssetManager::openNonAssetInPathLocked(const char* fileName, AccessMode m
             if (entry != NULL) {
                 //printf("FOUND NA in Zip file for %s\n", appName ? appName : kAppCommon);
                 pAsset = openAssetFromZipLocked(pZip, entry, mode, path);
+            }else{
+               LOGW("AsstManager findEntryByName '%s' failed in '%s'.", path.string(), ap.path.string());
             }
         }
 
@@ -589,6 +620,8 @@ Asset* AssetManager::openNonAssetInPathLocked(const char* fileName, AccessMode m
             pAsset->setAssetSource(
                     createZipSourceNameLocked(ZipSet::getPathName(ap.path.string()), String8(""),
                                                 String8(fileName)));
+        }else{
+             LOGW("AsstManager openAssetFromZipLocked '%s' failed in '%s'.", path.string(), ap.path.string());
         }
     }
 

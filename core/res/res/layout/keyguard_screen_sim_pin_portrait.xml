@@ -32,6 +32,7 @@
         <TextView android:id="@+id/headerText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dip"
             android:gravity="center"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
@@ -40,7 +41,7 @@
         <TextView android:id="@+id/carrier"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dip"
+            android:layout_marginTop="30dip"
             android:gravity="center"
             android:singleLine="true"
             android:ellipsize="marquee"

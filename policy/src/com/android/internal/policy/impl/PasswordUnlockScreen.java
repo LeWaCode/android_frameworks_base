@@ -129,9 +129,17 @@ public class PasswordUnlockScreen extends LinearLayout implements KeyguardScreen
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     mCallback.pokeWakelock();
                     String entry = mPasswordEntry.getText().toString();
-                    if (mLockPatternUtils.checkPassword(entry)) {
-                        mCallback.keyguardDone(true);
-                        mCallback.reportSuccessfulUnlockAttempt();
+                    if (keyCode != KeyEvent.KEYCODE_DEL) {
+                        if (mLockPatternUtils.checkPassword(entry)) {
+                            mCallback.keyguardDone(true);
+                            mCallback.reportSuccessfulUnlockAttempt();
+                        }
+                    } else if (entry.length() > MINIMUM_PASSWORD_LENGTH_BEFORE_REPORT) {
+                        mCallback.reportFailedUnlockAttempt();
+                        if (0 == (mUpdateMonitor.getFailedAttempts() % LockPatternUtils.FAILED_ATTEMPTS_BEFORE_TIMEOUT)) {
+                            long deadline = mLockPatternUtils.setLockoutAttemptDeadline();
+                            handleAttemptLockout(deadline);
+                        }
                     }
                     return false;
                 }

@@ -40,7 +40,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
 
-        android:textAppearance="?android:attr/textAppearanceSmallInverse"
+        android:textColor="@android:color/preference_secondary_text_light"
+        android:textSize="@android:dimen/preference_summary_size"
         />
 
 
@@ -54,7 +55,8 @@
         android:layout_above="@id/status"
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceLargeInverse"
+        android:textColor="@android:color/preference_primary_text_light"
+        android:textSize="@android:dimen/preference_title_size"
         />
 
 

@@ -30,7 +30,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:gravity="center"
         android:text="@string/usb_storage_message" />
 
     <RelativeLayout
@@ -46,6 +45,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="18dip"
             android:paddingRight="18dip"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/usb_storage_button_mount"
             />
         <Button android:id="@+id/unmount_button"
@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="18dip"
             android:paddingRight="18dip"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/usb_storage_stop_button_mount"
             />
         <ProgressBar android:id="@+id/progress"

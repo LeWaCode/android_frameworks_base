@@ -114,6 +114,16 @@
         android:label="@string/permlab_sendSms"
         android:description="@string/permdesc_sendSms" />
 
+
+    <!-- Allows an application to send SMS messages via the Messaging app with no user
+         input or confirmation.
+         @hide -->
+    <permission android:name="android.permission.SEND_SMS_NO_CONFIRMATION"
+        android:permissionGroup="android.permission-group.COST_MONEY"
+        android:protectionLevel="signatureOrSystem"
+        android:label="@string/permlab_sendSmsNoConfirmation"
+        android:description="@string/permdesc_sendSmsNoConfirmation" />
+
     <!-- Allows an application to initiate a phone call without going through
          the Dialer user interface for the user to confirm the call
          being placed. -->
@@ -1393,12 +1403,6 @@
 
         <service android:name="com.android.internal.service.wallpaper.ImageWallpaper"
                 android:permission="android.permission.BIND_WALLPAPER">
-        </service>
-
-        <service android:name="com.authentec.GfxEngineRelayService">
-            <intent-filter>
-                <action android:name="com.authentec.Keyguard" />
-            </intent-filter>
         </service>
 
         <receiver android:name="com.android.server.BootReceiver" >

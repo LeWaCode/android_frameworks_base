@@ -326,6 +326,12 @@
     <integer-array name="config_autoBrightnessKeyboardBacklightValues">
     </integer-array>
 
+    <!-- Woody Guo @ 2012/05/03
+         Minimal button brightness value
+         If the button brightness is set to less than the non-zero value specified here,
+         the Power Manager will turn button light off -->
+    <integer name="config_min_button_brightness">0</integer>
+
     <!-- Amount of time it takes for the light sensor to warm up in milliseconds.
          For this time after the screen turns on, the Power Manager
          will not debounce light sensor readings -->
@@ -497,7 +503,6 @@
     power button press to wake devices. usful for devices you
     dont carry in pockets -->
     <bool name="cm_default_disable_lockscreen">false</bool>
-
     <!--  option only available for devices with soft buttons.
     when enabled, fullscreen apps show the status bar. status
     bar then gets an adition hide button to switch to real
@@ -527,7 +532,6 @@
     volume change when pressing, user action when long-pressing. enabling
     (true) this option reverses this behavior -->
     <bool name="cm_default_reverse_volume_behavior">false</bool>
-
     <!-- defines the action of the volume buttons. for volume up,
     volume down, both press and both long-press. this is an
     index. to know, which index matches which button, see
@@ -636,7 +640,4 @@
              -SourcePortDestPort-SourcePortDestPort-OMADM PDU
          If false, not supported. -->
     <bool name="config_duplicate_port_omadm_wappush">false</bool>
-
-    <!-- Location of the Authentec framework jar -->
-    <string name="config_authentecJarLocation"></string>
 </resources>

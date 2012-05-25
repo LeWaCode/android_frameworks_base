@@ -71,7 +71,7 @@
         <item name="textCheckMarkInverse">@android:drawable/indicator_check_mark_light</item>
 
         <!-- Button styles -->
-        <item name="buttonStyle">@android:style/Widget.Button</item>
+        <item name="buttonStyle">@android:style/Widget.Button.Holo</item>
 
         <item name="buttonStyleSmall">@android:style/Widget.Button.Small</item>
         <item name="buttonStyleInset">@android:style/Widget.Button.Inset</item>
@@ -111,7 +111,7 @@
         <item name="windowContentOverlay">@android:drawable/title_bar_shadow</item>
         <item name="windowShowWallpaper">false</item>
         <item name="windowTitleStyle">@android:style/WindowTitle</item>
-        <item name="windowTitleSize">25dip</item>
+        <item name="windowTitleSize">48dip</item>
         <item name="windowTitleBackgroundStyle">@android:style/WindowTitleBackground</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Activity</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustUnspecified</item>
@@ -146,6 +146,9 @@
         <item name="absListViewStyle">@android:style/Widget.AbsListView</item>
         <item name="autoCompleteTextViewStyle">@android:style/Widget.AutoCompleteTextView</item>        
         <item name="checkboxStyle">@android:style/Widget.CompoundButton.CheckBox</item>
+        <!-- Begin, Add lewa CheckBox Style, zhumeiquan, 20120305 -->
+        <item name="lewaCheckboxStyle">@android:style/Widget.CompoundButton.LewaCheckBox</item>
+        <!-- End -->
         <item name="dropDownListViewStyle">@android:style/Widget.ListView.DropDown</item>
         <item name="editTextStyle">@android:style/Widget.EditText</item>
         <item name="expandableListViewStyle">@android:style/Widget.ExpandableListView</item>
@@ -166,7 +169,7 @@
         <item name="progressBarStyleInverse">@android:style/Widget.ProgressBar.Inverse</item>
 		<item name="progressBarStyleSmallInverse">@android:style/Widget.ProgressBar.Small.Inverse</item>
 	    <item name="progressBarStyleLargeInverse">@android:style/Widget.ProgressBar.Large.Inverse</item> 
-        <item name="seekBarStyle">@android:style/Widget.SeekBar</item>
+        <item name="seekBarStyle">@android:style/Widget.Holo.SeekBar</item>
         <item name="ratingBarStyle">@android:style/Widget.RatingBar</item>
         <item name="ratingBarStyleIndicator">@android:style/Widget.RatingBar.Indicator</item>
         <item name="ratingBarStyleSmall">@android:style/Widget.RatingBar.Small</item>
@@ -205,6 +208,9 @@
 
         <!-- Search widget styles -->
         <item name="searchWidgetCorpusItemBackground">@android:color/search_widget_corpus_item_background</item>
+        <!--Begin added by panqianbo for new ui 20120405-->
+        <item name="alertDialogTitle">@android:style/TextAppearance.AlertDialogTitle</item>
+        <!--End-->
     </style>
     
     <!-- Variant of the default (dark) theme with no title bar -->
@@ -504,7 +510,7 @@
 
     <style name="Theme.ExpandedMenu">
         <!-- Menu/item attributes -->
-        <item name="android:itemTextAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:itemTextAppearance">?android:attr/textAppearanceLargeInverse</item>
         <item name="android:listViewStyle">@android:style/Widget.ListView.Menu</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.OptionsPanel</item>
         <item name="android:background">@null</item>
@@ -515,9 +521,15 @@
         <item name="windowFrame">@null</item>
         <item name="windowTitleStyle">@android:style/DialogWindowTitle</item>
         <item name="windowBackground">@android:color/transparent</item>
-        <item name="windowIsFloating">true</item>
         <item name="windowContentOverlay">@null</item>
-        <item name="textAppearance">@style/TextAppearance.Theme.Dialog.AppError</item>
+        <item name="windowIsFloating">true</item>
+        <!--<item name="textAppearance">@style/TextAppearance.Theme.Dialog.AppError</item>-->
+        <item name="textColor">@android:color/primary_text_holo_dark</item>    
+        <item name="textAppearance">@android:style/TextAppearance.Holo</item>
+        <item name="textColorPrimary">@android:color/primary_text_holo_dark</item>
+        <item name="textAppearanceLarge">@android:style/TextAppearance.Large.Holo</item>
+        <item name="textAppearanceMedium">@android:style/TextAppearance.Medium.Holo</item>
+        <item name="textAppearanceSmall">@android:style/TextAppearance.Small.Holo</item>
     </style>
     
     <!-- Special theme for the recent apps dialog, to allow customization
@@ -536,4 +548,23 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
     
+    <!-- Begin, added by zhumeiquan for PreferenceTheme -->
+    <style name="Theme.Preference" parent="@style/Theme.Light">
+        <item name="windowBackground">@drawable/settings_background</item>
+        <item name="textColorPrimary">@android:color/primary_text_dark</item>
+        <item name="textColorSecondary">@android:color/secondary_text_dark</item>
+        <item name="textColorTertiary">@android:color/tertiary_text_dark</item>
+        <item name="textColorPrimaryInverse">@android:color/primary_text_light</item>
+        <item name="textColorSecondaryInverse">@android:color/secondary_text_light</item>
+        <item name="textColorTertiaryInverse">@android:color/tertiary_text_light</item>
+        <item name="textColorPrimaryDisableOnly">@android:color/primary_text_dark_disable_only</item>
+        <item name="textColorPrimaryInverseDisableOnly">@android:color/primary_text_light_disable_only</item>
+        <item name="textColorPrimaryNoDisable">@android:color/primary_text_dark_nodisable</item>
+        <item name="textColorSecondaryNoDisable">@android:color/secondary_text_dark_nodisable</item>
+        <item name="textColorPrimaryInverseNoDisable">@android:color/primary_text_light_nodisable</item>
+        <item name="textColorSecondaryInverseNoDisable">@android:color/secondary_text_light_nodisable</item>
+        <item name="textColorHint">@android:color/hint_foreground_light</item>
+        <item name="textColorHintInverse">@android:color/hint_foreground_dark</item>
+    </style>
+    <!-- End -->    
 </resources>
