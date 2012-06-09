@@ -51,4 +51,11 @@
 	<!-- Begin add by panqianbo for new ui 20120423 -->
 	<dimen name="progressbar_min_height">16dip</dimen>
 	<!-- End -->
+	
+	<!--added by zhuyaopeng-->
+	 <!-- DragableListView -->
+    <!-- height of a normal list item in edit playlist mode -->
+    <dimen name="normal_height">64dip</dimen>
+    <!-- height of an expanded list item in edit playlist mode -->
+    <dimen name="expanded_height">128dip</dimen>
 </resources>

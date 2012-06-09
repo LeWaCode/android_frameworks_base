@@ -111,5 +111,10 @@
     <color name="bright_foreground_holo_dark_disabled">#ff999999</color>
     <color name="bright_foreground_holo_dark_inverse">#ff000000</color>
     <!--End-->
+	
+	<!--added by zhuyaopeng-->
+	
+	    <!-- DragableListView -->
+    <color name="dragndrop_background">#e0e0e0</color>
 </resources>
 
