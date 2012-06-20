@@ -246,14 +246,16 @@ status_t BootAnimation::readyToRun() {
     mFlingerSurface = s;
 
     mAndroidAnimation = false;
-    status_t err = mZip.open("/data/local/bootanimation.zip");
-    if (err != NO_ERROR) {
-        err = mZip.open("/system/media/bootanimation.zip");
-        if (err != NO_ERROR) {
-            mAndroidAnimation = true;
-        }
-    }
-
+    status_t err = mZip.open("/data/system/face/boots/bootanimation.zip");
+    if(err != NO_ERROR){
+       err = mZip.open("/data/local/bootanimation.zip");
+       if (err != NO_ERROR) {
+           err = mZip.open("/system/media/bootanimation.zip");
+           if (err != NO_ERROR) {
+               mAndroidAnimation = true;
+           }
+       }
+   }
     return NO_ERROR;
 }
 
