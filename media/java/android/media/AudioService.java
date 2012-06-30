@@ -2524,12 +2524,13 @@ public class AudioService extends IAudioService.Stub {
                     if (!mRCStack.empty()) {
                         // create a new intent specifically aimed at the current registered listener
                         Intent targetedIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+                        String permission = intent.getStringExtra("permission");
                         targetedIntent.putExtras(intent.getExtras());
                         targetedIntent.setComponent(mRCStack.peek().mReceiverComponent);
                         // trap the current broadcast
                         abortBroadcast();
                         //Log.v(TAG, " Sending intent" + targetedIntent);
-                        context.sendBroadcast(targetedIntent, null);
+                        context.sendBroadcast(targetedIntent, permission);
                     }
                 }
             }

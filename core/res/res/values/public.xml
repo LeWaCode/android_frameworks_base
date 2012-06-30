@@ -1300,7 +1300,10 @@
   <public type="drawable" name="item_background_holo_dark_right" id="0x010800b4" />
   <public type="drawable" name="item_background_holo_dark_middle" id="0x010800b5" />
 
-  <public type="drawable" name="title_bar_medium" id="0x010800b6" /> 
-  <public type="drawable" name="notification_app_bg" id="0x010800b7" /> 
-  <public type="drawable" name="stat_sys_data_usb" id="0x010800b8" />    
+  <public type="drawable" name="title_bar_medium" id="0x010800b6" />
+  <public type="drawable" name="notification_app_bg" id="0x010800b7" />
+  <public type="drawable" name="stat_sys_data_usb" id="0x010800b8" />
+  <public type="drawable" name="preference_first_item" id="0x010800b9" />  
+  <public type="drawable" name="preference_item" id="0x010800ba" />
+  <public type="drawable" name="preference_last_item" id="0x010800bb" />
 </resources>
