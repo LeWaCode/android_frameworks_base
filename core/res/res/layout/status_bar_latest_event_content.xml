@@ -1,48 +1,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="64dip"
+    android:layout_gravity="center_vertical"
     android:orientation="vertical"
     android:paddingLeft="5dip"
-    android:paddingRight="5dip"
-    android:layout_gravity="center_vertical">
+    android:paddingRight="5dip" >
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!--com.android.server.status.AnimatedImageView android:id="@+id/icon" -->
-        <ImageView android:id="@+id/icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <!-- com.android.server.status.AnimatedImageView android:id="@+id/icon" -->
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginBottom="19dip"
             android:layout_marginRight="5dip"
-            android:scaleType="fitCenter"            
+            android:layout_marginTop="19dip"
             android:background="@drawable/notification_app_bg"
+            android:scaleType="fitCenter"
             android:src="@drawable/arrow_down_float" />
-        <TextView android:id="@+id/title"
+
+        <!-- android:textAppearance="@style/TextAppearance.StatusBar.EventContent.Title" -->
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:layout_toRightOf="@id/icon"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:singleLine="true"
+            android:textColor="#000000" 
             android:textAppearance="@style/TextAppearance.StatusBar.EventContent.Title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal"
-            android:textColor="#000000" />
-    </LinearLayout>
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView android:id="@+id/text"
-            android:textAppearance="@style/TextAppearance.StatusBar.EventContent"
+            />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dip"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal"
-            android:textColor="#515151" />
-        <android.widget.DateTimeView android:id="@+id/time"
-            android:textAppearance="@style/TextAppearance.StatusBar.EventContent"
+            android:layout_below="@id/title"
+            android:layout_marginTop="2dip"
+            android:layout_toRightOf="@id/icon"
+            android:orientation="horizontal" >
+
+            <!-- android:textAppearance="@style/TextAppearance.StatusBar.EventContent" -->
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:singleLine="true"
+                android:textColor="#515151" 
+                android:textAppearance="@style/TextAppearance.StatusBar.EventContent"
+                />
+
+        <android.widget.DateTimeView
+            android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="#515151" />
-    </LinearLayout>
+            android:singleLine="true"            
+            android:textColor="#515151"  
+            android:textAppearance="@style/TextAppearance.StatusBar.EventContent"           
+            />
+
+        </LinearLayout>
+    </RelativeLayout>
+
 </LinearLayout>

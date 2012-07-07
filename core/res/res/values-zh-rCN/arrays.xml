@@ -28,11 +28,6 @@
     <integer-array name="maps_starting_zoom">
         <item>2</item>
     </integer-array>
-    <string-array name="shutdown_reboot_options">
-        <item>重启模式</item>
-        <item>刷机模式</item>
-    <!--    <item>引导模式</item>   -->
-    </string-array>
 	
 	<!--Begin, chinese day for lockscreen, add by fulianwu 2011-12-27 -->
 	<string-array name="chineseMonthNames" translatable="false">

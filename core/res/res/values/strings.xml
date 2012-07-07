@@ -2487,10 +2487,10 @@
     <string name="lock_screen_new_msgs">%1$d New Messages</string>
     <string name="lock_screen_drag_down">Drag down to unlock</string>
     <string name="lock_screen_drag_here">Drag to here to unlock</string>	
-		<string name="lock_screen_dismiss">Dismiss</string>
-		<string name="lock_screen_snooze">Snooze</string>
-		<string name="lock_screen_pm">PM</string>
-		<string name="lock_screen_am">AM</string>
+    <string name="lock_screen_dismiss">Dismiss</string>
+    <string name="lock_screen_snooze">Snooze</string>
+    <string name="lock_screen_pm">PM</string>
+    <string name="lock_screen_am">AM</string>
     <string name="fixed_line">Fixed line</string>    
     <string name="ringtone_custom">Custom...</string>
     <string name="ringtone_silent_summary">Silent</string>

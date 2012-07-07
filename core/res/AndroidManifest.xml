@@ -1275,7 +1275,7 @@
          besides global search. -->
     <permission android:name="android.permission.GLOBAL_SEARCH"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
-        android:protectionLevel="signatureOrSystem" />
+        android:protectionLevel="normal" />
 
     <!-- Internal permission protecting access to the global search
          system: ensures that only the system can access the provider

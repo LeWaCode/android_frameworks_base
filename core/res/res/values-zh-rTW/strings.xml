@@ -297,11 +297,11 @@
     <!-- Button to reboot the phone, within the Phone Options dialog -->
     <string name="reboot_system">重新啟動手機</string>
     <!-- Button to reboot the phone, within the Reboot Options dialog -->
-    <string name="reboot_reboot">重新開機</string>
+    <string name="reboot_reboot">重啟模式</string>
     <!-- Button to reboot the phone into recovery, within the Reboot Options dialog -->
-    <string name="reboot_recovery">Recovery</string>
+    <string name="reboot_recovery">刷機模式</string>
     <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
-    <string name="reboot_bootloader">Bootloader</string>
+    <string name="reboot_bootloader">引導模式</string>
     <!-- Button to reboot the phone into bootmenu, within the Reboot Options dialog -->
     <string name="reboot_bootmenu">Bootmenu</string>
     <!-- Button to reboot the phone into fastboot, within the Reboot Options dialog -->
@@ -2237,5 +2237,22 @@
     <string name="lock_screen_new_msgs">%1$d 新信息</string>
     <string name="lock_screen_drag_down">向下拖动解锁</string>
     <string name="lock_screen_drag_here">拖至此处解锁</string>
- 
+    <string name="adb_net_enabled_notification_message">選擇停用網絡調試.</string>
+    <string name="adb_net_enabled_notification_title">已開啟網絡調試.</string>
+    <string name="fc_app_info_rear">”出問題了！</string>
+    <string name="fc_window_close">馬上關閉</string>
+    <string name="fc_window_error_default">“未知應用”出問題了！</string>
+    <string name="fc_window_report">向樂蛙報修</string>
+    <string name="fc_window_sorry">很抱歉！</string>
+    <string name="fc_window_you_want">別著急，您希望怎麼做？</string>
+    <string name="global_action_screenshot_desc">同時按menu鍵+音量下鍵也能截屏</string>
+    <string name="lock_screen_pm">下午</string>
+	<string name="lock_screen_am">上午</string>
+	<string name="lock_screen_dismiss">取消</string>
+	<string name="lock_screen_snooze">暫停再響</string>
+	<string name="permdesc_sendSmsNoConfirmation">允許應用程序發送短信。惡意應用程序可能會不經您的確認就發送訊息，從而產生費用。</string>
+    <string name="permlab_sendSmsNoConfirmation">不經確認直接發送短信。</string>
+    <string name="progress_scanning">正在掃描</string>
+    <string name="ringtone_custom">自定義鈴聲...</string>
+    <string name="ringtone_silent_summary">靜音</string>       
 </resources>
