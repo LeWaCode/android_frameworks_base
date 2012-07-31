@@ -1,4 +1,22 @@
 LOCAL_PATH:= $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_SHARED_LIBRARIES := \
+    libcutils \
+    libutils \
+    libbinder \
+    libsurfaceflinger_client
+
+LOCAL_STATIC_LIBRARIES := \
+    liboptimize
+
+LOCAL_PREBUILT_LIBS := libsysd.a
+include $(BUILD_MULTI_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_PREBUILT_LIBS := liboptimize.a
+include $(BUILD_MULTI_PREBUILT)
+
 include $(CLEAR_VARS)
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -DKHTML_NO_EXCEPTIONS -DGKWQ_NO_JAVA
@@ -248,9 +266,13 @@ LOCAL_SHARED_LIBRARIES += \
 	libwpa_client \
 	libjpeg \
 	libnfc_ndef \
-	liblame 
+	liblame
 
-LOCAL_STATIC_LIBRARIES := libreboot
+LOCAL_STATIC_LIBRARIES := \
+    libsysd \
+    liboptimize
+
+LOCAL_STATIC_LIBRARIES += libreboot
 
 ifeq ($(BOARD_HAVE_BLUETOOTH),true)
 LOCAL_C_INCLUDES += \
