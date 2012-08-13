@@ -116,5 +116,7 @@
 	
 	    <!-- DragableListView -->
     <color name="dragndrop_background">#e0e0e0</color>
+    <color name="viewPager_color0">#FFEDEDED</color>
+    <color name="viewPager_color1">#00FFFFFF</color>
 </resources>
 

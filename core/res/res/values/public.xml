@@ -738,6 +738,8 @@
   <!-- Begin, zhuemiquan -->  
   <public type="color" name="preference_primary_text_light" id="0x01060012" />
   <public type="color" name="preference_secondary_text_light" id="0x01060013" />
+    <public type="color" name="viewPager_color0" id="0x01060014" />
+  <public type="color" name="viewPager_color1" id="0x01060015" />
   <!-- End -->
   <public type="array" name="emailAddressTypes" id="0x01070000" />
   <public type="array" name="imProtocols" id="0x01070001" />
@@ -1306,4 +1308,5 @@
   <public type="drawable" name="preference_first_item" id="0x010800b9" />  
   <public type="drawable" name="preference_item" id="0x010800ba" />
   <public type="drawable" name="preference_last_item" id="0x010800bb" />
+
 </resources>
