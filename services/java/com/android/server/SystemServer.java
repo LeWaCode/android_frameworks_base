@@ -17,6 +17,7 @@
 
 package com.android.server;
 
+import com.android.server.NetworkTimeUpdateService;
 import com.android.server.am.ActivityManagerService;
 import com.android.server.usb.UsbService;
 import com.android.internal.app.ShutdownThread;
@@ -156,6 +157,7 @@ class ServerThread extends Thread {
         ThrottleService throttle = null;
         UiCloningService uiCloning = null;
         RingerSwitchObserver ringer = null;
+        NetworkTimeUpdateService networkTimeUpdater = null;
 
         // Critical services...
         try {
@@ -513,7 +515,13 @@ class ServerThread extends Thread {
             } catch (Throwable e) {
                 Slog.e(TAG, "Failure starting AssetRedirectionManager Service", e);
             }
-
+            try {
+                Slog.i(TAG, "NetworkTimeUpdateService");
+                networkTimeUpdater = new NetworkTimeUpdateService(context);
+            } catch (Throwable e) {
+                Slog.e(TAG, "starting NetworkTimeUpdate service", e);
+            }
+			
             String[] vendorServices = context.getResources().getStringArray(
                     com.android.internal.R.array.config_vendorServices);
 
@@ -633,6 +641,7 @@ class ServerThread extends Thread {
         final InputMethodManagerService immF = imm;
         final RecognitionManagerService recognitionF = recognition;
         final LocationManagerService locationF = location;
+        final NetworkTimeUpdateService networkTimeUpdaterF = networkTimeUpdater;
 
         // We now tell the activity manager it is okay to run third party
         // code.  It will call back into us once it has gotten to the state
@@ -661,6 +670,7 @@ class ServerThread extends Thread {
                 if (immF != null) immF.systemReady();
                 if (locationF != null) locationF.systemReady();
                 if (throttleF != null) throttleF.systemReady();
+                if (networkTimeUpdaterF != null) networkTimeUpdaterF.systemReady();
             }
         });
 

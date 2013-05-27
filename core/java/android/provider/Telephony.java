@@ -640,6 +640,16 @@ public final class Telephony {
             @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
             public static final String SMS_REJECTED_ACTION =
                 "android.provider.Telephony.SMS_REJECTED";
+			
+	         //--zhangwei---add--20111228	
+	        @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
+	        public static final String SMS_LW_RECIVER_ACTION =
+		        "android.provider.Telephony.SMS_LW_RECEIVED";
+
+	         @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
+	         public static final String WAP_LW_PUSH_RECEIVED_ACTION =
+		         "android.provider.Telephony.WAP_LW_PUSH_RECEIVED";
+		    //--zhangwei---add--20111228	
 
             /**
              * Read the PDUs out of an {@link #SMS_RECEIVED_ACTION} or a

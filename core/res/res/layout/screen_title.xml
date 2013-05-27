@@ -32,6 +32,7 @@ enabled.
             android:fadingEdge="horizontal"
             android:gravity="center_vertical"
             android:layout_width="match_parent"
+            android:textColor="@android:color/activity_title_bar_textcolor"
             android:layout_height="match_parent" />
     </FrameLayout>
     <FrameLayout android:id="@android:id/content"

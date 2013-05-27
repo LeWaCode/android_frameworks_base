@@ -277,6 +277,13 @@ public class Notification implements Parcelable
 
     public int flags;
 
+    /* added by zhanghui 2012.8.14
+     * to solve the issue that two usb icon come out when reboot the system
+     *  
+     */
+    public int mTagFlag = 0;
+    //ended 
+
     /**
      * Constructs a Notification object with everything set to 0.
      */
@@ -284,6 +291,7 @@ public class Notification implements Parcelable
     {
         this.when = System.currentTimeMillis();
     }
+
 
     /**
      * @deprecated use {@link #Notification(int,CharSequence,long)} and {@link #setLatestEventInfo}.
@@ -351,10 +359,28 @@ public class Notification implements Parcelable
         ledOffMS = parcel.readInt();
         iconLevel = parcel.readInt();
 
+        /* added by zhanghui 2012.8.14
+        * to solve the issue that two usb icon come out when reboot the system
+        * 
+        */
+        mTagFlag = parcel.readInt();
+
         if (parcel.readInt() != 0) {
             fullScreenIntent = PendingIntent.CREATOR.createFromParcel(parcel);
         }
     }
+
+    /* added by zhanghui 2012.8.14
+     * to solve the issue that two usb icon come out when reboot the system
+     *  
+     */
+    public int getTag() {
+        return mTagFlag;
+    }
+    public void setTag(int Tag) {
+        mTagFlag = Tag;
+    }
+    //ended
 
     public Notification clone() {
         Notification that = new Notification();
@@ -389,8 +415,15 @@ public class Notification implements Parcelable
         that.ledOnMS = this.ledOnMS;
         that.ledOffMS = this.ledOffMS;
         that.defaults = this.defaults;
-        
+
         that.flags = this.flags;
+
+        /* added by zhanghui 2012.8.14
+        * to solve the issue that two usb icon come out when reboot the system
+        * 
+        */
+        that.mTagFlag = this.mTagFlag;
+        //end
 
         return that;
     }
@@ -449,6 +482,13 @@ public class Notification implements Parcelable
         parcel.writeInt(ledOnMS);
         parcel.writeInt(ledOffMS);
         parcel.writeInt(iconLevel);
+
+        /* added by zhanghui 2012.8.14
+        * to solve the issue that two usb icon come out when reboot the system
+        * 
+        */
+        parcel.writeInt(mTagFlag);
+        //ended
 
         if (fullScreenIntent != null) {
             parcel.writeInt(1);

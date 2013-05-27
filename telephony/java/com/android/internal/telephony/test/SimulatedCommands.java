@@ -1479,4 +1479,10 @@ public final class SimulatedCommands extends BaseCommands
     public void getGsmBroadcastConfig(Message response) {
         unimplemented(response);
     }
+    
+    // Add by Fanzhong
+    public void setNewSmsIndication(int pos, Message response)
+    {
+      unimplemented(response);
+    }
 }

@@ -738,8 +738,15 @@
   <!-- Begin, zhuemiquan -->  
   <public type="color" name="preference_primary_text_light" id="0x01060012" />
   <public type="color" name="preference_secondary_text_light" id="0x01060013" />
-    <public type="color" name="viewPager_color0" id="0x01060014" />
+  <!-- End -->
+  <!-- Begin, for global theme -->  
+   <public type="color" name="viewPager_color0" id="0x01060014" />
   <public type="color" name="viewPager_color1" id="0x01060015" />
+  <public type="color" name="activity_title_bar_textcolor" id="0x01060016" />
+  <public type="color" name="page_indicator_title_textcolor" id="0x01060017" />
+  <public type="color" name="page_indicator_title_shadowcolor" id="0x01060018" />
+  <public type="color" name="page_indicator_title_unfocus_textcolor" id="0x01060019" />
+  <public type="color" name="page_indicator_title_unfocus_shadowcolor" id="0x0106001a" />
   <!-- End -->
   <public type="array" name="emailAddressTypes" id="0x01070000" />
   <public type="array" name="imProtocols" id="0x01070001" />
@@ -1308,5 +1315,8 @@
   <public type="drawable" name="preference_first_item" id="0x010800b9" />  
   <public type="drawable" name="preference_item" id="0x010800ba" />
   <public type="drawable" name="preference_last_item" id="0x010800bb" />
-
+  <!-- add by zenghuaying for common background -->
+ <public type="drawable" name="bg_common_background" id="0x010800bc" />
+ <public type="drawable" name="bg_common" id="0x010800bd" />
+ <!-- add end -->
 </resources>

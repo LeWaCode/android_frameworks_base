@@ -197,5 +197,8 @@ interface ISms {
      * @see #enableCellBroadcastRange(int, int)
      */
     boolean disableCellBroadcastRange(int startMessageId, int endMessageId);
+    
+    // Add by Fanzhong
+    void setNewSmsIndication(int newPosition);
 
 }

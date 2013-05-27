@@ -18,6 +18,7 @@ package com.android.internal.app;
 
 import android.content.res.PackageRedirectionMap;
 
+import android.content.res.lewaface.LewaRedirectionMap;
 /**
  * Interface used to interact with the AssetRedirectionManagerService.
  */
@@ -39,4 +40,15 @@ interface IAssetRedirectionManager {
      * Clear all redirection maps for the given target package.
      */
     void clearPackageRedirectionMap(in String targetPackageName);
+// modify for lewatheme by luoyongxing	
+    /**
+    * return the redirectionmap for lewatheme, if themeID was updated, the cache well be clear and rebuild.
+    *
+    */
+    LewaRedirectionMap lewaGetPackageRedirectionMap(String packageName, String themeID);
+
+	/*
+	* Clear the cache.
+	*/
+    void lewaClearRedirectionMaps();
 }

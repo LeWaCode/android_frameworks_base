@@ -23,6 +23,8 @@ import com.android.server.am.ActivityManagerService.PendingActivityLaunch;
 import android.app.Activity;
 import android.app.AppGlobals;
 import android.app.IActivityManager;
+import android.app.StatusBarManager;
+import com.android.internal.statusbar.IStatusBarService;
 import static android.app.IActivityManager.START_CLASS_NOT_FOUND;
 import static android.app.IActivityManager.START_DELIVERED_TO_TOP;
 import static android.app.IActivityManager.START_FORWARD_AND_REQUEST_CONFLICT;
@@ -244,6 +246,11 @@ public class ActivityStack {
     static final int DESTROY_TIMEOUT_MSG = 17;
     static final int RESUME_TOP_ACTIVITY_MSG = 19;
     
+    //add by zhangxianjia, for use statusbarmanager
+    IStatusBarService ibs = null;
+    private Runnable bgRunnable;
+    IBinder mBarBinder = new Binder();
+    
     final Handler mHandler = new Handler() {
         //public Handler() {
         //    if (localLOGV) Slog.v(TAG, "Handler started!");
@@ -312,6 +319,9 @@ public class ActivityStack {
         mMainStack = mainStack;
         PowerManager pm =
             (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        //add by zhangxianjia, for statusbar change background
+        ibs = StatusBarManager.getService();
+        bgRunnable = new BgRunnable();
         mGoingToSleep = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ActivityManager-Sleep");
         mLaunchingActivity = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ActivityManager-Launch");
         mLaunchingActivity.setReferenceCounted(false);
@@ -644,6 +654,19 @@ public class ActivityStack {
         }
     }
     
+    private class BgRunnable implements Runnable {
+        public void run() {
+            try {
+                if(ibs == null) {
+                    ibs = StatusBarManager.getService();
+                }
+                ibs.disable(StatusBarManager.DISABLE_BACKGROUND, mBarBinder, "com.android.launcher");
+            }catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
+    }
     private final void startPausingLocked(boolean userLeaving, boolean uiSleeping) {
         if (mPausingActivity != null) {
             RuntimeException e = new RuntimeException();
@@ -657,6 +680,19 @@ public class ActivityStack {
             resumeTopActivityLocked(null);
             return;
         }
+
+        //Begin, add by zhangxianjia, 20120831, for statusbar change background
+        if(prev.isHomeActivity) {
+            try {
+                if(ibs == null) {
+                    ibs = StatusBarManager.getService();
+                }
+                ibs.disable(StatusBarManager.DISABLE_NONE, mBarBinder, "com.android.launcher");
+            }catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        //End
         if (DEBUG_PAUSE) Slog.v(TAG, "Start pausing: " + prev);
         mResumedActivity = null;
         mPausingActivity = prev;
@@ -1211,6 +1247,11 @@ public class ActivityStack {
 
         if (next.app != null && next.app.thread != null) {
             if (DEBUG_SWITCH) Slog.v(TAG, "Resume running: " + next);
+            //add by zhangxianjia, for statusbar manager if resume home activity
+            if(next.isHomeActivity) {
+               // mStatusBarManager.disable(StatusBarManager.DISABLE_BACKGROUND);
+                mHandler.postDelayed(bgRunnable, 400L);
+            }
 
             // This activity is now becoming visible.
             mService.mWindowManager.setAppVisibility(next, true);
@@ -1903,6 +1944,13 @@ public class ActivityStack {
                     + (callerApp != null ? callerApp.pid : callingPid));
         }
 
+        //Begin , add by zhangxianjia, 20120830, for statusbar update background
+        if(intent != null && intent.getCategories() != null && "[android.intent.category.HOME]".equals(intent.getCategories().toString())) {
+                mHandler.postDelayed(bgRunnable, 400L);
+        }else {
+            //mStatusBarManager.disable(StatusBarManager.DISABLE_NONE);
+        }
+        //End
         ActivityRecord sourceRecord = null;
         ActivityRecord resultRecord = null;
         if (resultTo != null) {
@@ -2891,7 +2939,7 @@ public class ActivityStack {
             return false;
         }
 
-        r.makeFinishing();
+        r.finishing = true;
         EventLog.writeEvent(EventLogTags.AM_FINISH_ACTIVITY,
                 System.identityHashCode(r),
                 r.task.taskId, r.shortComponentName, reason);
@@ -3100,7 +3148,6 @@ public class ActivityStack {
 
     private final void removeActivityFromHistoryLocked(ActivityRecord r) {
         if (r.state != ActivityState.DESTROYED) {
-            r.makeFinishing();
             mHistory.remove(r);
             r.inHistory = false;
             r.resultTo = null;

@@ -93,11 +93,24 @@ public class MediaFile {
     public static final int FILE_TYPE_WPL     = 43;
     private static final int FIRST_PLAYLIST_FILE_TYPE = FILE_TYPE_M3U;
     private static final int LAST_PLAYLIST_FILE_TYPE = FILE_TYPE_WPL;
+    // Other popular file types add by zhangxianjia
+    public static final int FILE_TYPE_TEXT          = 100;
+    public static final int FILE_TYPE_HTML          = 101;
+    public static final int FILE_TYPE_PDF           = 102;
+    public static final int FILE_TYPE_XML           = 103;
+    public static final int FILE_TYPE_MS_WORD       = 104;
+    public static final int FILE_TYPE_MS_EXCEL      = 105;
+    public static final int FILE_TYPE_MS_POWERPOINT = 106;
+    public static final int FILE_TYPE_ZIP           = 107;
+	public static final int FILE_TYPE_APK           = 108;
+	  // theme file add by chenliang
+	public static final int FILE_TYPE_LWT           = 109;
+	public static final int FILE_TYPE_VCF = 110;
 
     static class MediaFileType {
 
-        int fileType;
-        String mimeType;
+        public final int fileType;
+        public final String mimeType;
 
         MediaFileType(int fileType, String mimeType) {
             this.fileType = fileType;
@@ -182,6 +195,26 @@ public class MediaFile {
         addFileType("PNG", FILE_TYPE_PNG, "image/png");
         addFileType("BMP", FILE_TYPE_BMP, "image/x-ms-bmp");
         addFileType("WBMP", FILE_TYPE_WBMP, "image/vnd.wap.wbmp");
+	//add by zhangxianjia , add normal files type
+        addFileType("TXT", FILE_TYPE_TEXT, "text/plain");
+        addFileType("RTX", FILE_TYPE_TEXT, "text/plain");
+        addFileType("RTF", FILE_TYPE_TEXT, "text/plain");
+        addFileType("HTM", FILE_TYPE_HTML, "text/html");
+        addFileType("HTML", FILE_TYPE_HTML, "text/html");
+        addFileType("PDF", FILE_TYPE_PDF, "application/pdf");
+        addFileType("DOC", FILE_TYPE_MS_WORD, "application/msword");
+        addFileType("DOCX", FILE_TYPE_MS_WORD, "application/msword");
+        addFileType("XLS", FILE_TYPE_MS_EXCEL, "application/vnd.ms-excel");
+        addFileType("XLSX", FILE_TYPE_MS_EXCEL, "application/vnd.ms-excel");
+        addFileType("PPT", FILE_TYPE_MS_POWERPOINT, "application/mspowerpoint");
+        addFileType("PPTX", FILE_TYPE_MS_POWERPOINT, "application/mspowerpoint");
+        addFileType("FLAC", FILE_TYPE_FLAC, "audio/flac");
+        addFileType("ZIP", FILE_TYPE_ZIP, "application/zip");
+		addFileType("APK", FILE_TYPE_APK, "application/vnd.android.package-archive");
+
+//add by chenliang , add lwt file type
+		addFileType("LWT", FILE_TYPE_LWT, "lewa/theme");
+		addFileType("VCF", FILE_TYPE_VCF, "application/vcf");
 
         if(SystemProperties.OMAP_ENHANCEMENT)
         {
@@ -242,9 +275,33 @@ public class MediaFile {
             return null;
         return sFileTypeMap.get(path.substring(lastDot + 1).toUpperCase());
     }
+    // add by zhangxianjia generates a title based on file name
+    public static String getFileTitle(String path) {
+        // extract file name after last slash
+        int lastSlash = path.lastIndexOf('/');
+        if (lastSlash >= 0) {
+            lastSlash++;
+            if (lastSlash < path.length()) {
+                path = path.substring(lastSlash);
+            }
+        }
+        // truncate the file extension (if any)
+        int lastDot = path.lastIndexOf('.');
+        if (lastDot > 0) {
+            path = path.substring(0, lastDot);
+        }
+        return path;
+    }
     public static int getFileTypeForMimeType(String mimeType) {
+        if("text/plain".equals(mimeType)) {
+			return 0;
+		}
         Integer value = sMimeTypeMap.get(mimeType);
         return (value == null ? 0 : value.intValue());
     }
 
-}
+    public static String getMimeTypeForFile(String path) {
+        MediaFileType mediaFileType = getFileType(path);
+        return (mediaFileType == null ? null : mediaFileType.mimeType);
+    }
+}

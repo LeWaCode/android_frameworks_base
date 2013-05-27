@@ -23,7 +23,7 @@ import android.provider.Telephony;
 import android.provider.Telephony.Sms.Intents;
 import android.util.Config;
 import android.util.Log;
-
+import android.os.Bundle;
 
 /**
  * WAP push handler class.
@@ -46,6 +46,18 @@ public class WapPushOverSms {
     public WapPushOverSms(Phone phone, SMSDispatcher smsDispatcher) {
         mSmsDispatcher = smsDispatcher;
         mContext = phone.getContext();
+    }
+    
+    /*
+     * Add for wappush to get sender and service address.
+     * Sender and service address will be stored in bundle
+     * dispatchWapPdu(byte[] pdu, Bundle extra) will be called by framework
+     */  
+    private Bundle bundle;
+    public int dispatchWapPdu(byte[] pdu, Bundle extra){
+    	if (Config.LOGD) Log.i(LOG_TAG, "dispathchWapPdu!" + extra.getString("sender") + extra.getString("service_center"));
+    	bundle = extra;
+    	return dispatchWapPdu(pdu);
     }
 
     /**
@@ -213,6 +225,10 @@ public class WapPushOverSms {
         intent.putExtra("header", header);
         intent.putExtra("data", data);
 
+        if (null != bundle) {
+            intent.putExtras(bundle);
+        }
+
         mSmsDispatcher.dispatch(intent, "android.permission.RECEIVE_WAP_PUSH");
     }
 
@@ -227,6 +243,10 @@ public class WapPushOverSms {
         intent.putExtra("pduType", pduType);
         intent.putExtra("header", header);
         intent.putExtra("data", pdu);
+
+        if (null != bundle) {
+            intent.putExtras(bundle);
+        }
 
         mSmsDispatcher.dispatch(intent, "android.permission.RECEIVE_WAP_PUSH");
     }
@@ -245,6 +265,10 @@ public class WapPushOverSms {
         intent.putExtra("pduType", pduType);
         intent.putExtra("header", header);
         intent.putExtra("data", data);
+
+        if (null != bundle) {
+            intent.putExtras(bundle);
+        }
 
         mSmsDispatcher.dispatch(intent, "android.permission.RECEIVE_MMS");
     }

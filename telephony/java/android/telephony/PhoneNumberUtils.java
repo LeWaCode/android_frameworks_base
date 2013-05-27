@@ -1141,6 +1141,10 @@ public class PhoneNumberUtils
      * not begin with +<country_code>
      */
     public static void formatNumber(Editable text, int defaultFormattingType) {
+        //add by jxli
+        if (true)
+            return;
+        //end
         int formatType = defaultFormattingType;
 
         if (text.length() > 2 && text.charAt(0) == '+') {
@@ -1342,6 +1346,10 @@ public class PhoneNumberUtils
         // to the list.
         number = extractNetworkPortionAlt(number);
 
+        if (number.equals("112") || number.equals("911") || number.equals("110") || number.equals("120")) {
+            return true;
+        }
+        
         // retrieve the list of emergency numbers
         // check read-write ecclist property first
         String numbers = SystemProperties.get("ril.ecclist");
@@ -1363,7 +1371,7 @@ public class PhoneNumberUtils
         }
 
         //no ecclist system property, so use our own list.
-        return (number.equals("112") || number.equals("911"));
+        return false;
     }
 
     /**

@@ -85,4 +85,9 @@ public class IccSmsInterfaceManagerProxy extends ISms.Stub {
             throws android.os.RemoteException {
         return mIccSmsInterfaceManager.disableCellBroadcastRange(startMessageId, endMessageId);
     }
+    
+    // Add by Fanzhong
+    public void setNewSmsIndication(int newPosition){
+    	this.mIccSmsInterfaceManager.setNewSmsIndication(newPosition);
+    }
 }

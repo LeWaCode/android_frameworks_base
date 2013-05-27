@@ -171,6 +171,20 @@ public class StatusBarManagerService extends IStatusBarService.Stub
             }
         }
     }
+	// add by luoyongxing
+	public void resetStatusBar(){
+        synchronized (mIcons) {
+			if (mBar != null) {
+	            try {
+	                mBar.resetStatusBar();
+	            } catch (RemoteException ex) {
+	            	Slog.e(TAG, "resetStatusBar FAILED!!");
+	            }
+	        }
+			
+        }
+			
+	}
 
     public void setIcon(String slot, String iconPackage, int iconId, int iconLevel) {
         enforceStatusBar();

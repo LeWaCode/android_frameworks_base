@@ -254,10 +254,12 @@ public abstract class DialogPreference extends Preference implements
      * Use this to set custom properties on the dialog.
      * <p>
      * Do not {@link AlertDialog.Builder#create()} or
-     * {@link AlertDialog.Builder#show()}.
+     * {@link LewaAlertDialog.Builder#show()}.
      */
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
     }
+
+
     
     @Override
     protected void onClick() {

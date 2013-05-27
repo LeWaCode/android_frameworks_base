@@ -73,10 +73,18 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
     private static final boolean DEBUG = false;
     private static final String TAG = "LockPatternKeyguardView";
 
+    //[Begin, for lockscreen style,fulianwu 20120104]
+    private static final int CURTAIN_LOCKSCREEN_STYLE = 6;
+    private static final int ANGRYBIRD_LOCKSCREEN_STYLE = 7;
+    //[End]
+    
+    private int mLockscreenStyle = (Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.LOCKSCREEN_STYLE_PREF, ANGRYBIRD_LOCKSCREEN_STYLE));
+
     private final KeyguardUpdateMonitor mUpdateMonitor;
     private final KeyguardWindowController mWindowController;
 
-    private View mLockScreen;
+    private static View mLockScreen;
     private View mUnlockScreen;
 
     private boolean mScreenOn = false;
@@ -194,7 +202,7 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
      * @param lockPatternUtils Used to look up state of lock pattern.
      */
     public LockPatternKeyguardView(
-            Context context,
+            final Context context,
             KeyguardUpdateMonitor updateMonitor,
             LockPatternUtils lockPatternUtils,
             KeyguardWindowController controller) {
@@ -234,6 +242,14 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
         mMode = getInitialMode();
 
         mKeyguardScreenCallback = new KeyguardScreenCallback() {
+
+            public void setPendingIntent(Intent intent){
+                
+                if(intent != null){
+                    context.startActivity(intent);
+                }
+                
+            };
 
             public void goToLockScreen() {
                 mForgotPattern = false;
@@ -651,13 +667,46 @@ public class LockPatternKeyguardView extends KeyguardViewBase {
         }
     }
 
+    /*View createLockScreen() {
+        //add by fulianwu
+        if (mLockscreenStyle == ANGRYBIRD_LOCKSCREEN_STYLE) {//mLewa
+            return new LewaLockScreen(
+                    mContext,
+                    mConfiguration,
+                    mLockPatternUtils,
+                    mUpdateMonitor,
+                    mKeyguardScreenCallback);
+        //add by zhangbo
+        } else if(mLockscreenStyle == CURTAIN_LOCKSCREEN_STYLE){
+            return new LewaLockScreen_zb(
+                    mContext,
+                    mConfiguration,
+                    mLockPatternUtils,
+                    mUpdateMonitor,
+                    mKeyguardScreenCallback);
+        }else {
+            return new LockScreen(
+                    mContext,
+                    mConfiguration,
+                    mLockPatternUtils,
+                    mUpdateMonitor,
+                    mKeyguardScreenCallback);
+        }
+        
+    }*/
+
+    /**
+    * ÷ª¡Ù◊°¿÷Õ‹À¯∆¡
+    */
     View createLockScreen() {
-        return new LockScreen(
+  
+        return new LewaLockScreen(
                 mContext,
                 mConfiguration,
                 mLockPatternUtils,
                 mUpdateMonitor,
                 mKeyguardScreenCallback);
+        
     }
 
     View createUnlockScreenFor(UnlockMode unlockMode) {

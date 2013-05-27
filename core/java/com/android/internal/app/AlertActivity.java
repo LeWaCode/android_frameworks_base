@@ -20,6 +20,9 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.Gravity;
+import android.view.Window;
+import android.provider.Settings;
 
 /**
  * An activity that follows the visual style of an AlertDialog.
@@ -85,6 +88,28 @@ public abstract class AlertActivity extends Activity implements DialogInterface 
         if (mAlert.onKeyUp(keyCode, event)) return true;
         return super.onKeyUp(keyCode, event);
     }
-    
-    
+    //Begin add by panqianbo for new ui 20120409
+        @Override
+    protected void onStart() {
+        super.onStart();
+        Window window = getWindow();
+        android.view.WindowManager.LayoutParams layoutparams = window.getAttributes();
+
+        int value = Settings.System.getInt(getContentResolver(),
+                        Settings.System.ALERTDIALOG_STYLES, 0);
+	    switch(value) {
+			case 0:
+				layoutparams.windowAnimations = com.android.internal.R.style.Animation_InputMethod;
+                layoutparams.gravity = Gravity.BOTTOM;
+				break;
+			case 1:
+				layoutparams.windowAnimations = com.android.internal.R.style.Animation_AlertDialog;
+                layoutparams.gravity = Gravity.TOP;
+				break;
+		}
+		
+        window.setAttributes(layoutparams);
+      
+    }
+    //End
 }

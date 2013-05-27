@@ -246,6 +246,7 @@ status_t BootAnimation::readyToRun() {
     mFlingerSurface = s;
 
     mAndroidAnimation = false;
+    // add for theme change bootanimation by luoyongxing
     status_t err = mZip.open("/data/system/face/boots/bootanimation.zip");
     if(err != NO_ERROR){
        err = mZip.open("/data/local/bootanimation.zip");

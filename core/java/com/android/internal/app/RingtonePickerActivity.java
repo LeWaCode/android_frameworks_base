@@ -19,6 +19,8 @@ package com.android.internal.app;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -52,12 +54,18 @@ public final class RingtonePickerActivity extends AlertActivity implements
     
     private Cursor mCursor;
     private Handler mHandler;
+    private int mType;
 
     /** The position in the list of the 'Silent' item. */
     private int mSilentPos = -1;
     
     /** The position in the list of the 'Default' item. */
     private int mDefaultRingtonePos = -1;
+
+    // Begin, Modified by zhumeiquan for new req Bug 2629, replace silent to custom, 20120228
+    /** The position in the list of the 'Customise' item. */
+    private int mCustomPos = -1;    
+    // End
 
     /** The position in the list of the last clicked item. */
     private int mClickedPos = -1;
@@ -96,9 +104,16 @@ public final class RingtonePickerActivity extends AlertActivity implements
         public void onClick(DialogInterface dialog, int which) {
             // Save the position of most recently clicked item
             mClickedPos = which;
-            
-            // Play clip
-            playRingtone(which, 0);
+            //Begin, Added by chenqiang for bug 4186. 20120320
+            if (mClickedPos == mCustomPos) {
+                Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                intent.setType("audio/*");
+                startActivityForResult(intent, 0);
+            } else {
+                // Play clip
+                playRingtone(which, 0);
+            }
+            //End
         }
         
     };
@@ -137,6 +152,8 @@ public final class RingtonePickerActivity extends AlertActivity implements
         if (types != -1) {
             mRingtoneManager.setType(types);
         }
+
+        mType = types;
         
         mCursor = mRingtoneManager.getCursor();
         
@@ -168,10 +185,11 @@ public final class RingtonePickerActivity extends AlertActivity implements
     }
 
     public void onPrepareListView(ListView listView) {
-        
+        // Begin, Modified by zhumeiquan for new req Bug 2629, replace silent to custom, 20120228
+        mCustomPos = addCustomItem(listView);
+        // End
         if (mHasDefaultItem) {
             mDefaultRingtonePos = addDefaultRingtoneItem(listView);
-            
             if (RingtoneManager.isDefault(mExistingUri)) {
                 mClickedPos = mDefaultRingtonePos;
             }
@@ -179,7 +197,6 @@ public final class RingtonePickerActivity extends AlertActivity implements
         
         if (mHasSilentItem) {
             mSilentPos = addSilentItem(listView);
-            
             // The 'Silent' item should use a null Uri
             if (mExistingUri == null) {
                 mClickedPos = mSilentPos;
@@ -210,6 +227,17 @@ public final class RingtonePickerActivity extends AlertActivity implements
         mStaticItemCount++;
         return listView.getHeaderViewsCount() - 1;
     }
+
+    // Begin, Modified by zhumeiquan for new req Bug 2629, 20120228
+    private int addCustomItem(ListView listView) {
+        TextView textView = (TextView) getLayoutInflater().inflate(
+                com.android.internal.R.layout.select_dialog_item, listView, false);
+        textView.setText(com.android.internal.R.string.ringtone_custom);
+        listView.addHeaderView(textView);
+        mStaticItemCount++;
+        return listView.getHeaderViewsCount() - 1;
+    }
+    // End
     
     private int addDefaultRingtoneItem(ListView listView) {
         return addStaticItem(listView, com.android.internal.R.string.ringtone_default);
@@ -229,6 +257,13 @@ public final class RingtonePickerActivity extends AlertActivity implements
         mRingtoneManager.stopPreviousRingtone();
         
         if (positiveResult) {
+            //Begin, Added by chenqiang for bug 4186. 20120320
+            if (mSampleRingtonePos == mCustomPos) {
+                Intent intent = new Intent("android.intent.action.GET_CONTENT");
+                intent.setType("audio/*");
+                startActivityForResult(intent, 0);
+            }
+            //End
             Intent resultIntent = new Intent();
             Uri uri = null;
             
@@ -274,11 +309,12 @@ public final class RingtonePickerActivity extends AlertActivity implements
     }
     
     public void run() {
-        
-        if (mSampleRingtonePos == mSilentPos) {
+        //Begin, Modified by chenqiang for bug 4186. 20120320
+        if (mSampleRingtonePos == mSilentPos || mSampleRingtonePos == mCustomPos) {
             mRingtoneManager.stopPreviousRingtone();
             return;
         }
+        //End
         
         /*
          * Stop the default ringtone, if it's playing (other ringtones will be
@@ -310,6 +346,14 @@ public final class RingtonePickerActivity extends AlertActivity implements
         
         if (ringtone != null) {
             ringtone.play();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mSampleRingtonePos == mCustomPos) {
+            finish();
         }
     }
 
@@ -347,5 +391,59 @@ public final class RingtonePickerActivity extends AlertActivity implements
         
         return ringtoneManagerPos + mStaticItemCount;
     }
-    
+
+    // Begin, Added by zhumeiquan for new req Bug 2629, 20120228
+    private Uri convertPath2Uri(Uri uri) {
+        if (uri == null || "content".equals(uri.getScheme())) {
+            return uri;
+        }
+        
+        String id = null;
+        Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, 
+                new String[]{"_id"}, "_data='"+uri.getPath()+"'", null, null);            
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            id = cursor.getString(0);
+            cursor.close();
+        } 
+        if (id != null) {
+            return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(id));
+        }
+        return null;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (data != null) {                
+                Uri uri = convertPath2Uri(data.getData());
+                if (uri == null) {
+                    return;
+                }
+                // first: update the media database
+                try {
+                    ContentValues values = new ContentValues(2);
+                    if (mType == RingtoneManager.TYPE_NOTIFICATION) {
+                        values.put(MediaStore.Audio.Media.IS_NOTIFICATION, "1");
+                    } else {
+                        values.put(MediaStore.Audio.Media.IS_RINGTONE, "1");
+                        values.put(MediaStore.Audio.Media.IS_ALARM, "1");
+                    }
+                    getContentResolver().update(uri, values, null, null);
+                } catch (UnsupportedOperationException ex) {
+                    // most likely the card just got unmounted                   
+                    return;
+                }
+
+                // second: send the result to SettingsProvider
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, uri);
+                setResult(RESULT_OK, resultIntent);
+
+                //Third: finish the current activity
+                finish();
+            }
+        }
+    } 
+    // End
 }

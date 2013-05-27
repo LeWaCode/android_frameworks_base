@@ -25,6 +25,7 @@ import android.text.TextUtils;
 
 import java.util.Locale;
 
+import android.content.res.lewaface.*;
 /**
  * This class describes all device configuration information that can
  * impact the resources the application retrieves.  This includes both
@@ -57,7 +58,11 @@ public final class Configuration implements Parcelable, Comparable<Configuration
      * @hide
      */
     public CustomTheme customTheme;
-
+	/**
+     * @hide
+     */
+// modify for lewatheme by luoyongxing
+	public LewaTheme lewaTheme; // #lyx@
     /**
      * Locale should persist on setting.  This is hidden because it is really
      * questionable whether this is the right way to expose the functionality.
@@ -267,10 +272,14 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         if (o.customTheme != null) {
             customTheme = (CustomTheme) o.customTheme.clone();
         }
+// modify for lewatheme by luoyongxing
+		if(o.lewaTheme != null){
+			lewaTheme = (LewaTheme) o.lewaTheme.clone();
+		}
     }
     
     public String toString() {
-        StringBuilder sb = new StringBuilder(128);
+        StringBuilder sb = new StringBuilder(256);
         sb.append("{ scale=");
         sb.append(fontScale);
         sb.append(" imsi=");
@@ -304,6 +313,10 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         sb.append(" themeResource=");
         sb.append(customTheme);
         sb.append('}');
+// modify for lewatheme by luoyongxing
+		sb.append(" lewaResource=");
+		sb.append(lewaTheme);
+		sb.append('}');
         return sb.toString();
     }
 
@@ -326,6 +339,8 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         uiMode = UI_MODE_TYPE_UNDEFINED;
         seq = 0;
         customTheme = null;
+// modify for lewatheme by luoyongxing
+		lewaTheme = null;
     }
 
     /** {@hide} */
@@ -428,6 +443,13 @@ public final class Configuration implements Parcelable, Comparable<Configuration
             changed |= ActivityInfo.CONFIG_THEME_RESOURCE;
             customTheme = (CustomTheme)delta.customTheme.clone();
         }
+		// #lyx@ add lewaTheme.
+		if (delta.lewaTheme != null 
+            && (lewaTheme == null || !delta.lewaTheme.equals(lewaTheme))) {
+            changed |= ActivityInfo.CONFIG_LEWATHEME_RESOURCE;
+            lewaTheme = delta.lewaTheme;
+            
+        }
 
         return changed;
     }
@@ -512,7 +534,11 @@ public final class Configuration implements Parcelable, Comparable<Configuration
                 (customTheme == null || !customTheme.equals(delta.customTheme))) {
             changed |= ActivityInfo.CONFIG_THEME_RESOURCE;
         }
-        
+// modify for lewatheme by luoyongxing
+        if (delta.lewaTheme != null &&
+                (lewaTheme == null || !lewaTheme.equals(delta.lewaTheme))) {
+            changed |= ActivityInfo.CONFIG_LEWATHEME_RESOURCE;
+        }
         return changed;
     }
 
@@ -530,7 +556,8 @@ public final class Configuration implements Parcelable, Comparable<Configuration
     public static boolean needNewResources(int configChanges, int interestingChanges) {
         return (configChanges & (interestingChanges |
                 ActivityInfo.CONFIG_FONT_SCALE |
-                ActivityInfo.CONFIG_THEME_RESOURCE)) != 0;
+                ActivityInfo.CONFIG_THEME_RESOURCE |
+                ActivityInfo.CONFIG_LEWATHEME_RESOURCE)) != 0;
     }
     
     /**
@@ -604,6 +631,24 @@ public final class Configuration implements Parcelable, Comparable<Configuration
             dest.writeString(customTheme.getThemeId());
             dest.writeString(customTheme.getThemePackageName());
         }
+		if(lewaTheme == null ){
+			dest.writeInt(0);
+		}else{
+			dest.writeInt(1);
+			if(lewaTheme.isValid()){
+				dest.writeString(lewaTheme.getThemeName());	
+				dest.writeString(String.valueOf(lewaTheme.getResModelNames().size()));
+				dest.writeString(lewaTheme.getResModelNamesStr());
+			}else{
+				if(lewaTheme.getThemeName() != null){
+					dest.writeString(lewaTheme.getThemeName());	
+				}else{
+					dest.writeString("");
+				}
+				dest.writeString("");
+				dest.writeString("");
+			}
+		}
     }
 
     public void readFromParcel(Parcel source) {
@@ -631,6 +676,14 @@ public final class Configuration implements Parcelable, Comparable<Configuration
             String themePackage = source.readString();
             customTheme = new CustomTheme(themeId, themePackage);
         }
+// modify for lewatheme by luoyongxing
+		if(source.readInt()!=0){
+			String themeName = source.readString();
+			String modelNumStr = source.readString();
+			String modelNames = source.readString();
+			lewaTheme = new LewaTheme(themeName, modelNames, modelNumStr);
+			
+		}
     }
     
     public static final Parcelable.Creator<Configuration> CREATOR
@@ -701,6 +754,15 @@ public final class Configuration implements Parcelable, Comparable<Configuration
             n = this.customTheme.getThemePackageName().compareTo(that.customTheme.getThemePackageName());
             if (n != 0) return n;
         }
+// modify for lewatheme by luoyongxing
+		if(this.lewaTheme == null){
+			if(that.lewaTheme != null) return 1;
+		}else if(that.lewaTheme == null){
+			return -1;
+		}else{
+			n =  this.lewaTheme.getThemeName().compareTo(that.lewaTheme.getThemeName());
+			if(n != 0) return n;
+		}
 
         return n;
     }
@@ -726,6 +788,8 @@ public final class Configuration implements Parcelable, Comparable<Configuration
                 + this.keyboard + this.keyboardHidden + this.hardKeyboardHidden
                 + this.navigation + this.navigationHidden
                 + this.orientation + this.screenLayout + this.uiMode
-                + (this.customTheme != null ? this.customTheme.hashCode() : 0);
+                + (this.customTheme != null ? this.customTheme.hashCode() : 0)
+// modify for lewatheme by luoyongxing
+                + (this.lewaTheme != null?this.lewaTheme.hashCode():0);
     }
 }

@@ -102,7 +102,8 @@ class TelephonyRegistry extends ITelephonyRegistry.Stub {
                 PhoneStateListener.LISTEN_CALL_STATE |
                 PhoneStateListener.LISTEN_DATA_ACTIVITY |
                 PhoneStateListener.LISTEN_DATA_CONNECTION_STATE |
-                PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR;
+                PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR|
+                PhoneStateListener.LISTEN_LEWA_FLAG;//add by chenhengheng
 
     // we keep a copy of all of the state so we can send it out when folks
     // register for it
@@ -147,7 +148,19 @@ class TelephonyRegistry extends ITelephonyRegistry.Stub {
                     r.binder = b;
                     r.callback = callback;
                     r.pkgForDebug = pkgForDebug;
-                    mRecords.add(r);
+					//add by george,20111209
+                    if((events& PhoneStateListener.LISTEN_LEWA_FLAG)!=0){
+						if( N > 0){
+							Record rLewa = mRecords.get(0);
+							if ((rLewa.events & PhoneStateListener.LISTEN_LEWA_FLAG) != 0) {
+								remove(rLewa.binder);
+							}
+						}
+                        mRecords.add(0,r);
+						System.out.println(TAG+"==="+"add Lewa Records");
+                    }else{
+                        mRecords.add(r);						
+                    }
                 }
                 int send = events & (events ^ r.events);
                 r.events = events;
@@ -229,14 +242,29 @@ class TelephonyRegistry extends ITelephonyRegistry.Stub {
         }
     }
 
+	 /*
+     * modified by george,for 360 safe
+     */
     public void notifyCallState(int state, String incomingNumber) {
         if (!checkNotifyPermission("notifyCallState()")) {
             return;
         }
         synchronized (mRecords) {
+            int last = 0;
             mCallState = state;
             mCallIncomingNumber = incomingNumber;
-            for (int i = mRecords.size() - 1; i >= 0; i--) {
+            
+            //added by george,2011-12-12
+            Record rLewa = mRecords.get(0);
+            if ((rLewa.events & PhoneStateListener.LISTEN_LEWA_FLAG) != 0) {
+                try {
+                    rLewa.callback.onCallStateChanged(state, incomingNumber);
+                    last = 1;
+                } catch (RemoteException ex) {
+                    remove(rLewa.binder);
+                }
+            }
+            for (int i = mRecords.size() - 1; i >= last; i--) {
                 Record r = mRecords.get(i);
                 if ((r.events & PhoneStateListener.LISTEN_CALL_STATE) != 0) {
                     try {

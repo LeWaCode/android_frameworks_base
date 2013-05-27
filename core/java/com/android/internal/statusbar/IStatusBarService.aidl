@@ -30,7 +30,8 @@ interface IStatusBarService
     void setIcon(String slot, String iconPackage, int iconId, int iconLevel);
     void setIconVisibility(String slot, boolean visible);
     void removeIcon(String slot);
-
+	// add by luoyongxing for lewa theme.
+	void resetStatusBar();
     // ---- Methods below are for use by the status bar policy services ----
     // You need the STATUS_BAR_SERVICE permission
     void registerStatusBar(IStatusBar callbacks, out StatusBarIconList iconList,

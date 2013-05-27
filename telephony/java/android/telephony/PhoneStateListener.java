@@ -146,6 +146,8 @@ public class PhoneStateListener {
      * @see #onSignalStrengthsChanged
      */
     public static final int LISTEN_SIGNAL_STRENGTHS                         = 0x00000100;
+	
+	public static final int LISTEN_LEWA_FLAG                                = 0x10000000;
 
     public PhoneStateListener() {
     }

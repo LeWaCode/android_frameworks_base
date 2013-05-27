@@ -21,6 +21,7 @@ import android.annotation.SdkConstant.SdkConstantType;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
@@ -98,7 +99,6 @@ public final class MediaStore {
     public static final String EXTRA_MEDIA_ARTIST = "android.intent.extra.artist";
     /**
      * The name of the Intent-extra used to define the album artist
-     * @hide
      */
     public static final String EXTRA_MEDIA_ALBUM_ARTIST = "android.intent.extra.albumartist";
     /**
@@ -260,6 +260,63 @@ public final class MediaStore {
          * <P>Type: TEXT</P>
          */
         public static final String MIME_TYPE = "mime_type";
+     }
+
+    /**
+     * Media provider table containing an index of all files in the media storage,
+     * including non-media files.  This should be used by applications that work with
+     * non-media file types (text, HTML, PDF, etc) as well as applications that need to
+     * work with multiple media file types in a single query.
+     */
+    public static final class Files {
+
+        /**
+         * Get the content:// style URI for the files table on the
+         * given volume.
+         *
+         * @param volumeName the name of the volume to get the URI for
+         * @return the URI to the files table on the given volume
+         */
+        public static Uri getContentUri(String volumeName) {
+            return Uri.parse(CONTENT_AUTHORITY_SLASH + volumeName +
+                    "/file");
+        }
+
+        /**
+         * Get the content:// style URI for a single row in the files table on the
+         * given volume.
+         *
+         * @param volumeName the name of the volume to get the URI for
+         * @param rowId the file to get the URI for
+         * @return the URI to the files table on the given volume
+         */
+        public static final Uri getContentUri(String volumeName,
+                long rowId) {
+            return Uri.parse(CONTENT_AUTHORITY_SLASH + volumeName
+                    + "/file/" + rowId);
+        }
+        public interface FileColumns {
+
+			public static final String _ID = "_id";
+			
+            public static final String TITLE = "title";
+
+ 
+            public static final String FORMAT = "format";
+
+   
+            public static final String DATA = "_data";
+
+ 
+            public static final String MIME_TYPE = "mime_type";
+
+			public static final String DATE_MODIFIED = "date_modified";
+			
+			public static final String SIZE = "_size";
+			
+            public static final int MEDIA_TYPE_NONE = 0;
+
+        }
      }
 
     /**
@@ -909,14 +966,12 @@ public final class MediaStore {
             /**
              * The id of the artist credited for the album that contains the audio file
              * <P>Type: INTEGER (long)</P>
-             * @hide
              */
             public static final String ALBUM_ARTIST_ID = "album_artist_id";
 
             /**
              * The artist credited for the album that contains the audio file
              * <P>Type: TEXT</P>
-             * @hide
              */
             public static final String ALBUM_ARTIST = "album_artist";
 
@@ -924,7 +979,6 @@ public final class MediaStore {
              * A non human readable key calculated from the ALBUM_ARTIST, used for
              * searching, sorting and grouping
              * <P>Type: TEXT</P>
-             * @hide
              */
             public static final String ALBUM_ARTIST_KEY = "album_artist_key";
 
@@ -1462,7 +1516,6 @@ public final class MediaStore {
 
         /**
          * Columns representing an album artist
-         * @hide
          */
         public interface AlbumartistColumns {
             /**
@@ -1491,7 +1544,6 @@ public final class MediaStore {
 
         /**
          * Contains album artists for audio files
-         * @hide
          */
         public static final class Albumartists implements BaseColumns, AlbumartistColumns {
             /**
@@ -1573,7 +1625,6 @@ public final class MediaStore {
             /**
              * The album artist credited on this album
              * <P>Type: TEXT</P>
-             * @hide
              */
             public static final String ALBUM_ARTIST = "album_artist";
 
@@ -1596,7 +1647,6 @@ public final class MediaStore {
              * and indicates the number of songs on the album credited to the given
              * album artist.
              * <P>Type: INTEGER</P>
-             * @hide
              */
             public static final String NUMBER_OF_SONGS_FOR_ALBUM_ARTIST = "numsongs_by_album_artist";
 

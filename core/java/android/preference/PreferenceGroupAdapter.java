@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.util.Log;
 
 /**
  * An adapter that returns the {@link Preference} contained in this group.
@@ -218,7 +219,53 @@ class PreferenceGroupAdapter extends BaseAdapter implements OnPreferenceChangeIn
             convertView = null;
         }
 
-        return preference.getView(convertView, parent);
+        View view = preference.getView(convertView, parent);
+        
+        if (!(preference instanceof PreferenceCategory)) {
+            boolean bFirst =  false;
+            boolean bLast = false;
+            int i = position - 1;
+            int j = position + 1;
+            if (position == 0) {
+                bFirst = true;
+                if (getItem(j) instanceof PreferenceCategory) {
+                    bLast = true;
+                }
+            } else if (position != getCount() - 1){
+                if(getItem(i) instanceof PreferenceCategory) {
+                    bFirst = true;
+                } 
+                if (getItem(j) instanceof PreferenceCategory) {                         
+                    bLast = true;
+                }      
+            } else if (position == getCount() - 1) {
+                bLast = true;
+                if(getItem(i) instanceof PreferenceCategory) {
+                    bFirst = true;
+                }
+            }
+            int resId = 0;
+            if (bFirst && bLast) {
+                if (position == 0) {
+                    resId = com.android.internal.R.drawable.preference_one_item;
+                } else {
+                    resId = com.android.internal.R.drawable.preference_single_item;
+                }
+            } else if (bFirst && !bLast) {
+                if (position == 0) {
+                    resId = com.android.internal.R.drawable.preference_top_item;
+                } else {
+                    resId = com.android.internal.R.drawable.preference_first_item;
+                }
+            } else if (!bFirst && bLast){
+                resId = com.android.internal.R.drawable.preference_last_item;
+            } else if (!bFirst && !bLast){ 
+                resId = com.android.internal.R.drawable.preference_item;
+            }        
+            view.setBackgroundResource(resId);
+            view.setDrawingCacheEnabled(false);            
+        }        
+        return view;
     }
 
     @Override

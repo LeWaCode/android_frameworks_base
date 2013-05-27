@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * Copyright (c) 2009, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0 
+ *
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ */
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label" msgid="4489004083283879149">"状态栏"</string>
+    <string name="status_bar_clear_all_button" msgid="7774721344716731603">"清除"</string>
+    <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"无通知"</string>
+    <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"正在进行的"</string>
+    <string name="status_bar_latest_events_title" msgid="6594767438577593172">"通知"</string>
+    <string name="battery_low_title" msgid="7923774589611311406">"请连接充电器"</string>
+    <string name="battery_low_subtitle" msgid="7388781709819722764">"电量所剩不多："</string>
+    <string name="battery_low_percent_format" msgid="696154104579022959">"电量剩余 <xliff:g id="NUMBER">%d%%</xliff:g> 或更少。"</string>
+    <string name="battery_low_why" msgid="7279169609518386372">"电量使用情况"</string>
+    <!-- no translation found for usb_accessory_permission_prompt (3969745913539898765) -->
+    <skip />
+    <!-- no translation found for usb_device_confirm_prompt (2727793581411868504) -->
+    <skip />
+    <!-- no translation found for usb_accessory_confirm_prompt (3947430407252730383) -->
+    <skip />
+    <string name="usb_accessory_uri_prompt" msgid="6332150684964235705">"未安装此 USB 配件适用的应用程序。要了解关于此配件的详情，请访问：<xliff:g id="URL">%1$s</xliff:g>"</string>
+    <string name="title_usb_accessory" msgid="4966265263465181372">"USB 配件"</string>
+    <string name="label_view" msgid="6304565553218192990">"查看"</string>
+    <string name="always_use_accessory" msgid="1210954576979621596">"默认情况下用于该 USB 配件"</string>
+
+    <!-- add by zhangbo for demo test -->
+    <string name="data_monitor">流量监控</string>
+    <string name="performance_suggest1">系统状况差，需优化。</string>
+    <string name="performance_suggest2">系统状况较差，需优化。</string>
+    <string name="performance_suggest3">系统状况不佳，需优化。</string>
+    <string name="performance_suggest4">系统状况较好，需优化。</string>
+    <string name="performance_suggest5">系统运行良好，请保持。</string>
+    <string name="Release_memory">释放了 %1$d M 内存</string>
+    <string name="performance_count">%1$d分</string>
+    <string name="monthly_data">每月套餐流量</string>
+    <string name="monthly_total">%1$dM</string>
+    <string name="reminder_me">每月剩余流量提醒</string>
+    <string name="reminder_data">每月流量小于%1$dM时提醒我</string>
+    <string name="start_date"> 每月流量结算日</string>
+    <string name="start_from">从每月%1$s号开始结算</string>
+    <string name="start_from_1">从每月1号开始结算</string>
+    <string name="sms_query">流量短信查询及设置</string>
+    <string name="sms_number">10086</string>
+    <string name="clear_history">清除历史记录</string>
+    <string name="verify_data">修正已用流量</string>
+    <string name="verify_data_by">通过短信或者电话修正已用流量</string>
+    <string name="please_input_monthly_data">请输入每月套餐流量</string>
+    <string name="please_input_reminder_data">请输入每月提醒的剩余流量</string>
+    <string name="set_query_number">设置查询代码</string>
+    <string name="set_carrier_number">设置运营商查询号码</string>
+    <string name="restore_default">恢复默认</string>
+    <string name="save">保存</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="monthly">本月套餐流量：</string>
+    <string name="mb">M</string> 
+    <string name="month_total_no_change">Monthly data no change!</string>
+    <string name="today_left_data">Today %1$.2f%2$s %3$.2f%4$s Left</string>
+    <string name="sure_clear_history">你确定清除所有流量记录？</string>
+    <string name="select_start_date">选择每月结算日期</string>
+    <string name="today_flow">今日已用</string>
+    <string name="month_flow">本月已用</string>
+    <string name="left_flow">剩余流量</string>
+	<string name="today_flow_ext">今日：</string>
+    <string name="month_flow_ext">本月已用：</string>
+    <string name="left_flow_ext">剩余：</string>
+	<string name="exceed_flow_ext">超出：</string>
+    <string name="Verify_used_data">校准本月已使用流量</string>
+    <string name="Reset_used_data">重设本月已使用流量</string>
+    <string name="please_wait">请等待\.\.\.</string>
+    <string name="remind_notify_title">流量监控提醒</string>
+    <string name="remind_notify">剩余流量不足 %1$d M</string>
+    <string name="query">查询</string>
+    <string name="date_format">yyyy 年 M 月 d 日 EEE</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="bluetooth">蓝牙</string>
+    <string name="gps">GPS</string>
+    <string name="sound">静音</string>
+    <string name="brightness">亮度</string>
+    <string name="sync">同步</string>
+    <string name="wifiap">Wifi 热点</string>
+    <string name="screentimeout">屏幕超时</string>
+    <string name="mobiledata">移动数据</string>
+    <string name="lockscreen">锁屏</string>
+    <string name="networkmode">网络切换</string>
+    <string name="autorotate">屏幕旋转</string>
+    <string name="airplane">飞行模式</string>
+    <string name="flashlight">LED 手电筒</string>
+    <string name="sleep">睡眠模式</string>
+    <string name="play_pause">播放/暂停</string>
+    <string name="previous">跳到前一首</string>
+    <string name="next">跳到下一首</string>
+    <string name="wimax">WiMAX</string>
+    <string name="vibrate">振动</string>
+	<string name="mylockscreen">锁屏</string>
+	<string name="poweroff">关机</string>
+	<string name="reboot">重启</string>
+    <string name="month_day">M月d日</string> 
+    <string name="exceed_flow">超出流量</string>
+    <string name="china_mobile">中国移动</string>
+    <string name="china_unicom">中国联通</string>
+    <string name="china_telecom">中国电信</string>
+    <string name="release_left_memory">释放了%1$dM内存，剩余%2$dM内存</string>
+	<string name="release_memory_ext">内存已清理到最佳</string>
+	<string name="reboot_confirm">您的手机将会重启。</string>
+	<string name="twelve_hour_time_format">ah:mm</string>
+	<string name="twenty_four_hour_time_format">H:mm</string>
+	
+	<string name="datamonitor_firewall">联网防火墙</string>
+    <string name="datamonitor_switch">控制应用联网开关</string>
+    <string name="app_control">联网方式</string>
+    <string name="loading_apps_list">加载中\.\.\.</string>
+	<string name="firewall">联网防火墙</string>
+    <string name="monitor_setup">监控设置</string>
+    <string name="data_activity">流量信息</string>
+	<string name="android_system">Android系统</string>
+	<string name="month_limit">本月限额：</string>
+	<string name="today_save">今日已用：</string>
+	<string name="month_save">本月已用：</string>
+	<string name="upload">上传：</string>
+    <string name="download">下载：</string>
+	<string name="nodata">无</string>
+	<string name="memory_protect">内存清理白名单</string>
+	<string name="networkmode1">2G/3G</string>
+	<string name="datamonitor_exceed">流量已超出，请注意您的钱包</string>
+	<string name="datamonitor_suggest1">流量剩余严重不足，请谨慎使用</string>
+	<string name="datamonitor_suggest2">剩余流量已不多，请节约使用</string>
+	<string name="datamonitor_suggest3">流量充裕，请放心使用</string>
+	<string name="left_flow_ext1">本月剩余：</string>
+	<string name="exceed_flow_ext1">本月超出：</string>
+	<string name="no_app">无第三方应用</string>
+	<string name="data_reminder_title">流量提醒</string>
+	<string name="data_reminder_message">您的流量马上就要超支了，是否关闭数据流量？</string>
+	<!-- end for demo test -->
+	
+	<string name="tip_status_shortcut">长按可以进入对应的设置</string>
+    <string name="tip_status_memoryclear">点击可以清理内存，长按进入内存清理防护网设置</string>
+    
+    <string name="month_flow_ext_short">本月已用：</string>
+    <string name="please_input_used_data">请输入本月已用流量</string>
+	<string name="group_title_userapp">用户应用</string>
+    <string name="group_title_systemapp">系统应用</string>
+    <string name="power_widgetbutton_nightmode">夜间模式</string>
+    <string name="poputip_title1">此通知来自</string>
+    <string name="poputip_title2">禁止</string>
+    <string name="poputip_title3">此应用的所有通知推送</string>
+    <string name="poputip_title4">查看此应用的详情</string>
+    <string name="poputip_toast">已禁止<xliff:g id="name">%s</xliff:g>的消息推送</string>
+    <string name="usb_mode_notification">USB数据存储</string>
+
+	<!--added by zhuyaopeng-->
+	 <!-- Tabs for statusbar expanded view -->
+    <string name="tab_notifications">通知</string>
+    <string name="tab_switches">开关</string>
+
+    <string name="title_buttons">开关</string>
+    <string name="title_toggle_wifi">Wifi</string>
+    <string name="title_toggle_bluetooth">蓝牙</string>
+    <string name="title_toggle_gps">GPS</string>
+    <string name="title_toggle_sound">静音</string>
+    <string name="title_toggle_brightness">亮度</string>
+    <string name="title_toggle_sync">自动同步</string>
+    <string name="title_toggle_wifiap">Wifi AP</string>
+    <string name="title_toggle_mobiledata">移动数据</string>
+    <string name="title_toggle_lockscreen">启用/禁用锁屏</string>
+    <string name="title_toggle_networkmode">2G/3G</string>
+    <string name="title_toggle_autorotate">自动旋转</string>
+    <string name="title_toggle_airplane">飞行模式</string>
+    <string name="title_toggle_flashlight">手电</string>
+    <string name="title_toggle_sleep">睡眠</string>
+    <string name="title_toggle_locknow">锁屏</string>
+    <string name="title_toggle_shutdown">关机</string>
+    <string name="title_toggle_reboot">重启</string>
+    <string name="title_toggle_powermanager">超长待机</string>
+    <string name="title_toggle_switchwidgetstyle">更多</string>
+    <string name="title_toggle_screencapture">连续截屏模式</string>
+    
+    <!-- added by zhuyaopeng -->
+    <string name="status_bar_virtual_layer_back">返回通话</string>
+    <string name="status_bar_virtual_layer_right_text">21:45</string>
+    <string name="monthly_data_flow">套餐：</string>
+    <string name="sure_clear_history_summary">(联网防火墙中单个应用的流量将被重置为本次开机后所使用的流量)</string>
+</resources>

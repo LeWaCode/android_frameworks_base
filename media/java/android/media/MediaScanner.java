@@ -34,6 +34,7 @@ import android.os.SystemProperties;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.provider.MediaStore.Audio;
+import android.provider.MediaStore.Files;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Audio.Genres;
@@ -45,7 +46,6 @@ import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
 import android.util.Xml;
-import android.os.SystemProperties;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -109,6 +109,18 @@ public class MediaScanner
     }
 
     private final static String TAG = "MediaScanner";
+	//add by zhangxianjia [add files prescan projection]
+    private static final String[] FILES_PRESCAN_PROJECTION = new String[] {
+            "_id", // 0
+            Files.FileColumns.DATA, // 1
+            //Files.FileColumns.FORMAT, // 2
+            Files.FileColumns.DATE_MODIFIED, // 2
+    };
+
+	private static final int FILES_PRESCAN_ID_COLUMN_INDEX = 0;
+    private static final int FILES_PRESCAN_PATH_COLUMN_INDEX = 1;
+    //private static final int FILES_PRESCAN_FORMAT_COLUMN_INDEX = 2;
+    private static final int FILES_PRESCAN_DATE_MODIFIED_COLUMN_INDEX = 2;
 
     private static final String[] AUDIO_PROJECTION = new String[] {
             Audio.Media._ID, // 0
@@ -305,6 +317,7 @@ public class MediaScanner
     private Uri mThumbsUri;
     private Uri mGenresUri;
     private Uri mPlaylistsUri;
+    private Uri mFilesUri;
     private boolean mProcessPlaylists, mProcessGenres;
 
     // used when scanning the image database so we know whether we have to prune
@@ -661,6 +674,7 @@ public class MediaScanner
                 throws RemoteException {
             // update database
             Uri tableUri;
+			boolean isFile = false;
             boolean isAudio = MediaFile.isAudioFileType(mFileType);
             boolean isVideo = MediaFile.isVideoFileType(mFileType);
             boolean isImage = MediaFile.isImageFileType(mFileType);
@@ -672,7 +686,8 @@ public class MediaScanner
                 tableUri = mAudioUri;
             } else {
                 // don't add file to database if not audio, video or image
-                return null;
+                tableUri = mFilesUri;
+				isFile = true;
             }
             entry.mTableUri = tableUri;
 
@@ -703,7 +718,12 @@ public class MediaScanner
                 if (lastDot > 0) {
                     title = title.substring(0, lastDot);
                 }
-                values.put(MediaStore.MediaColumns.TITLE, title);
+				if(!isFile) {
+					values.put(MediaStore.MediaColumns.TITLE, title);
+				}else {
+					values.put(MediaStore.Files.FileColumns.TITLE, title);
+				}
+
             }
             String album = values.getAsString(Audio.Media.ALBUM);
             if (MediaStore.UNKNOWN_STRING.equals(album)) {
@@ -1054,7 +1074,52 @@ public class MediaScanner
                 c.close();
             }
         }
+	//add by zhangxianjia
+
+		try {
+            if (true) {
+                // First read existing files from the files table
+
+                c = mMediaProvider.query(mFilesUri, FILES_PRESCAN_PROJECTION,
+                        where, selectionArgs, null);
+
+                if (c != null) {
+                   
+                    while (c.moveToNext()) {
+                        long rowId = c.getLong(FILES_PRESCAN_ID_COLUMN_INDEX);
+                        String path = c.getString(FILES_PRESCAN_PATH_COLUMN_INDEX);
+                        //int format = c.getInt(FILES_PRESCAN_FORMAT_COLUMN_INDEX);
+                        long lastModified = c.getLong(FILES_PRESCAN_DATE_MODIFIED_COLUMN_INDEX);
+
+                        // Only consider entries with absolute path names.
+                        // This allows storing URIs in the database without the
+                        // media scanner removing them.
+                        if (path != null && path.startsWith("/")) {
+                            String key = path;
+                            if (mCaseInsensitivePaths) {
+                                key = path.toLowerCase();
+                            }
+
+                            FileCacheEntry entry = new FileCacheEntry(mFilesUri, rowId, path,
+                                    lastModified);
+                            mFileCache.put(key, entry);
+                        }
+                    }
+                    c.close();
+                    c = null;
+                }
+            }
+        }
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+
+		
     }
+
+
 
     private boolean inScanDirectory(String path, String[] directories) {
         for (int i = 0; i < directories.length; i++) {
@@ -1135,6 +1200,16 @@ public class MediaScanner
             }
 
             if (fileMissing) {
+                // add by zhangxianjia
+                // in the media provider from deleting the file.
+                // If the file is truly gone the delete is unnecessary, and we want to avoid
+                // accidentally deleting files that are really there.
+                ContentValues values = new ContentValues();
+                values.put(Files.FileColumns.DATA, "");
+                values.put(Files.FileColumns.DATE_MODIFIED, 0);
+                mMediaProvider.update(ContentUris.withAppendedId(mFilesUri, entry.mRowId),
+                        values, null, null);
+
                 // do not delete missing playlists, since they may have been modified by the user.
                 // the user can delete them in the media player instead.
                 // instead, clear the path and lastModified fields in the row
@@ -1142,7 +1217,7 @@ public class MediaScanner
                 int fileType = (mediaFileType == null ? 0 : mediaFileType.fileType);
 
                 if (MediaFile.isPlayListFileType(fileType)) {
-                    ContentValues values = new ContentValues();
+                    values = new ContentValues();
                     values.put(MediaStore.Audio.Playlists.DATA, "");
                     values.put(MediaStore.Audio.Playlists.DATE_MODIFIED, 0);
                     mMediaProvider.update(ContentUris.withAppendedId(mPlaylistsUri, entry.mRowId), values, null, null);
@@ -1175,6 +1250,7 @@ public class MediaScanner
         mVideoUri = Video.Media.getContentUri(volumeName);
         mImagesUri = Images.Media.getContentUri(volumeName);
         mThumbsUri = Images.Thumbnails.getContentUri(volumeName);
+        mFilesUri = Files.getContentUri(volumeName);
 
         if (!volumeName.equals("internal")) {
             // we only support playlists on external media

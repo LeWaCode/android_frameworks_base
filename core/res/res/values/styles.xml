@@ -207,6 +207,7 @@
 
     <style name="TextAppearance.StatusBar.Icon">
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/status_bar_textcolor</item>
     </style>
     <style name="TextAppearance.StatusBar.EventContent">
         <item name="android:textColor">#ff6b6b6b</item>
@@ -939,4 +940,9 @@
        <item name="android:textColor">@android:color/primary_text_holo_dark</item>
     </style>
    <!--End-->
+    <!-- Style for text view magnifier and text selection. -->
+    <style name="zzz_text_magnifier_popup">
+       <item name="android:windowEnterAnimation">@anim/zzz_text_magnifier_popup_show</item>
+       <item name="android:windowExitAnimation">@anim/zzz_text_magnifier_popup_hide</item>
+    </style>
 </resources>

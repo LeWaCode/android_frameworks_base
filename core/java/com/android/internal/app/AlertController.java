@@ -52,6 +52,8 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.view.Gravity;
+import android.provider.Settings;
 
 import java.lang.ref.WeakReference;
 
@@ -118,7 +120,10 @@ public class AlertController {
     private int mCheckedItem = -1;
 
     private Handler mHandler;
-
+    //Begin add by panqianbo for new ui 20120409
+    private static boolean mIsLewaStyle = false; 
+    public boolean mIsLewaBackGround = false; 
+    //End
     View.OnClickListener mButtonHandler = new View.OnClickListener() {
         public void onClick(View v) {
             Message m = null;
@@ -169,6 +174,7 @@ public class AlertController {
         mContext = context;
         mDialogInterface = di;
         mWindow = window;
+        //mWindow.setWindowAnimations(com.android.internal.R.style.AlertDialogAnimation);
         mHandler = new ButtonHandler(di);
     }
     
@@ -202,7 +208,16 @@ public class AlertController {
             mWindow.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         }
-        mWindow.setContentView(com.android.internal.R.layout.alert_dialog);
+        //Begin modify by panqianbo for new ui 20120409
+        if(mListView != null) {
+            mIsLewaBackGround = true;
+        }
+        if(mIsLewaBackGround) {
+            mWindow.setContentView(com.android.internal.R.layout.lewa_alert_dialog);
+        } else {
+             mWindow.setContentView(com.android.internal.R.layout.alert_dialog);
+        }
+        //End
         setupView();
     }
     
@@ -378,8 +393,10 @@ public class AlertController {
          * custom view or a message.
          */
         if (hasTitle && ((mMessage != null) || (mView != null))) {
-            View divider = mWindow.findViewById(R.id.titleDivider);
-            divider.setVisibility(View.VISIBLE);
+            //Begin delete by panqianbo for new ui 20120410
+            //View divider = mWindow.findViewById(R.id.titleDivider);
+            //divider.setVisibility(View.VISIBLE);
+            //End
         }
         
         setBackground(topPanel, contentPanel, customPanel, hasButtons, a, hasTitle, buttonPanel);
@@ -422,11 +439,14 @@ public class AlertController {
                     /* Apply the padding from the icon to ensure the
                      * title is aligned correctly.
                      */
-                    mTitleView.setPadding(mIconView.getPaddingLeft(),
-                            mIconView.getPaddingTop(),
-                            mIconView.getPaddingRight(),
-                            mIconView.getPaddingBottom());
-                    mIconView.setVisibility(View.GONE);
+                    //Begin modify by panqianbo for new ui 20120409
+                    //mTitleView.setPadding(mIconView.getPaddingLeft(),
+                    //        mIconView.getPaddingTop(),
+                    //        mIconView.getPaddingRight(),
+                    //        mIconView.getPaddingBottom());
+                    //mIconView.setVisibility(View.GONE);
+                   mIconView.setImageResource(com.android.internal.R.drawable.ic_dialog_info);
+                    //End
                 }
             } else {
                 
@@ -481,6 +501,8 @@ public class AlertController {
             mButtonPositive.setText(mButtonPositiveText);
             mButtonPositive.setVisibility(View.VISIBLE);
             whichButtons = whichButtons | BIT_BUTTON_POSITIVE;
+            mButtonPositive.setBackgroundResource(com.android.internal.R.drawable.item_background_holo_dark_left);
+            mIsLewaStyle = true;
         }
 
         mButtonNegative = (Button) mWindow.findViewById(R.id.button2);
@@ -491,8 +513,9 @@ public class AlertController {
         } else {
             mButtonNegative.setText(mButtonNegativeText);
             mButtonNegative.setVisibility(View.VISIBLE);
-
+            mButtonNegative.setBackgroundResource(com.android.internal.R.drawable.item_background_holo_dark_right);
             whichButtons = whichButtons | BIT_BUTTON_NEGATIVE;
+            mIsLewaStyle = true;
         }
 
         mButtonNeutral = (Button) mWindow.findViewById(R.id.button3);
@@ -503,8 +526,9 @@ public class AlertController {
         } else {
             mButtonNeutral.setText(mButtonNeutralText);
             mButtonNeutral.setVisibility(View.VISIBLE);
-
+            mButtonNeutral.setBackgroundResource(com.android.internal.R.drawable.item_background_holo_dark_middle);
             whichButtons = whichButtons | BIT_BUTTON_NEUTRAL;
+            mIsLewaStyle = true;
         }
 
         /*
@@ -514,7 +538,7 @@ public class AlertController {
         if (whichButtons == BIT_BUTTON_POSITIVE) {
             centerButton(mButtonPositive);
         } else if (whichButtons == BIT_BUTTON_NEGATIVE) {
-            centerButton(mButtonNeutral);
+            centerButton(mButtonNegative);
         } else if (whichButtons == BIT_BUTTON_NEUTRAL) {
             centerButton(mButtonNeutral);
         }
@@ -523,14 +547,18 @@ public class AlertController {
     }
 
     private void centerButton(Button button) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) button.getLayoutParams();
+        button.setBackgroundResource(com.android.internal.R.drawable.item_background_holo_dark);
+        //Begin delete by panqianbo
+        /*LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) button.getLayoutParams();       
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        params.weight = 0.5f;
+        params.weight = 1.0f;
         button.setLayoutParams(params);
+        
         View leftSpacer = mWindow.findViewById(R.id.leftSpacer);
         leftSpacer.setVisibility(View.VISIBLE);
         View rightSpacer = mWindow.findViewById(R.id.rightSpacer);
-        rightSpacer.setVisibility(View.VISIBLE);
+        rightSpacer.setVisibility(View.VISIBLE);*/
+        //End
     }
 
     private void setBackground(LinearLayout topPanel, LinearLayout contentPanel,
@@ -613,6 +641,11 @@ public class AlertController {
             }
             lastView = v;
             lastLight = light[pos];
+            //Begin add by panqianbo for new ui 20120409
+            if(mIsLewaBackGround) {
+                lastLight = true;
+            }
+            //End
         }
         
         if (lastView != null) {
@@ -627,7 +660,7 @@ public class AlertController {
                 lastView.setBackgroundResource(lastLight ? fullBright : fullDark);
             }
         }
-        
+        //mIsLewaBackGround = false;
         /* TODO: uncomment section below. The logic for this should be if 
          * it's a Contextual menu being displayed AND only a Cancel button 
          * is shown then do this.
@@ -901,6 +934,43 @@ public class AlertController {
             listView.mRecycleOnMeasure = mRecycleOnMeasure;
             dialog.mListView = listView;
         }
+
+        public void setLewaStyleState() {
+         mIsLewaStyle = true;
+       }
     }
 
+    //Begin add by panqianbo for new ui 20120409
+    public void onStart() {
+            if(mIsLewaStyle || mIsLewaBackGround) {
+                android.view.WindowManager.LayoutParams layoutparams = mWindow.getAttributes();
+            layoutparams.windowAnimations = com.android.internal.R.style.Animation_InputMethod;
+            layoutparams.width = android.view.ViewGroup.LayoutParams.FILL_PARENT;
+            layoutparams.height = android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+			
+            int value = Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.ALERTDIALOG_STYLES, 0);
+			switch(value) {
+				case 0:
+					layoutparams.windowAnimations = com.android.internal.R.style.Animation_InputMethod;
+                    layoutparams.gravity = Gravity.BOTTOM;
+					break;
+				case 1:
+					layoutparams.windowAnimations = com.android.internal.R.style.Animation_AlertDialog;
+                    layoutparams.gravity = Gravity.TOP;
+					break;
+			}
+			
+
+            int flag = layoutparams.flags | 0x10000;
+            layoutparams.flags = flag;
+
+            mIsLewaStyle = false;
+            mIsLewaBackGround = false;
+            mWindow.setAttributes(layoutparams);
+           // mWindow.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);     
+          
+         }
+        }
+      //End
 }

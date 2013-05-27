@@ -126,7 +126,6 @@ import com.android.internal.R;
  *      onRun.run();
  *    }
  *
- * @hide
  */
 public class PhoneGoggles {
 

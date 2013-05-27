@@ -31,9 +31,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.UUID;
 
-/**
- * @hide
-*/
 public final class ProfileGroup implements Parcelable {
     private static final String TAG = "ProfileGroup";
 

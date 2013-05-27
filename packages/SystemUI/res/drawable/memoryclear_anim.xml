@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>  
+ 
+<animation-list  
+  xmlns:android="http://schemas.android.com/apk/res/android"  
+  android:oneshot="true"
+  >  
+    <!-- <item android:drawable="@drawable/clear_blue_step1" android:duration="150"></item>  
+    <item android:drawable="@drawable/clear_blue_step2" android:duration="150"></item>  
+    <item android:drawable="@drawable/clear_blue_step3" android:duration="150"></item>  
+    <item android:drawable="@drawable/clear_blue_step4" android:duration="150"></item>   -->
+    <item android:drawable="@drawable/clear_saoba_step1" android:duration="150"></item>  
+    <item android:drawable="@drawable/clear_saoba_step2" android:duration="150"></item>  
+    <item android:drawable="@drawable/clear_saoba_step3" android:duration="150"></item>  
+    <item android:drawable="@drawable/clear_saoba_step4" android:duration="150"></item>
+    <item android:drawable="@drawable/clear_saoba_step5" android:duration="150"></item>
+    <item android:drawable="@drawable/clear_saoba_step6" android:duration="150"></item>
+    <item android:drawable="@drawable/clear_saoba_step7" android:duration="150"></item>
+    <item android:drawable="@drawable/clear_saoba_step8" android:duration="150"></item>
+</animation-list>

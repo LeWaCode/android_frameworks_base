@@ -302,6 +302,11 @@ public class ActivityInfo extends ComponentInfo
      * @hide
      */
     public static final int CONFIG_THEME_RESOURCE = 0x008000;
+ 	/**
+     * @hide
+     */
+// modify for lewatheme by luoyongxing
+	public static final int CONFIG_LEWATHEME_RESOURCE = 0x010000;
     /**
      * Bit in {@link #configChanges} that indicates that the activity
      * can itself handle changes to the screen layout.  Set from the

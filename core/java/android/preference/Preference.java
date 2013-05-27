@@ -29,6 +29,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import com.android.internal.util.CharSequences;
+import android.util.TypedValue;
 import android.view.AbsSavedState;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -434,6 +435,11 @@ public class Preference implements Comparable<Preference>, OnDependencyChangeLis
         TextView textView = (TextView) view.findViewById(com.android.internal.R.id.title); 
         if (textView != null) {
             textView.setText(getTitle());
+            if ((mLayoutResId != com.android.internal.R.layout.preference_information)
+                && (mLayoutResId != com.android.internal.R.layout.preference_category)
+                && (mLayoutResId != com.android.internal.R.layout.preference_progress_category)) {                
+                textView.setTextColor(getContext().getResources().getColorStateList(com.android.internal.R.color.preference_primary_text_light));
+            }
         }
         
         textView = (TextView) view.findViewById(com.android.internal.R.id.summary);
@@ -443,8 +449,10 @@ public class Preference implements Comparable<Preference>, OnDependencyChangeLis
                 if (textView.getVisibility() != View.VISIBLE) {
                     textView.setVisibility(View.VISIBLE);
                 }
-                
                 textView.setText(getSummary());
+                if (mLayoutResId != com.android.internal.R.layout.preference_information) {
+                    textView.setTextColor(getContext().getResources().getColorStateList(com.android.internal.R.color.preference_secondary_text_light));
+                }
             } else {
                 if (textView.getVisibility() != View.GONE) {
                     textView.setVisibility(View.GONE);

@@ -550,7 +550,7 @@
     
     <!-- Begin, added by zhumeiquan for PreferenceTheme -->
     <style name="Theme.Preference" parent="@style/Theme.Light">
-        <item name="windowBackground">@drawable/settings_background</item>
+        <item name="windowBackground">@drawable/bg_common</item>
         <item name="textColorPrimary">@android:color/primary_text_dark</item>
         <item name="textColorSecondary">@android:color/secondary_text_dark</item>
         <item name="textColorTertiary">@android:color/tertiary_text_dark</item>

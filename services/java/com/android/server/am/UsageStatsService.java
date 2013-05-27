@@ -49,7 +49,6 @@ import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * This service collects the statistics associated with usage
  * of various components, like when a particular package is launched or
@@ -101,7 +100,9 @@ public final class UsageStatsService extends IUsageStats.Stub {
     private final AtomicInteger mLastWriteDay = new AtomicInteger(-1);
     private final AtomicLong mLastWriteElapsedTime = new AtomicLong(0);
     private final AtomicBoolean mUnforcedDiskWriteRunning = new AtomicBoolean(false);
-    
+    private long  mPkgStartTime;
+    static boolean bInit = false;
+
     static class TimeStats {
         int count;
         int[] times = new int[NUM_LAUNCH_TIME_BINS];
@@ -520,6 +521,19 @@ public final class UsageStatsService extends IUsageStats.Stub {
             }
             
             final boolean samePackage = pkgName.equals(mLastResumedPkg);
+            // csxie @ 2012/12/24
+            if(mLastResumedPkg == null){
+                mPkgStartTime = System.currentTimeMillis();
+            }
+            if(!samePackage && (mLastResumedPkg != null)){
+                long useTime = System.currentTimeMillis() - mPkgStartTime;
+                useTime = useTime > 0 ? useTime : 0;
+                if (localLOGV)Slog.i(TAG, "pkg:"+mLastResumedPkg+" startTime:"+mPkgStartTime+" useTime:"+useTime);
+                if(!bInit){
+                    bInit = true;
+                }
+                mPkgStartTime = System.currentTimeMillis();
+            }
             if (mIsResumed) {
                 if (mLastResumedPkg != null) {
                     // We last resumed some other package...  just pause it now

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/monitor_top"
+        />
+        
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dip"
+        android:layout_marginLeft="5dip"
+        android:layout_gravity="left"
+        android:src="@drawable/monitor_2g3g"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/line3"
+        />
+        
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip" 
+        >
+        <RelativeLayout android:id="@+id/real" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dip"
+            android:layout_marginBottom="0dip" 
+            >
+            <TextView android:id="@+id/text2"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:paddingLeft="0dip"
+                android:layout_alignParentLeft="true"
+                android:gravity="top"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/today_flow_ext"
+                android:textColor="#808080"
+                />
+            <TextView android:id="@+id/today_data"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:layout_toRightOf="@id/text2"
+                android:layout_marginLeft="2dip"
+                android:gravity="top"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#808080"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout android:id="@+id/ip"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_below="@id/real" 
+            android:layout_marginTop="6dip"
+            android:layout_marginBottom="0dip" 
+            >
+            <ProgressBar android:id="@+id/progressbar1" 
+                android:layout_width="fill_parent" 
+                android:layout_height="15dip"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:max="100"  
+                android:progress="50"
+                android:secondaryProgress="60"
+                android:progressDrawable="@drawable/status_expand_progress"
+                /> 
+        </RelativeLayout>
+
+        <RelativeLayout android:id="@+id/descrip"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_below="@id/ip"
+            android:layout_marginTop="6dip"
+            android:layout_marginBottom="0dip" 
+            >
+            <TextView android:id="@+id/text1"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dip"
+                android:gravity="bottom"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#515151"
+                android:text="@string/month_flow_ext"
+                />
+            <TextView android:id="@+id/month_used_data"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:layout_toRightOf="@id/text1"
+                android:layout_marginLeft="2dip"
+                android:gravity="bottom"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#515151"
+                />       
+            <TextView android:id="@+id/text3"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text1"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dip"
+                android:gravity="bottom"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#515151"
+                android:text="@string/left_flow_ext1"
+                />
+            <TextView android:id="@+id/left_data"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:layout_below="@id/text1"
+                android:layout_toRightOf="@id/text3"
+                android:layout_marginLeft="2dip"
+                android:gravity="bottom"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#515151"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:layout_marginLeft="5dip"
+        android:layout_gravity="left"
+        android:src="@drawable/monitor_wifi"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/line3"
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:layout_marginTop="15dip"
+        android:layout_marginBottom="0dip">
+        <TextView android:id="@+id/today_save_title"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_alignParentLeft="true"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/today_save"
+            android:textColor="#515151"
+            />
+        <TextView android:id="@+id/today_save"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_toRightOf="@id/today_save_title"
+            android:layout_marginLeft="2dip"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#515151"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:layout_marginTop="0dip"
+        android:layout_marginBottom="0dip">
+        <TextView android:id="@+id/month_save_title"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_alignParentLeft="true"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/month_save"
+            android:textColor="#515151"
+            />
+        <TextView android:id="@+id/month_save"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_toRightOf="@id/month_save_title"
+            android:layout_marginLeft="2dip"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#515151"
+            />
+    </RelativeLayout>
+</LinearLayout>

@@ -605,7 +605,9 @@ public class WifiManager {
             return mService.getConnectionInfo();
         } catch (RemoteException e) {
             return null;
-        }
+        } catch (SecurityException e) { //add by Lewa Shenqi for some app did not add permission  android.permission.BROADCAST_STICKY
+        	return null;
+        }		
     }
 
     /**

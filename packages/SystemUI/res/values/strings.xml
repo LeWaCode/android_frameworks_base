@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * Copyright (c) 2009, The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0 
+ *
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ */
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Name of the status bar as seen in the applications info settings page. -->
+    <string name="app_label">Status Bar</string>
+
+    <!-- The text for the button in the notification window-shade that clears
+         all of the currently visible notifications. -->
+    <string name="status_bar_clear_all_button">Clear</string>
+
+    <!-- The label in the bar at the top of the status bar when there are no notifications
+         showing. -->
+    <string name="status_bar_no_notifications_title">No notifications</string>
+
+    <!-- The label for the group of notifications for ongoing events in the opened version of
+         the status bar.  An ongoing call is the prime example of this.  The MP3 music player
+         might be another example.  -->
+    <string name="status_bar_ongoing_events_title">Ongoing</string>
+
+    <!-- The label for the group of notifications for recent events in the opened version of
+         the status bar.  Recently received text messsages (SMS), emails, calendar alerts, etc. -->
+    <string name="status_bar_latest_events_title">Notifications</string>
+
+    <!-- When the battery is low, this is displayed to the user in a dialog.  The title of the low battery alert. -->
+    <string name="battery_low_title">Please connect charger</string>
+
+    <!-- When the battery is low, this is displayed to the user in a dialog. The subtitle of the low battery alert. -->
+    <string name="battery_low_subtitle">The battery is getting low:</string>
+
+    <!-- A message that appears when the battery level is getting low in a dialog.  This is appened to the subtitle of the low battery alert. -->
+    <string name="battery_low_percent_format"><xliff:g id="number">%d%%</xliff:g>
+    or less remaining.</string>
+
+    <!-- When the battery is low, this is the label of the button to go to the
+         power usage activity to find out what drained the battery. -->
+    <string name="battery_low_why">Battery use</string>
+
+    <!-- Prompt for the USB accessory permission dialog [CHAR LIMIT=80] -->
+    <string name="usb_accessory_permission_prompt">Allow the application %1$s to access the USB accessory?</string>
+
+    <!-- Prompt for the USB device confirm dialog [CHAR LIMIT=80] -->
+    <string name="usb_device_confirm_prompt">Open %1$s when this USB device is connected?</string>
+
+    <!-- Prompt for the USB accessory confirm dialog [CHAR LIMIT=80] -->
+    <string name="usb_accessory_confirm_prompt">Open %1$s when this USB accessory is connected?</string>
+
+    <!-- Prompt for the USB accessory URI dialog [CHAR LIMIT=80] -->
+    <string name="usb_accessory_uri_prompt">No installed applications work with this USB accessory. Learn more about this accessory at <xliff:g id="url">%1$s</xliff:g></string>
+
+    <!-- Title for USB accessory dialog.  Used when the name of the accessory cannot be determined.  [CHAR LIMIT=50] -->
+    <string name="title_usb_accessory">USB accessory</string>
+
+    <!-- View button label for USB dialogs.  [CHAR LIMIT=15] -->
+    <string name="label_view">View</string>
+
+    <!-- Checkbox label for USB accessory dialogs.  [CHAR LIMIT=50] -->
+    <string name="always_use_accessory">Use by default for this USB accessory</string>
+    
+    <!-- add by zhangbo for demo test -->
+    <string name="data_monitor">Data monitor</string>
+    <string name="performance_suggest1">System performance poor, press the optimize button to improve.</string>
+    <string name="performance_suggest2">System performance poor, press the optimize button to improve.</string>
+    <string name="performance_suggest3">System performance poor, press the optimize button to improve.</string>
+    <string name="performance_suggest4">System performance poor, press the optimize button to improve.</string>
+    <string name="performance_suggest5">System running well, keep up the good job.</string>
+    <string name="Release_memory">Released %1$d M of memory</string>
+    <string name="performance_count">%1$d</string>
+    <string name="monthly_data">Monthly data limit</string>
+    <string name="reminder_me">Remind me</string>
+    <string name="reminder_data">Remind me when &lt;%1$dMB</string>
+    <string name="start_date">Start date</string>
+    <string name="start_from">Every month, start from day %1$s</string>
+    <string name="start_from_1">Start from the first of each month</string>
+    <string name="sms_query">SMS query setting</string>
+    <string name="sms_number">10086</string>
+    <string name="clear_history">Clear history</string>
+    <string name="verify_data">Verify the used data</string>
+    <string name="verify_data_by">Verify data by phone or SMS</string>
+    <string name="please_input_monthly_data">Enter monthly usage limit</string>
+    <string name="please_input_reminder_data">Enter max data usage limit</string>
+    <string name="set_query_number">Set query code</string>
+    <string name="set_carrier_number">Set carrier number</string>
+    <string name="restore_default">Restore Default</string>
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="monthly">Monthly:</string>
+    <string name="mb">M</string>
+    <string name="month_total_no_change">Monthly data limit not changed</string>
+    <string name="today_left_data">Today %1$.2f%2$s %3$.2f%4$s Left</string>
+    <string name="sure_clear_history">Clear your data usage history?</string>
+    <string name="select_start_date">Select Start Date</string>
+    <string name="today_flow">Today</string>
+    <string name="month_flow">Monthly</string>
+    <string name="left_flow">Remaining</string>
+	<string name="today_flow_ext">Today\'s usage:</string>
+    <string name="month_flow_ext">Monthly usage:</string>
+    <string name="left_flow_ext">Remain:</string>
+	<string name="exceed_flow_ext">Exceeded: </string>
+    <string name="Verify_used_data">Verify usage data</string>
+    <string name="Reset_used_data">Reset usage data</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="remind_notify_title">Data monitor reminder</string>
+    <string name="remind_notify">Remaining data less than %1$d M</string>
+    <string name="query">Query Now</string>
+    <string name="date_format">EEE, MMM d, yyyy</string> 
+    <string name="wifi">WLAN</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="gps">GPS</string>
+    <string name="sound">Silent</string>
+    <string name="brightness">Brightness</string>
+    <string name="sync">Sync</string>
+    <string name="wifiap">WiFi AP</string>
+    <string name="screentimeout">ScreenTimeout</string>
+    <string name="mobiledata">MobileData</string>
+    <string name="lockscreen">LockScreen</string>
+    <string name="networkmode">2G/3G</string>
+    <string name="autorotate">AutoRotate</string>
+    <string name="airplane">Airplane</string>
+    <string name="flashlight">FlashLight</string>
+    <string name="sleep">Sleep</string>
+    <string name="play_pause">Play/Pause</string>
+    <string name="previous">Skip to Previous</string>
+    <string name="next">Skip to Next</string>
+    <string name="wimax">WiMAX</string>
+    <string name="vibrate">Vibrate</string>
+	<string name="mylockscreen">LockScreen</string>
+	<string name="poweroff">Power Off</string>
+	<string name="reboot">Reboot</string>
+    <string name="month_day">MMM d</string> 
+    <string name="exceed_flow">Exceeded</string> 
+    <string name="china_mobile">CHINA MOBILE</string>
+    <string name="china_unicom">CHINA UNICOM</string>
+    <string name="china_telecom">CHINA TELECOM</string>
+    <string name="release_left_memory">Released %1$dM of memory, %2$dM of memory available.</string>
+	<string name="release_memory_ext">Memory has already been cleared</string>
+	<string name="reboot_confirm">Your phone will reboot</string>
+	<string name="twelve_hour_time_format">h:mma</string>	
+	<string name="twenty_four_hour_time_format">HH:mm</string>
+	
+	<string name="datamonitor_firewall">Network Firewall</string>
+    <string name="datamonitor_switch">Network Usage Rules</string>
+    <string name="app_control">Network type</string>
+    <string name="loading_apps_list">Loading...</string>
+	<string name="firewall">Firewall</string>
+    <string name="monitor_setup">Monitor setup</string>
+    <string name="data_activity">Data Usage</string>
+	<string name="android_system">Android System</string>
+	<string name="month_limit">Total:</string>
+	<string name="today_save">Today\'s usage:</string>
+	<string name="month_save">Monthly usage:</string>
+	<string name="upload">Upload:</string>
+    <string name="download">Download:</string>
+	<string name="nodata">0</string>
+	<string name="memory_protect">Clear memory white list</string>
+	<string name="networkmode1">2G/3G</string>
+	<string name="datamonitor_exceed">Network traffic exceeded</string>
+	<string name="datamonitor_suggest1">Network performance poor</string>
+	<string name="datamonitor_suggest2">Network performance poor</string>
+	<string name="datamonitor_suggest3">Network performance good</string>
+	<string name="left_flow_ext1">Remaining: </string>
+	<string name="exceed_flow_ext1">Exceed:</string>
+	<string name="no_app">No third party applications installed</string>
+	<string name="data_reminder_title">Data reminder</string>
+	<string name="data_reminder_message">You are about to exceed your data limit, do you want to turn off the data connection?</string>
+	<!-- end for demo test -->
+	
+	<string name="tip_status_shortcut">Long press to jump to settings</string>
+    <string name="tip_status_memoryclear">Press to clear memory or long press to jump to settings</string>
+
+	<string name="month_flow_ext_short">Monthly:</string>
+	<string name="please_input_used_data">Enter your usage this month</string>
+    <string name="group_title_userapp">User Apps</string>
+    <string name="group_title_systemapp">System Apps</string>
+	<string name="power_widgetbutton_nightmode">Night</string>
+	<string name="poputip_title1">This notification From</string>
+    <string name="poputip_title2">Ban</string>
+    <string name="poputip_title3">All notifications push for this application</string>
+    <string name="poputip_title4">View details of this application</string>
+	<string name="poputip_toast">Baned<xliff:g id="name">%s</xliff:g>message push</string>
+    <string name="usb_mode_notification">USB Storage</string>
+	
+	<!--added by zhuyaopeng 2012/05/26-->
+	 <!-- Tabs for statusbar expanded view -->
+    <string name="tab_notifications">Notifications</string>
+    <string name="tab_switches">Switches</string>
+
+    <string name="title_buttons">Buttons</string>
+    <string name="title_toggle_wifi">WiFi</string>
+    <string name="title_toggle_bluetooth">BT</string>
+    <string name="title_toggle_gps">GPS</string>
+    <string name="title_toggle_sound">Silent</string>
+    <string name="title_toggle_brightness">Backlight</string>
+    <string name="title_toggle_sync">Toggle Sync</string>
+    <string name="title_toggle_wifiap">Toggle Wifi AP</string>
+    <string name="title_toggle_mobiledata">Data</string>
+    <string name="title_toggle_lockscreen">Lockscreen</string>
+    <string name="title_toggle_networkmode">2G/3G</string>
+    <string name="title_toggle_autorotate">Rotation</string>
+    <string name="title_toggle_airplane">Flight</string>
+    <string name="title_toggle_flashlight">Light</string>
+    <string name="title_toggle_sleep">Go to sleep</string>
+    <string name="title_toggle_locknow">Lock</string>
+    <string name="title_toggle_shutdown">Power</string>
+    <string name="title_toggle_reboot">Reboot</string>
+    <string name="title_toggle_powermanager">Power+</string>
+    <string name="title_toggle_switchwidgetstyle">More</string>
+    <string name="title_toggle_screencapture">Screen Capture Mode</string>
+    <string name="monthly_data_input_tip">1G = 1024MB</string>
+    <string name="monthly_data_flow">Limit:</string>
+    <string name="sure_clear_history_summary">(App date usage in firewall will be reset to value since system started)</string>
+</resources>

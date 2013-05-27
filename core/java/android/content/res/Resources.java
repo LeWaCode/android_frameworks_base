@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
+import android.content.res.lewaface.*;
 
 /**
  * Class for accessing an application's resources.  This sits on top of the
@@ -584,8 +585,21 @@ public class Resources {
     public Drawable getDrawable(int id) throws NotFoundException {
         synchronized (mTmpValue) {
             TypedValue value = mTmpValue;
+			Drawable d = null;
+		
             getValue(id, value, true);
-            return loadDrawable(value, id);
+			
+			try{
+            	d = loadDrawable(value, id);
+				
+			}catch(NotFoundException e){
+				if(lewaIsThemeRedirected(value)){// can't get theme resource, get default resource.
+					Log.e(TAG, "ERROR! loadDrawable for theme failed, reset now, value: "+value);
+					lewaResetThemeRedirection(value);
+					d = loadDrawable(value, id);
+				}
+			}
+			return d;
         }
     }
 
@@ -611,11 +625,23 @@ public class Resources {
      */
     public Drawable getDrawable(int id, int mask, Mode maskType) throws NotFoundException {
         synchronized (mTmpValue) {
-            TypedValue value = mTmpValue;
+             TypedValue value = mTmpValue;
             getValue(id, value, true);
-            Drawable tmpDrawable = loadDrawable(value, id);
-            tmpDrawable.setColorFilter(mask, maskType);
-            return tmpDrawable;
+
+			Drawable d = null;
+			try{
+            	d = loadDrawable(value, id);
+				
+			}catch(NotFoundException e){
+				if(lewaIsThemeRedirected(value)){// can't get theme resource, get default resource.
+					Log.e(TAG, "ERROR! loadDrawable for theme failed, reset now, value: "+value);
+					lewaResetThemeRedirection(value);
+					d = loadDrawable(value, id);
+				}
+			}
+            
+            d.setColorFilter(mask, maskType);
+            return d;
         }
     }
 
@@ -857,8 +883,23 @@ public class Resources {
             return mAssets.openNonAsset(value.assetCookie, value.string.toString(),
                     AssetManager.ACCESS_STREAMING);
         } catch (Exception e) {
+        	Log.e(TAG, "WARNING! openRawResource failed! value=" + value);
+        	if(lewaIsThemeRedirected(value)){
+				Log.e(TAG, "Error! lewatheme openNonAsset failed, reset now. value="+value);
+				lewaResetThemeRedirection(value);
+				try{
+					return mAssets.openNonAsset(value.assetCookie, value.string.toString(),
+                    	AssetManager.ACCESS_STREAMING);
+				}catch(Exception e1){
+					Log.e(TAG, "Error! lewatheme openNonAsset failed after reset, value="+value);
+					NotFoundException rnf = new NotFoundException("File " + value.string.toString() +
+                   		" from drawable resource ID #0x" + Integer.toHexString(id));
+            		rnf.initCause(e1);
+            		throw rnf;
+				}
+        	}
             NotFoundException rnf = new NotFoundException("File " + value.string.toString() +
-                    " from drawable resource ID #0x" + Integer.toHexString(id));
+                   " from drawable resource ID #0x" + Integer.toHexString(id));
             rnf.initCause(e);
             throw rnf;
         }
@@ -894,6 +935,22 @@ public class Resources {
                 return mAssets.openNonAssetFd(
                     value.assetCookie, value.string.toString());
             } catch (Exception e) {
+            	if(lewaIsThemeRedirected(value)){
+					Log.e(TAG, "Error! lewatheme openNonAssetFd failed, reset now. value="+value);
+					lewaResetThemeRedirection(value);
+					try{
+						
+						return mAssets.openNonAssetFd(
+                    		value.assetCookie, value.string.toString());
+					}catch(Exception e1){
+						Log.e(TAG, "Error! lewatheme openNonAsset failed after reset, value="+value);
+						NotFoundException rnf = new NotFoundException(
+		                    "File " + value.string.toString()
+		                    + " from drawable resource ID #0x"
+		                    + Integer.toHexString(id));
+		                rnf.initCause(e1);
+					}
+            	}
                 NotFoundException rnf = new NotFoundException(
                     "File " + value.string.toString()
                     + " from drawable resource ID #0x"
@@ -923,6 +980,15 @@ public class Resources {
     public void getValue(int id, TypedValue outValue, boolean resolveRefs)
             throws NotFoundException {
         boolean found = mAssets.getResourceValue(id, outValue, resolveRefs);
+		if(found && outValue.lewaForceNotRedirect == false){
+            outValue.lewaIsRedirected = false;
+            outValue.lewaOriginalCookie = 0;
+			long attr = mAssets.lewaLookupRedirections(id, outValue.assetCookie);
+			if(lewaNeedRedirect(outValue, attr)){
+				lewaSetThemeRedirection(outValue, attr, mAssets.lewaGetRedirectedCookie(outValue));
+			}
+			
+		}
         if (found) {
             return;
         }
@@ -1787,6 +1853,7 @@ public class Resources {
                         is.close();
         //                System.out.println("Created stream: " + dr);
                     } catch (Exception e) {
+                    	Log.e(TAG, "openNonAsset failed.");
                         NotFoundException rnf = new NotFoundException(
                             "File " + file + " from drawable resource ID #0x"
                             + Integer.toHexString(id));
@@ -2062,4 +2129,63 @@ public class Resources {
         mAssets.ensureStringBlocks();
         mCompatibilityInfo = CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO;
     }
+	// add by luoyongxing for lewa theme
+	
+	public static void lewaSetForceNotRedirect(TypedValue value){
+			value.lewaForceNotRedirect = true;
+	}
+	public static boolean lewaIsForceNotRedirect(TypedValue value){
+			return value.lewaForceNotRedirect;
+	}
+	public boolean lewaNeedRedirect(TypedValue value, long attr){
+        if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "lewaNeedRedirect check:"+attr);
+		if(attr == 0){
+            if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "lewaNeedRedirect attr==0");
+			return false;
+		}
+		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT &&
+            value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+             if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "lewaNeedRedirect color return ture");
+			return true;
+	    }else if(value.type == value.TYPE_STRING && value.string != null){
+	    	if(mAssets.lewaNeedRedirect(attr, value.string.toString(), value.assetCookie)){
+                if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "lewaNeedRedirect ture");
+				return true;
+	    	}
+	    }
+		Log.w(TAG, "needn't redirect for attr:"+Long.toHexString(attr)+" value:"+value);
+		return false;
+	}
+    
+	public static void lewaSetThemeRedirection(TypedValue value, long attr, int redirctedCookie){
+        if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "before redirected value:"+value);
+		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT &&
+            value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+        
+			value.data =  (int)(attr & 0xFFFFFFFF);
+            //if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "lewaSetThemeRedirection redirected cookie:"+redirctedCookie);
+			value.lewaIsRedirected = true;
+					
+	    }else if(value.lewaIsRedirected == false){
+	        value.lewaOriginalCookie = value.assetCookie;
+            
+			value.assetCookie = redirctedCookie;
+            
+			value.lewaIsRedirected = true;
+		}
+        if(LewaTheme.TRACE_DEBUG)LewaTheme.log(value.resourceId, "redirected value:"+value);
+		
+	}
+
+	public static void lewaResetThemeRedirection(TypedValue value){
+		if(value.lewaIsRedirected = true){
+			value.assetCookie = value.lewaOriginalCookie;
+		}
+		value.lewaIsRedirected = false;
+	}
+
+	public static boolean lewaIsThemeRedirected(TypedValue value){
+		return value.lewaIsRedirected;
+	}
+	
 }

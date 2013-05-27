@@ -110,6 +110,8 @@ import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 import static android.view.WindowManager.LayoutParams.TYPE_INPUT_METHOD;
 import static android.view.WindowManager.LayoutParams.TYPE_INPUT_METHOD_DIALOG;
 import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+import static android.view.WindowManager.LayoutParams.TYPE_TOP_MOST;
+
 import static android.view.WindowManager.LayoutParams.TYPE_TOAST;
 import static android.view.WindowManager.LayoutParams.TYPE_WALLPAPER;
 import android.view.WindowManagerImpl;
@@ -131,7 +133,8 @@ import java.util.List;
  * can be acquired with either thw Lw and Li lock held, so has the restrictions
  * of both of those when held.
  */
-public class PhoneWindowManager implements WindowManagerPolicy {
+public class PhoneWindowManager implements WindowManagerPolicy
+        , RecentApplicationsDialog.VisibilityListener {
     static final String TAG = "WindowManager";
     static final boolean DEBUG = false;
     static final boolean localLOGV = DEBUG ? Config.LOGD : Config.LOGV;
@@ -148,6 +151,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static final int SYSTEM_DIALOG_LAYER = 6;
     // toasts and the plugged-in battery thing
     static final int TOAST_LAYER = 7;
+    /*
     static final int STATUS_BAR_LAYER = 8;
     // SIM errors and unlock.  Not sure if this really should be in a high layer.
     static final int PRIORITY_PHONE_LAYER = 9;
@@ -163,6 +167,30 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // responsible for power management when displayed.
     static final int KEYGUARD_LAYER = 14;
     static final int KEYGUARD_DIALOG_LAYER = 15;
+    // things in here CAN NOT take focus, but are shown on top of everything else.
+    static final int SYSTEM_OVERLAY_LAYER = 16;
+    static final int SECURE_SYSTEM_OVERLAY_LAYER = 17;
+*/
+    /**
+    * modify for lockscreen fullscreen by fulianwu 20120413
+    */
+    // SIM errors and unlock.  Not sure if this really should be in a high layer.
+    static final int PRIORITY_PHONE_LAYER = 8;
+    // like the ANR / app crashed dialogs
+    static final int SYSTEM_ALERT_LAYER = 9;
+    // system-level error dialogs
+    static final int SYSTEM_ERROR_LAYER = 10;
+    // on-screen keyboards and other such input method user interfaces go here.
+    static final int INPUT_METHOD_LAYER = 11;
+    // on-screen keyboards and other such input method user interfaces go here.
+    static final int INPUT_METHOD_DIALOG_LAYER = 12;
+    // the keyguard; nothing on top of these can take focus, since they are
+    // responsible for power management when displayed.
+    static final int KEYGUARD_LAYER = 13;
+    static final int KEYGUARD_DIALOG_LAYER = 14;
+    static final int STATUS_BAR_LAYER = 15;
+
+    
     // things in here CAN NOT take focus, but are shown on top of everything else.
     static final int SYSTEM_OVERLAY_LAYER = 16;
     static final int SECURE_SYSTEM_OVERLAY_LAYER = 17;
@@ -252,6 +280,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     PointerLocationView mPointerLocationView = null;
     InputChannel mPointerLocationInputChannel;
 
+    // Woody Guo @ 2012/05/07
+    private boolean mMenuPressed = false;
+    private boolean mInjectedMenu = false;
+    private boolean mConsumeVolumeDownUp = false;
+    private final static int INJECT_KEY_DELAY = 100;
+
+    private boolean mRecentsVisible = false;
+    // Luoyongxing @ 2012/06/27
+    private boolean mVolDownPressed = false;
+    @Override
+    public void onShow() {
+        mRecentsVisible = true;
+    }
+
+    @Override
+    public void onHide() {
+        mRecentsVisible = false;
+    }
+    // END
+
     private final InputHandler mPointerLocationInputHandler = new BaseInputHandler() {
         @Override
         public void handleMotion(MotionEvent event, Runnable finishedCallback) {
@@ -335,7 +383,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     ShortcutManager mShortcutManager;
     PowerManager.WakeLock mBroadcastWakeLock;
-
+	 private static final String N880S = "n880s" ;
+	//private static final String N880S = "u8800x" ;
     class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
@@ -686,7 +735,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      */
     void showRecentAppsDialog() {
         if (mRecentAppsDialog == null) {
-            mRecentAppsDialog = new RecentApplicationsDialog(mContext);
+            mRecentAppsDialog = new RecentApplicationsDialog(mContext, this);
         }
         mRecentAppsDialog.show();
     }
@@ -917,6 +966,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 break;
             case TYPE_INPUT_METHOD:
             case TYPE_WALLPAPER:
+            case TYPE_TOP_MOST:
                 // The window manager will check these.
                 break;
             case TYPE_PHONE:
@@ -1285,7 +1335,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean down = (action == KeyEvent.ACTION_DOWN);
         final boolean canceled = ((flags & KeyEvent.FLAG_CANCELED) != 0);
 
-        if (false) {
+        if (DEBUG) {
             Log.d(TAG, "interceptKeyTi keyCode=" + keyCode + " down=" + down + " repeatCount="
                     + repeatCount + " keyguardOn=" + keyguardOn + " mHomePressed=" + mHomePressed);
         }
@@ -2043,14 +2093,49 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.removeCallbacks(mCameraLongPress);
     }
 
+    // Woody Guo @ 2012/05/07
+    // Inject menu key event if VolDown is not pressed when MENU is pressed
+    private final Runnable mSendMenuKey = new Runnable() {
+        public void run() {
+            if (mMenuPressed) {
+                if (DEBUG) Log.d(TAG, "Repost runnable to inject Menu key event");
+                mHandler.removeCallbacks(mSendMenuKey);
+
+                // If keyguard is active, do not inject events of menu key, do not perform haptic feedback
+                if (mKeyguardMediator.isShowingAndNotHidden() || mKeyguardMediator.isShowing()) return;
+
+                // If RecentApplicationsDialog is shown, do not inject events of menu key
+                if (!mRecentsVisible) mHandler.postDelayed(mSendMenuKey, INJECT_KEY_DELAY);
+                else performHapticFeedbackLw(null, HapticFeedbackConstants.VIRTUAL_KEY, false);
+
+                return;
+            }
+
+            if (DEBUG) Log.d(TAG, "Inject Menu key event");
+            mInjectedMenu = true;
+
+            // If keyguard is active, do not inject events of menu key, do not perform haptic feedback
+            if (mKeyguardMediator.isShowingAndNotHidden() || mKeyguardMediator.isShowing()) return;
+
+            // If RecentApplicationsDialog is shown, do not inject events of menu key
+            if (!mRecentsVisible) sendHwButtonEvent(KeyEvent.KEYCODE_MENU);
+            else performHapticFeedbackLw(null, HapticFeedbackConstants.VIRTUAL_KEY, false);
+        }
+    };
+    // END
+
     /** {@inheritDoc} */
     @Override
     public int interceptKeyBeforeQueueing(long whenNanos, int action, int flags,
             int keyCode, int scanCode, int policyFlags, boolean isScreenOn) {
+
         final boolean down = action == KeyEvent.ACTION_DOWN;
         final boolean canceled = (flags & KeyEvent.FLAG_CANCELED) != 0;
 
         final boolean isInjected = (policyFlags & WindowManagerPolicy.FLAG_INJECTED) != 0;
+
+        //liuhao fix Volume hangup call
+        boolean isKeycodeVolume = false;
 
         // If screen is off then we treat the case where the keyguard is open but hidden
         // the same as if it were open and in front.
@@ -2060,14 +2145,99 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                         mKeyguardMediator.isShowingAndNotHidden() :
                                         mKeyguardMediator.isShowing());
 
-        if (false) {
+        if (DEBUG) {
             Log.d(TAG, "interceptKeyTq keycode=" + keyCode
-                  + " screenIsOn=" + isScreenOn + " keyguardActive=" + keyguardActive);
+                  + " screenIsOn=" + isScreenOn + " keyguardActive=" + keyguardActive + " down=" + down);
+        }
+        // Luoyongxing @ 2012/06/27
+        // combination key to unlock lockscreen
+        // Note that you should press BACK first and then VolUp to make this work
+       
+        if(keyguardActive){
+           if(keyCode == KeyEvent.KEYCODE_VOLUME_DOWN && down){
+                mVolDownPressed = true;
+           }else if(keyCode == KeyEvent.KEYCODE_BACK && down){
+                if(mVolDownPressed){
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            Intent intent = new Intent("lewa.intent.action.UNLOCK");
+                            mContext.sendBroadcast(intent);
+                        }
+                    });
+                    mVolDownPressed = false;
+                }
+           }else{
+                mVolDownPressed = false;
+           }
+        }
+        // Woody Guo @ 2012/05/07
+        // Initialize a screenshot capturing when both MENU and VolDown are pressed.
+        // Note that you should press first MENU then VolDown to make this work
+        if (DEBUG) Log.d(TAG, "mMenuPressed=" + mMenuPressed + " mInjectedMenu="
+                + mInjectedMenu + " mConsumeVolumeDownUp=" + mConsumeVolumeDownUp);
+        if (isScreenOn && keyCode == KeyEvent.KEYCODE_MENU) {
+            if (!mInjectedMenu) {
+                if (down) {
+                    if (DEBUG) Log.d(TAG, "Menu pressed");
+                    mMenuPressed = true;
+                    if (DEBUG) Log.d(TAG, "mMenuPressed=" + mMenuPressed + " mInjectedMenu="
+                            + mInjectedMenu + " mConsumeVolumeDownUp=" + mConsumeVolumeDownUp);
+                    mHandler.postDelayed(mSendMenuKey, INJECT_KEY_DELAY);
+                    return 0;
+                }
+                mMenuPressed = false;
+                if (DEBUG) Log.d(TAG, "Eat Menu up");
+                return 0;
+            } else if (!down) {
+                mInjectedMenu = false;
+                if (DEBUG) Log.d(TAG, "mMenuPressed=" + mMenuPressed + " mInjectedMenu="
+                        + mInjectedMenu + " mConsumeVolumeDownUp=" + mConsumeVolumeDownUp);
+            }
         }
 
-        if (down && (policyFlags & WindowManagerPolicy.FLAG_VIRTUAL) != 0) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (mMenuPressed) {
+                if (down) {
+                    mHandler.removeCallbacks(mSendMenuKey);
+                    mMenuPressed = false;
+                    mConsumeVolumeDownUp = true;
+                    if (DEBUG) Log.d(TAG, "Menu + VolumeDown down\n\tmMenuPressed=" + mMenuPressed
+                            + " mInjectedMenu=" + mInjectedMenu + " mConsumeVolumeDownUp="
+                            + mConsumeVolumeDownUp);
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            Intent intent = new Intent("android.intent.action.SCREENSHOT");
+                            mContext.sendBroadcast(intent);
+                        }
+                    });
+                    return 0;
+                }
+                if (DEBUG) Log.d(TAG, "Eat VolumeDown up 1");
+                return 0;
+            } else if (!down) {
+                if (mInjectedMenu) mInjectedMenu = false;
+                if (mConsumeVolumeDownUp) {
+                    mConsumeVolumeDownUp = false;
+                    if (DEBUG) Log.d(TAG, "Eat VolumeDown up 2\n\tmMenuPressed=" + mMenuPressed
+                            + " mInjectedMenu=" + mInjectedMenu + " mConsumeVolumeDownUp="
+                            + mConsumeVolumeDownUp);
+                    return 0;
+                }
+            }
+        }
+        // END
+
+        if (down && ((policyFlags & WindowManagerPolicy.FLAG_VIRTUAL) != 0
+                || keyCode == KeyEvent.KEYCODE_MENU
+                || keyCode == KeyEvent.KEYCODE_SEARCH
+                || keyCode == KeyEvent.KEYCODE_HOME
+                || keyCode == KeyEvent.KEYCODE_BACK)) {
             performHapticFeedbackLw(null, HapticFeedbackConstants.VIRTUAL_KEY, false);
-        } else if ((policyFlags & WindowManagerPolicy.FLAG_VIRTUAL) != 0) {
+        } else if ((policyFlags & WindowManagerPolicy.FLAG_VIRTUAL) != 0
+                || keyCode == KeyEvent.KEYCODE_MENU
+                || keyCode == KeyEvent.KEYCODE_SEARCH
+                || keyCode == KeyEvent.KEYCODE_HOME
+                || keyCode == KeyEvent.KEYCODE_BACK) {
             performHapticFeedbackLw(null, HapticFeedbackConstants.VIRTUAL_RELEASED, false);
         }
 
@@ -2106,8 +2276,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             // make sure keyevent get's handled as power key on volume-wake
             if(mVolumeWakeScreen && isWakeKey && ((keyCode == KeyEvent.KEYCODE_VOLUME_UP)
-                    || (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)))
+                    || (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)))  {
                 keyCode = KeyEvent.KEYCODE_POWER;
+                //liuhao fix Volume hangup call
+                isKeycodeVolume = true;
+            }
+
+	     //add by shenqi for wakeup by anykey
+	     if(N880S.equals(Build.DEVICE)){	
+			ITelephony telephony = getTelephonyService();
+			if (telephony != null){
+				try {
+						if( telephony.isOffhook()){
+							isWakeKey = true;
+						}				  
+					} 
+					catch (RemoteException ex) {
+						Log.w(TAG, "ITelephony threw RemoteException", ex);
+					}
+			}
+	    }
 
             if (down && isWakeKey) {
                 if (keyguardActive) {
@@ -2249,7 +2437,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                     && telephonyService.isOffhook()) {
                                 // Otherwise, if "Power button ends call" is enabled,
                                 // the Power button will hang up any current active call.
-                                hungUp = telephonyService.endCall();
+
+                                //liuhao fix Volume hangup call
+                                if (!isKeycodeVolume)
+                                    hungUp = telephonyService.endCall();
                             }
                         } catch (RemoteException ex) {
                             Log.w(TAG, "ITelephony threw RemoteException", ex);

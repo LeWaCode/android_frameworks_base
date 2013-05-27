@@ -262,7 +262,6 @@ public class SipProfile implements Parcelable, Serializable, Cloneable {
          *
          * @param interval in seconds
          * @return this builder object
-         * @hide
          */
         public Builder setKeepAliveInterval(int interval) {
             mProfile.mKeepAliveInterval = interval;
@@ -505,7 +504,6 @@ public class SipProfile implements Parcelable, Serializable, Cloneable {
      * Gets the value of 'Keep-alive interval'.
      *
      * @return the Keep-alive interval in seconds.
-     * @hide
      */
     public int getKeepAliveInterval() {
         return mKeepAliveInterval;

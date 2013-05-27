@@ -445,6 +445,11 @@ public final class ViewRoot extends Handler implements ViewParent, ViewOpacityMa
         synchronized (this) {
             if (mView == null) {
                 mView = view;
+                // Begin, added by zhumeiquan for statusbar transparent, 20120413
+                if (attrs.format == PixelFormat.RGB_565) {
+                    attrs.format = PixelFormat.RGBA_8888;
+                }
+                // End
                 mWindowAttributes.copyFrom(attrs);
                 attrs = mWindowAttributes;
                 if (view instanceof RootViewSurfaceTaker) {
@@ -590,6 +595,11 @@ public final class ViewRoot extends Handler implements ViewParent, ViewOpacityMa
             // preserve compatible window flag if exists.
             int compatibleWindowFlag =
                 mWindowAttributes.flags & WindowManager.LayoutParams.FLAG_COMPATIBLE_WINDOW;
+            // Begin, added by zhumeiquan for statusbar transparent, 20120413            
+            if (attrs.format == PixelFormat.RGB_565) {
+                attrs.format = PixelFormat.RGBA_8888;
+            }
+            // End
             mWindowAttributes.copyFrom(attrs);
             mWindowAttributes.flags |= compatibleWindowFlag;
             

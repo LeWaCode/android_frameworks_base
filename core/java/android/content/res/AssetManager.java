@@ -27,6 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.ArrayList;
+
+import android.content.res.lewaface.*;
 
 /**
  * Provides access to an application's raw asset files; see {@link Resources}
@@ -93,6 +96,8 @@ public final class AssetManager {
      * responsible for delete in C++).
      */
     private SparseArray<PackageRedirectionMap> mRedirections;
+// modify for lewatheme by luoyongxing
+	private SparseArray<LewaRedirectionMap> mLewaRedirections;
 
     /**
      * Create a new AssetManager containing only the basic system assets.
@@ -431,6 +436,8 @@ public final class AssetManager {
                 AssetInputStream res = new AssetInputStream(asset);
                 incRefsLocked(res.hashCode());
                 return res;
+            }else{
+            	Log.e(TAG, "ERROR. openNonAssetNative == null.");
             }
         }
         throw new FileNotFoundException("Asset absolute file: " + fileName);
@@ -739,6 +746,16 @@ public final class AssetManager {
     }
 
     /**
+     * Clear redirection map for the asset manager.
+     * {@hide}
+     */
+    public void clearRedirections() {
+        if (mRedirections != null) {
+            mRedirections.clear();
+        }
+        clearRedirectionsNative();
+    }
+    /**
      * Add a redirection map to the asset manager. All future resource lookups
      * will consult this map.
      * {@hide}
@@ -751,16 +768,94 @@ public final class AssetManager {
         addRedirectionsNative(map.getNativePointer());
     }
 
-    /**
-     * Clear redirection map for the asset manager.
-     * {@hide}
-     */
-    public void clearRedirections() {
-        if (mRedirections != null) {
-            mRedirections.clear();
+    private LewaRedirectionMap getMapByCookie(int cookie){
+        if(mLewaRedirections == null){
+            return null;
         }
-        clearRedirectionsNative();
+        if(cookie < 0 || cookie >= LewaTheme.MAP_KEYS.length){
+            if(LewaTheme.TRACE_DEBUG)Log.w(TAG, "getMapByCookie failed, cookie out of range:"+cookie);
+            return null;
+        }
+        int key = LewaTheme.MAP_KEYS[cookie];
+        LewaRedirectionMap map = mLewaRedirections.get(key);
+        if(map == null){
+            if(LewaTheme.TRACE_DEBUG)Log.w(TAG, "Can't get map for cookie:"+cookie);
+        }
+        return map;
     }
+	public long lewaLookupRedirections(int id, int cookie){
+		
+        LewaRedirectionMap map = getMapByCookie(cookie);
+		if(map != null){
+            long ret = map.lookupMap(id);
+            if(LewaTheme.TRACE_DEBUG)LewaTheme.log(id, "lewaLookupRedirections:"+ret+" cookie:"+cookie);
+			return ret;
+		}
+		
+        if(LewaTheme.TRACE_DEBUG)Log.w(TAG, "lewaLookupRedirections failed.");
+		return 0;
+	}
+    
+    public boolean lewaNeedRedirect(long attr, String fileName, int cookie){
+      
+        LewaRedirectionMap map = getMapByCookie(cookie);
+        if(map != null){
+            return map.needRedirect(attr, fileName);
+        }else{
+            if(LewaTheme.TRACE_DEBUG)Log.w(TAG, "lewaNeedRedirect failed, can find map.");
+            return false;
+        }
+    }
+
+    public int lewaGetRedirectedCookie(TypedValue value){
+         int cookie;
+        if(value.lewaIsRedirected){
+            cookie = value.lewaOriginalCookie;
+        }else{
+            cookie = value.assetCookie;
+        }
+        
+        LewaRedirectionMap map = getMapByCookie(cookie);
+        if(map != null){
+            return map.getRedirectedCookie();
+        }
+        return 0;
+        
+    }
+    
+	public void lewaAddRedirections(LewaRedirectionMap map, int redirectedCookie, String packageName) {
+        if(packageName == null || map == null || redirectedCookie <= 0){
+            Log.e(TAG, "lewaAddRedirections failed, null point.");
+            return;
+        }
+        if(LewaTheme.TRACE_DEBUG)Log.i(TAG, "add redirection: redirectedCookie="+redirectedCookie+" packageName: "+packageName);
+        if (mLewaRedirections == null) {
+            mLewaRedirections = new SparseArray<LewaRedirectionMap>(2);
+        }
+        int key;
+        if(packageName.equals("android")||packageName.equals("framework-res")){
+            key = LewaTheme.MAP_KEYS[LewaTheme.KEY_FOR_ANROID];
+        }else{
+            key = LewaTheme.MAP_KEYS[LewaTheme.KEY_FOR_APP];
+        }
+        map.setRedirectedCookie(redirectedCookie);
+        mLewaRedirections.put(key, map);
+    }
+
+	 public void lewaClearRedirections() {
+        if (mLewaRedirections != null) {
+            int size = mLewaRedirections.size();
+            LewaRedirectionMap map;
+            for(int i = 0; i < size; i++){
+                map = mLewaRedirections.valueAt(i);
+                if(map != null){
+                    map.clear();
+                }
+            }
+            mLewaRedirections.clear();
+        }
+    }
+    
 
     /**
      * Determine whether the state in this asset manager is up-to-date with

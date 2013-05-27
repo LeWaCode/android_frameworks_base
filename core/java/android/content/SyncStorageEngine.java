@@ -282,8 +282,9 @@ public class SyncStorageEngine extends Handler {
     private int mNumPendingFinished = 0;
 
     private int mNextHistoryId = 0;
-    private boolean mMasterSyncAutomatically = true;
-
+    // Begin, modified by zhumeiquan for bug 8194, 20120703
+    private boolean mMasterSyncAutomatically = false;
+    // End
     private SyncStorageEngine(Context context, File dataDir) {
         mContext = context;
         sSyncStorageEngine = this;

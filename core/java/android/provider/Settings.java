@@ -38,6 +38,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.*;
+import android.os.SystemProperties;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.AndroidException;
@@ -1157,12 +1158,18 @@ public final class Settings {
          * END_BUTTON_BEHAVIOR default value.
          * @hide
          */
-        public static final int END_BUTTON_BEHAVIOR_DEFAULT = END_BUTTON_BEHAVIOR_SLEEP;
-
+        //public static final int END_BUTTON_BEHAVIOR_DEFAULT = END_BUTTON_BEHAVIOR_SLEEP;
+        public static final int END_BUTTON_BEHAVIOR_DEFAULT = END_BUTTON_BEHAVIOR_HOME;//by george,2011-11-21
+		
         /**
          * Whether Airplane Mode is on.
          */
         public static final String AIRPLANE_MODE_ON = "airplane_mode_on";
+
+				/**
+         * Whether PowerManager Mode is on.
+         */
+        public static final String POWERMANAGER_MODE_ON = "powermanager_mode_on";
 
         /**
          * Constant for use in AIRPLANE_MODE_RADIOS to specify Bluetooth radio.
@@ -1305,6 +1312,23 @@ public final class Settings {
          */
         public static final String BLUETOOTH_DISCOVERABILITY_TIMEOUT =
             "bluetooth_discoverability_timeout";
+			
+	    
+		//add by chenhengheng , for 360
+		public static final String INTERCEPT_SWITCH              = "intercept_switch";
+			
+		public static final String INTERCEPT_NOTIFICATION_SWITCH = "intercept_notification_switch";	
+
+             public static final String INTERCEPT_ONERING_SWITCH = "intercept_onering_switch";
+		
+		//add by chenhengheng , 2012.03.14 , for swapper
+		public static final String SWAPPER_HOWSWAP = "swapper_howswap";
+		public static final String SWAPPER_HOWSWAPSIZE = "swapper_howswap_size";
+		
+        public static final String IS_SDCARDSWAP_OPEN  = "is_sdcardswap_open";
+		
+		public static final String IS_REBOOT_RUN       = "is_reboot_run";
+       			
 
         /**
          * @deprecated Use {@link android.provider.Settings.Secure#LOCK_PATTERN_ENABLED}
@@ -1601,7 +1625,17 @@ public final class Settings {
          * not change the volume. See AudioManager.
          */
         public static final String VOLUME_BLUETOOTH_SCO = "volume_bluetooth_sco";
-
+		public static final String ALERTDIALOG_STYLES = "alertdiaog_styles";
+		public static final String NIGHT_MODES = "night_modes";
+		
+		/**
+         * FM volume. This is used internally, changing this value will
+         * not change the volume. See AudioManager.
+         *
+         * @hide
+         */
+		public static final String VOLUME_FM = "volume_fm";
+		
         /**
          * Whether the notifications should use the ring volume (value of 1) or
          * a separate notification volume (value of 0). In most cases, users
@@ -1672,7 +1706,8 @@ public final class Settings {
          */
         public static final String[] VOLUME_SETTINGS = {
             VOLUME_VOICE, VOLUME_SYSTEM, VOLUME_RING, VOLUME_MUSIC,
-            VOLUME_ALARM, VOLUME_NOTIFICATION, VOLUME_BLUETOOTH_SCO
+            VOLUME_ALARM, VOLUME_NOTIFICATION, VOLUME_BLUETOOTH_SCO,
+			VOLUME_FM
         };
 
         /**
@@ -1827,6 +1862,19 @@ public final class Settings {
          * disabled by the application.
          */
         public static final String ACCELEROMETER_ROTATION = "accelerometer_rotation";
+
+
+        // Begin, Added by zhumeiquan for controlling the virtual key, 20111109
+        public static final String VIRTUAL_KEY = "virtual_key";
+        public static final String BOTTOM_VIRTUAL_KEY = "bottom_virtual_key";
+        // End
+
+        /**
+         * Whether Longpress back button unlock and bring to camear app at the unlock screen. The value is
+         * boolean (1 or 0).
+         * @hide
+         */
+        public static final String BACK_BTN_UNLOCK_CAMERA = "back_btn_unlock_camera";
 
          /**
          * Control the type of rotation which can be performed using the accelerometer
@@ -2300,6 +2348,8 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_BATTERY = "status_bar_battery";
+		
+        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
 
         /**
          * Whether to show the clock in status bar
@@ -2377,6 +2427,60 @@ public final class Settings {
          * @hide
          */
         public static final String SOFT_BUTTONS_LEFT = "soft_buttons_left";
+
+		//begin,added by zhuyaopeng 2012/05/26
+	    /**
+         * Switch widget page style
+         * 1: shows switches and notifications in a single page
+         * 2: shows switches and notifications in separate pages
+         * default: 2
+         * @hide
+         */
+        public static final String SWITCH_WIDGET_STYLE = "switch_widget_style";
+
+        /**
+         * Determines the order in which switch buttons are shown in the widget in the dual pages mode
+         * @hide
+         */
+        public static final String SWITCH_WIDGET_BUTTONS = "switch_widget_buttons";
+
+        /**
+         * Determines which switch buttons are shown in the widget in the single page mode
+         * @hide
+         */
+        public static final String SWITCH_WIDGET_BUTTONS_TINY = "switch_widget_buttons_tiny";
+
+        /**
+         * Determines whether clear notifications by shaking 
+         * @hide
+         */
+        public static final String SHAKE_CLEAR_NOTIFICATIONS = "shake_clear_notifications";
+		
+		        /**
+         * Determines whether it's now in screen capture mode;
+         * MENU key event will be intercepted in screen capture mode
+         * @hide
+         */
+        public static final String SCREEN_CAPTURE_MODE = "screen_capture_mode";
+        /**
+         * The screen capture style: continual or single shot
+         * @hide
+         */
+        public static final String SCREEN_CAPTURE_STYLE = "screen_capture_style";
+        /**
+         * The screen capture method: MENU key, timer or shake
+         * @hide
+         */
+        public static final String SCREEN_CAPTURE_METHOD = "screen_capture_method";
+        public static final String SCREEN_CAPTURE_INTERVAL = "screen_capture_interval ";
+        public static final String SCREEN_CAPTURE_FORMAT = "screen_capture_format";
+        public static final String SCREEN_CAPTURE_SHUTTER = "screen_capture_shutter";
+
+        public static final int SCREEN_CAPTURE_METHOD_SHAKE = 1;
+        public static final int SCREEN_CAPTURE_METHOD_MENU = 2;
+        public static final int SCREEN_CAPTURE_METHOD_TIMER = 3;
+		
+		//end,added by zhuyaopeng 2012/05/26
 
         /**
          * Whether to override fullscreen so statusbar always visible
@@ -2524,7 +2628,7 @@ public final class Settings {
 
         /**
          * Whether the lockscreen should be disabled if security is on
-         * @hide
+         * 
          */
         public static final String LOCKSCREEN_DISABLE_ON_SECURITY = "lockscreen_disable_on_security";
 
@@ -2584,6 +2688,42 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_ROTARY_HIDE_ARROWS = "lockscreen_rotary_hide_arrows";
 
+        // Woody Guo @ 2012/05/04
+        /**
+         * 1 is enabled, 0 is disabled
+         * When enabled, will change power mode when battery level is lower/higher than configured level
+         * @hide
+         */
+        public static final String CHANGE_POWER_MODE_IF_LOW_BATTERY = "change_power_mode_if_low_battery";
+        /**
+         * Configured battery level decides whether or not to change power mode
+         * @hide
+         */
+        public static final String CHANGE_POWER_MODE_BATTERY_LEVEL = "change_power_mode_battery_level";
+        // END
+
+        //Begin for lockscreen sound ,by fulianwu 20111228
+        /**
+         *  0 is off,1 is on
+         **/
+        public static final String LOCKSCREEN_SOUND_SWITCH = "lockscreen_sound_switch";
+    
+        /**
+         * 0 is first time start lewa rom,1 is not the first time start lewa rom
+         * 
+         */
+        public static final String LOCKSCREEN_FIRST_TIME_UNLOCK_PROMPT = "lockscreen_first_time_unlock_prompt";
+        //End
+        
+        //Begin for lockscreen changed ,by fulianwu 20120529
+        /**
+         * 0 is not change, 1 is changed
+         * @hide
+         */
+        public static final String LOCKSCREEN_CHANGED = "lockscreen_changed";
+        //End
+
+        
         /**
          * When enabled, ring style lockscreen switches app started and unlock, so the unlock ring
          * is in the middle
@@ -2599,7 +2739,7 @@ public final class Settings {
 
         /**
          * Sets the lockscreen style
-         * @hide
+         * 
          */
         public static final String LOCKSCREEN_STYLE_PREF = "lockscreen_style_pref";
 
@@ -2888,12 +3028,6 @@ public final class Settings {
         */
         public static final String EXPANDED_FLASH_MODE = "expanded_flash_mode";
 
-        /**
-        * Notification Power Widget - Mobile Data Auto 2G/3G Toggle
-        * @hide
-        */
-        public static final String EXPANDED_MOBILEDATANETWORK_MODE = "expanded_mobiledatanetwork_mode";
-
         /** 
         * Enables the Screen-on animation
         * @hide
@@ -3124,7 +3258,6 @@ public final class Settings {
          */
         @Deprecated
         public static final String INSTALL_NON_MARKET_APPS = Secure.INSTALL_NON_MARKET_APPS;
-
         /**
          * @deprecated Use {@link android.provider.Settings.Secure#LOCATION_PROVIDERS_ALLOWED}
          * instead
@@ -3577,7 +3710,6 @@ public final class Settings {
 
         /**
          * The TCP/IP port to run ADB on, or -1 for USB
-         * @hide
          */
         public static final String ADB_PORT = "adb_port";
 
@@ -4046,7 +4178,13 @@ public final class Settings {
          */
         public static final String ALLOWED_GEOLOCATION_ORIGINS
                 = "allowed_geolocation_origins";
-
+        /**
+         * Whether uploading debug log to server
+         *
+         * 1 = allow uploading debug log to server 0 = not allow uploading
+         * from the Android Market
+         */
+        public static final String LEWA_UPLOAD_DEBUG_LOG = "lewa_upload_debug_log";
         /**
          * Whether mobile data connections are allowed by the user.  See
          * ConnectivityManager for more info.
@@ -4369,6 +4507,10 @@ public final class Settings {
          */
         public static final String SHORT_KEYLIGHT_DELAY_MS =
                 "short_keylight_delay_ms";
+
+        // Begin, added by zhumeiquan for enable or disable PromixitySensor
+        public static final String PROMIXITY_SENSOR_ENABLE =
+                "promixity_sensor";
 
         /**
          * The interval in minutes after which the amount of free storage left on the
@@ -4832,6 +4974,11 @@ public final class Settings {
          */
         public static final String MVNO_ROAMING = "button_mvno_roaming_key";
 
+        /** Preferred NTP server. {@hide} */
+        public static final String NTP_SERVER = "ntp_server";
+        /** Timeout in milliseconds to wait for NTP server. {@hide} */
+        public static final String NTP_TIMEOUT = "ntp_timeout";
+
         /**
          * Whether to enable permissions management.
          * @hide
@@ -5125,5 +5272,4 @@ public final class Settings {
     public static String getGTalkDeviceId(long androidId) {
         return "android-" + Long.toHexString(androidId);
     }
-    
 }

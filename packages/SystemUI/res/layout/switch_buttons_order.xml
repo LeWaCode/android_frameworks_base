@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.statusbar.switchwidget.SwitchWidgetOptionsView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    >
+
+    <DragableListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:drawSelectorOnTop="false"
+        android:choiceMode="multipleChoice"
+        android:textSize="18sp"
+        />
+        <!-- android:textAppearance="?android:attr/textAppearanceMedium" -->
+        <!-- android:fastScrollEnabled="true" -->
+        <!-- android:cacheColorHint="#FFFFFF" -->
+
+</com.android.systemui.statusbar.switchwidget.SwitchWidgetOptionsView>

@@ -316,6 +316,13 @@ public class TypedArray {
         } else if (type == TypedValue.TYPE_STRING) {
             final TypedValue value = mValue;
             if (getValueAt(index, value)) {
+                
+                // add by luoyongxing for theme @20120725
+                long attr = mResources.getAssets().lewaLookupRedirections(value.resourceId, value.assetCookie);	
+                if(mResources.lewaNeedRedirect(value, attr) ){
+    				Resources.lewaSetThemeRedirection(value, attr, mResources.getAssets().lewaGetRedirectedCookie(value));
+                    return value.data;
+			    }
                 ColorStateList csl = mResources.loadColorStateList(
                         value, value.resourceId);
                 return csl.getDefaultColor();
@@ -339,6 +346,12 @@ public class TypedArray {
     public ColorStateList getColorStateList(int index) {
         final TypedValue value = mValue;
         if (getValueAt(index*AssetManager.STYLE_NUM_ENTRIES, value)) {
+            // add by luoyongxing for theme @20120725
+            long attr = mResources.getAssets().lewaLookupRedirections(value.resourceId, value.assetCookie);		
+			if(mResources.lewaNeedRedirect(value, attr) ){
+				Resources.lewaSetThemeRedirection(value, attr, mResources.getAssets().lewaGetRedirectedCookie(value));
+                return ColorStateList.valueOf(value.data);
+			}
             return mResources.loadColorStateList(value, value.resourceId);
         }
         return null;
@@ -588,6 +601,8 @@ public class TypedArray {
      */
     public Drawable getDrawable(int index) {
         final TypedValue value = mValue;
+		// modify for lewa theme by luoyongxing
+		Drawable d = null;
         if (getValueAt(index*AssetManager.STYLE_NUM_ENTRIES, value)) {
             if (false) {
                 System.out.println("******************************************************************");
@@ -598,7 +613,22 @@ public class TypedArray {
                                    + " cookie=" + value.assetCookie);
                 System.out.println("******************************************************************");
             }
-            return mResources.loadDrawable(value, value.resourceId);
+			
+			long attr = mResources.getAssets().lewaLookupRedirections(value.resourceId, value.assetCookie);
+				
+			if(mResources.lewaNeedRedirect(value, attr) ){
+				Resources.lewaSetThemeRedirection(value, attr, mResources.getAssets().lewaGetRedirectedCookie(value));
+			}
+			try{
+				d = mResources.loadDrawable(value, value.resourceId);
+			}catch(Exception e){
+				if(Resources.lewaIsThemeRedirected(value)){
+					Log.e("TypedArray", "ERROR! loadDrawable for theme failed, reset now, value: "+value);
+					Resources.lewaResetThemeRedirection(value);
+					d = mResources.loadDrawable(value, value.resourceId);
+				}
+			}
+            return d;
         }
         return null;
     }
@@ -709,6 +739,10 @@ public class TypedArray {
         outValue.changingConfigurations = data[index+AssetManager.STYLE_CHANGING_CONFIGURATIONS];
         outValue.density = data[index+AssetManager.STYLE_DENSITY];
         outValue.string = (type == TypedValue.TYPE_STRING) ? loadStringValueAt(index) : null;
+        // add by luoyongxing
+        outValue.lewaIsRedirected = false;
+        outValue.lewaOriginalCookie = 0;
+        outValue.lewaForceNotRedirect = false;
         return true;
     }
 

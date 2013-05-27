@@ -417,9 +417,9 @@ static jint android_hardware_fmradio_FmReceiverJNI_startSearchNative
     }
     // before returning wait for tuning to finish and seek to start.
     // I have seen this go into an infinite loop once, so limit it to 20 iterations (usually takes 1-4).
-    for (int i=0; i < 20 && android_hardware_fmradio_FmReceiverJNI_getFreqNative(NULL,NULL,NULL) == oldFreq+(dir?100:-100); i++){
+    for (int i=0; i < 200 && android_hardware_fmradio_FmReceiverJNI_getFreqNative(NULL,NULL,NULL) == oldFreq+(dir?100:-100); i++){
         LOGD("waiting for seek to start");
-        usleep(100);
+        usleep(200);
     }
 
     return FM_JNI_SUCCESS;

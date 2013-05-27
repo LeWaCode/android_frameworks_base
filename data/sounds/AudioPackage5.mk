@@ -7,6 +7,13 @@
 
 LOCAL_PATH:= frameworks/base/data/sounds
 
+# added by ioz9 for small camera_click voice
+#ifeq ($(TARGET_PRODUCT),cyanogen_c8650)
+#PRODUCT_COPY_FILES += \
+#        $(LOCAL_PATH)/effects/camera_click_small.ogg:system/media/audio/ui/camera_click.ogg
+#else      
+#endif
+
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/Alarm_Buzzer.ogg:system/media/audio/alarms/Alarm_Buzzer.ogg \
 	$(LOCAL_PATH)/Alarm_Beep_01.ogg:system/media/audio/alarms/Alarm_Beep_01.ogg \
@@ -48,7 +55,6 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/ringtones/ANDROMEDA.ogg:system/media/audio/ringtones/ANDROMEDA.ogg \
 	$(LOCAL_PATH)/ringtones/Aquila.ogg:system/media/audio/ringtones/Aquila.ogg \
 	$(LOCAL_PATH)/ringtones/ArgoNavis.ogg:system/media/audio/ringtones/ArgoNavis.ogg \
-	$(LOCAL_PATH)/ringtones/BOOTES.ogg:system/media/audio/ringtones/BOOTES.ogg \
 	$(LOCAL_PATH)/ringtones/CANISMAJOR.ogg:system/media/audio/ringtones/CANISMAJOR.ogg \
 	$(LOCAL_PATH)/ringtones/Carina.ogg:system/media/audio/ringtones/Carina.ogg \
 	$(LOCAL_PATH)/ringtones/CASSIOPEIA.ogg:system/media/audio/ringtones/CASSIOPEIA.ogg \

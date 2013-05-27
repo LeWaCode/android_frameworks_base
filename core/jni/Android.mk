@@ -1,22 +1,4 @@
 LOCAL_PATH:= $(call my-dir)
-
-include $(CLEAR_VARS)
-LOCAL_SHARED_LIBRARIES := \
-    libcutils \
-    libutils \
-    libbinder \
-    libsurfaceflinger_client
-
-LOCAL_STATIC_LIBRARIES := \
-    liboptimize
-
-LOCAL_PREBUILT_LIBS := libsysd.a
-include $(BUILD_MULTI_PREBUILT)
-
-include $(CLEAR_VARS)
-LOCAL_PREBUILT_LIBS := liboptimize.a
-include $(BUILD_MULTI_PREBUILT)
-
 include $(CLEAR_VARS)
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -DKHTML_NO_EXCEPTIONS -DGKWQ_NO_JAVA
@@ -160,12 +142,10 @@ LOCAL_SRC_FILES:= \
 	android_backup_FileBackupHelperBase.cpp \
 	android_backup_BackupHelperDispatcher.cpp \
 	android_content_res_ObbScanner.cpp \
-	android_content_res_Configuration.cpp
-
-LOCAL_PREBUILT_OBJ_FILES += \
-    android_phone_vocrec_qualcomm.o \
-    android_animation_PropertyValuesHolder.o
-
+	android_content_res_Configuration.cpp \
+	android_phone_vocrec_qualcomm.cpp \
+	android_animation_PropertyValuesHolder.cpp
+  
 ifeq ($(BOARD_HAVE_FM_RADIO),true)
     ## There's a difference. BOARD_HAVE_FM_RADIO enabled the runtime
     ## without modifying the audiosystem (which HAVE_FM_RADIO does)
@@ -196,20 +176,6 @@ ifeq ($(BOARD_HAVE_FM_RADIO),true)
     ifeq ($(BOARD_FM_DEVICE),wl1271)
         LOCAL_SRC_FILES += android_hardware_fm_wl1271.cpp
     endif
-    ifeq ($(BOARD_FM_DEVICE),ti-st)
-        LOCAL_SRC_FILES += android_hardware_fm_ti-st.cpp
-        LOCAL_SHARED_LIBRARIES += libfmstack libmcphal
-        FMSTACK := hardware/ti/wpan/fmradio/fm_stack
-        LOCAL_C_INCLUDES += $(FMSTACK)/HSW_FMStack/stack/inc/ \
-                            $(FMSTACK)/MCP_Common/Platform/fmhal/LINUX/common/inc/ \
-                            $(FMSTACK)/MCP_Common/Platform/os/LINUX/common/inc \
-                            $(FMSTACK)/MCP_Common/inc/ \
-                            $(FMSTACK)/MCP_Common/Platform/inc/ \
-                            $(FMSTACK)/MCP_Common/Platform/os/LINUX/android_zoom2/inc/ \
-                            $(FMSTACK)/MCP_Common/Platform/fmhal/inc/int/ \
-                            $(FMSTACK)/MCP_Common/Platform/fmhal/inc \
-                            $(FMSTACK)/HSW_FMStack/stack/inc/int/
-    endif
 endif
 
 LOCAL_C_INCLUDES += \
@@ -236,7 +202,8 @@ LOCAL_C_INCLUDES += \
 	external/lame \
 	frameworks/opt/emoji
 
-LOCAL_SHARED_LIBRARIES += \
+
+LOCAL_SHARED_LIBRARIES := \
 	libexpat \
 	libnativehelper \
 	libcutils \
@@ -266,13 +233,9 @@ LOCAL_SHARED_LIBRARIES += \
 	libwpa_client \
 	libjpeg \
 	libnfc_ndef \
-	liblame
+	liblame 
 
-LOCAL_STATIC_LIBRARIES := \
-    libsysd \
-    liboptimize
-
-LOCAL_STATIC_LIBRARIES += libreboot
+LOCAL_STATIC_LIBRARIES := libreboot
 
 ifeq ($(BOARD_HAVE_BLUETOOTH),true)
 LOCAL_C_INCLUDES += \
@@ -301,6 +264,9 @@ endif
 ifeq ($(WITH_MALLOC_LEAK_CHECK),true)
 	LOCAL_CFLAGS += -DMALLOC_LEAK_CHECK
 endif
+
+LOCAL_STATIC_LIBRARIES += \
+    libcutils
 
 LOCAL_MODULE:= libandroid_runtime
 

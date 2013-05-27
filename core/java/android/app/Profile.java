@@ -33,9 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * @hide
-*/
 public final class Profile implements Parcelable {
 
     private String mName;

@@ -320,6 +320,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 // next: airplane mode
                 mAirplaneModeOn,
                 // next: choose profile
+                /* Begin, Deleted by zhumeiquan for Bug ROM #1808, 20111128
                 new ProfileChooseAction() {
                     public void onPress() {
                         createProfileDialog();
@@ -333,8 +334,10 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                         return false;
                     }
                 },
+                */
                 // next: screenshot
-                new SinglePressAction(com.android.internal.R.drawable.ic_lock_screenshot, R.string.global_action_screenshot) {
+                new SinglePressAction(com.android.internal.R.drawable.ic_lock_screenshot
+                        , R.string.global_action_screenshot, R.string.global_action_screenshot_desc) {
                     public void onPress() {
                         Intent intent = new Intent("android.intent.action.SCREENSHOT");
                         mContext.sendBroadcast(intent);
@@ -611,14 +614,22 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     /**
      * A single press action maintains no state, just responds to a press
      * and takes an action.
+     *
+     * Woody Guo @ 2012/06/12: Add action description
      */
     private static abstract class SinglePressAction implements Action {
         private final int mIconResId;
         private final int mMessageResId;
+        private final int mDescriptionResId;
 
         protected SinglePressAction(int iconResId, int messageResId) {
+            this(iconResId, messageResId, -1);
+        }
+
+        protected SinglePressAction(int iconResId, int messageResId, int descriptionResId) {
             mIconResId = iconResId;
             mMessageResId = messageResId;
+            mDescriptionResId = descriptionResId;
         }
 
         public boolean isEnabled() {
@@ -636,7 +647,11 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             ImageView icon = (ImageView) v.findViewById(R.id.icon);
             TextView messageView = (TextView) v.findViewById(R.id.message);
 
-            v.findViewById(R.id.status).setVisibility(View.GONE);
+            if (0 > mDescriptionResId) {
+                v.findViewById(R.id.status).setVisibility(View.GONE);
+            } else {
+                ((TextView) v.findViewById(R.id.status)).setText(mDescriptionResId);
+            }
 
             icon.setImageDrawable(context.getResources().getDrawable(mIconResId));
             messageView.setText(mMessageResId);

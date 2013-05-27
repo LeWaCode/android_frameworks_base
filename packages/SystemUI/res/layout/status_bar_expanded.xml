@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* apps/common/assets/default/default/skins/StatusBar.xml
+**
+*/
+-->
+
+<com.android.systemui.statusbar.ExpandedView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:descendantFocusability="afterDescendants"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:background="@drawable/statusbar_expanded_background" >
+
+    <!-- added by zhuyaopeng  2012/05/28 -->
+    <!--         android:background="#ff303030" -->
+    <!--  android:background="@drawable/data_monitor_bg" -->
+    <LinearLayout
+        android:id="@+id/data_monitor_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dip"
+        android:paddingTop="4dip"
+        android:background="@drawable/data_monitor_bg"
+        >
+
+        <RelativeLayout
+            android:id="@+id/monitor_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dip"
+            android:layout_marginRight="5dip"
+            android:layout_weight="4" 
+            android:paddingTop="5dip"
+            >
+
+            <RelativeLayout
+                android:id="@+id/real"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_marginLeft="3dip"
+                android:layout_marginRight="5dip" 
+                >
+
+                <TextView
+                    android:id="@+id/text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="top"
+                    android:paddingLeft="0dip"
+                    android:text="@string/today_flow_ext"
+                    android:textColor="@color/titlebar_textcolor"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:id="@+id/main_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dip"
+                    android:layout_toRightOf="@id/text2"
+                    android:gravity="top"
+                    android:textColor="@color/titlebar_textcolor"
+                    android:textSize="14sp"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/real"
+                android:layout_marginLeft="3dip"
+                android:layout_marginRight="5dip" 
+                android:layout_marginTop="3dip"
+                android:layout_marginBottom="3dip"
+                >
+
+                <ProgressBar
+                    android:id="@+id/main_progressbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="12dip"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/status_expand_progress"
+                    android:secondaryProgress="60" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/descrip"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_below="@id/ip"
+                android:layout_marginLeft="3dip"
+                android:layout_marginRight="5dip" >
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="0dip"
+                    android:gravity="bottom"
+                    android:text="@string/month_flow_ext"
+                    android:textColor="@color/titlebar_textcolor"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:id="@+id/main_used"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dip"
+                    android:layout_toRightOf="@id/text1"
+                    android:gravity="bottom"
+                    android:textColor="@color/titlebar_textcolor"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:id="@+id/main_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom"
+                    android:textColor="@color/titlebar_textcolor"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:id="@+id/text3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="2dip"
+                    android:layout_toLeftOf="@id/main_left"
+                    android:gravity="bottom"
+                    android:text="@string/left_flow_ext"
+                    android:textColor="@color/titlebar_textcolor"
+                    android:textSize="14sp"
+                     />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="2dip"
+            android:layout_height="fill_parent"
+            android:background="@drawable/line1" />
+
+        <!--  android:background="@drawable/monitor_button_background" -->
+        <ImageButton
+            android:id="@+id/data_monitor_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:paddingBottom="0dip"
+            android:paddingLeft="7dip"
+            android:paddingRight="7dip"
+            android:paddingTop="0dip" 
+            android:background="#00ffffff"
+            />
+    </LinearLayout>
+
+   <!--  <View
+        android:layout_width="fill_parent"
+        android:layout_height="5dip"
+        android:background="@drawable/line2" /> -->
+
+    <TextView
+        android:id="@+id/clear_all_button"
+        style="@style/StatusBar.ClearButton"
+        android:layout_width="fill_parent"
+        android:layout_height="35dip"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="0dip"
+        android:background="@color/clearbutton_background"
+        android:gravity="center"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:text="@string/status_bar_clear_all_button"
+        android:textColor="#000000" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@drawable/line3" />
+    <!-- end added -->
+
+    <RelativeLayout
+        android:id="@+id/layout_switches"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/layout_tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal" >     
+            
+             <TextView
+                android:id="@+id/image_tab_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/switchtabtxtcolor_off"
+                android:background="@drawable/stat_tab_off"
+                android:gravity="center"
+                android:text="@string/tab_notifications"
+                android:textAppearance="@style/TextAppearance.StatusBar.Title" />
+            
+             <TextView
+                android:id="@+id/image_tab_switches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/switchtabtxtcolor_on"
+                android:background="@drawable/stat_tab_on"
+                android:gravity="center"
+                android:text="@string/tab_switches"
+                android:textAppearance="@style/TextAppearance.StatusBar.Title" />           
+            
+        </LinearLayout>
+        
+         <com.android.systemui.statusbar.switchwidget.SwitchWidget
+            android:id="@+id/switch_widget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/layout_tabs"
+            android:layout_alignParentTop="true" 
+            android:paddingTop="4dip"
+        />
+
+        <FrameLayout
+            android:id="@+id/notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/layout_tabs"
+            android:layout_alignParentTop="true" 
+            >
+
+            <!-- android:layout_above="@id/layout_tabs" -->
+
+            <ScrollView
+                android:id="@+id/scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fadingEdge="none"
+                android:overScrollMode="ifContentScrolls" >
+
+                <com.android.systemui.statusbar.NotificationLinearLayout
+                    android:id="@+id/notificationLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+                    
+                <!-- Begin, added by zhumeiquan for new req SW1 #5492, 20120524 -->
+				<LinearLayout android:gravity="center_vertical" 
+					android:id="@+id/usb_mode_notification" 
+					android:background="@drawable/notification_item_bg" 
+					android:focusable="true" 
+					android:clickable="true"
+					android:paddingLeft="5dip"
+					android:paddingRight="5dip"
+					android:layout_width="fill_parent" 
+					android:layout_height="64.0dip"
+					android:visibility="gone">
+				<ImageView android:layout_width="25dp" 
+					android:layout_height="25dp"
+					android:layout_marginRight="5dip"
+					android:src="@android:drawable/stat_sys_data_usb"
+					android:background="@android:drawable/notification_app_bg"
+					android:scaleType="fitCenter" />
+				<TextView android:textAppearance="@android:style/TextAppearance.StatusBar.EventContent.Title" 
+					android:ellipsize="marquee"
+					android:fadingEdge="horizontal" 
+					android:layout_width="match_parent" 
+					android:layout_height="wrap_content" 
+					android:text="@string/usb_mode_notification" 
+					android:singleLine="true" 
+					android:layout_weight="1.0" />
+				<LewaCheckBox android:id="@+id/usb_mode_button" 
+					android:focusable="false" 
+					android:clickable="false" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_marginRight="4.0dip" />
+				</LinearLayout>  
+				<!-- End -->
+
+                    <TextView
+                        android:id="@+id/noNotificationsTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shade_header_background"
+                        android:paddingLeft="5dp"
+                        android:text="@string/status_bar_no_notifications_title"
+                        android:textAppearance="@style/TextAppearance.StatusBar.Title" />
+
+                    <TextView
+                        android:id="@+id/ongoingTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shade_header_background"
+                        android:paddingLeft="5dp"
+                        android:text="@string/status_bar_ongoing_events_title"
+                        android:textAppearance="@style/TextAppearance.StatusBar.Title" />
+
+                    <LinearLayout
+                        android:id="@+id/ongoingItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        android:id="@+id/latestTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shade_header_background"
+                        android:paddingLeft="5dp"
+                        android:text="@string/status_bar_latest_events_title"
+                        android:textAppearance="@style/TextAppearance.StatusBar.Title" />
+
+                    <LinearLayout
+                        android:id="@+id/latestItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <TextView
+                        android:id="@+id/clear_all_button"
+                        style="@style/StatusBar.ClearButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="4dp"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:text="@string/status_bar_clear_all_button" />
+                </com.android.systemui.statusbar.NotificationLinearLayout>
+            </ScrollView>
+
+           <!--  <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/title_bar_shadow" /> -->
+        </FrameLayout>
+        
+    </RelativeLayout>
+    <!--
+               - <TextView android:id="@+id/clear_all_button"
+               -     android:layout_width="wrap_content"
+               -     android:layout_height="wrap_content"
+               -     android:layout_gravity="center_vertical"
+               -     android:layout_marginTop="4dp"
+               -     android:layout_marginBottom="1dp"
+               -     android:text="@string/status_bar_clear_all_button"
+               -     style="@style/StatusBar.ClearButton"
+               -     android:paddingLeft="15dp"
+               -     android:paddingRight="15dp"
+               - />
+    -->
+
+</com.android.systemui.statusbar.ExpandedView>

@@ -716,7 +716,7 @@ public class ConnectivityService extends IConnectivityManager.Stub {
         // TODO - move this into the MobileDataStateTracker
         int usedNetworkType = networkType;
         if(networkType == ConnectivityManager.TYPE_MOBILE) {
-            if (!getMobileDataEnabled()) {
+            if (!getMobileDataEnabled() && !(TextUtils.equals(feature, Phone.FEATURE_ENABLE_MMS))) {
                 if (DBG) Slog.d(TAG, "requested special network with data disabled - rejected");
                 return Phone.APN_TYPE_NOT_AVAILABLE;
             }
@@ -934,8 +934,10 @@ public class ConnectivityService extends IConnectivityManager.Stub {
      * @see ConnectivityManager#getBackgroundDataSetting()
      */
     public boolean getBackgroundDataSetting() {
+        // Begin, Modified by zhumeiquan for req 8194, 20120703
         return Settings.Secure.getInt(mContext.getContentResolver(),
-                Settings.Secure.BACKGROUND_DATA, 1) == 1;
+                Settings.Secure.BACKGROUND_DATA, 0) == 1;
+        // End
     }
 
     /**

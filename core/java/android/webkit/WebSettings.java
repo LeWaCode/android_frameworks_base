@@ -410,9 +410,15 @@ public class WebSettings {
             buffer.append(" Build/");
             buffer.append(id);
         }
-        final String modversion = SystemProperties.get("ro.modversion");
-        if (modversion != null && modversion.length() > 0)
-            buffer.append("; " + modversion.replaceAll("(.+?-.*?)-.*","$1"));
+
+        // by even 2012-05-23 modifyed UA added display.id
+        //final String modversion = SystemProperties.get("ro.modversion");
+        //if (modversion != null && modversion.length() > 0)
+        //    buffer.append("; " + modversion.replaceAll("(.+?-.*?)-.*","$1"));
+        final String lewaversion = SystemProperties.get("ro.build.display.id");
+        if (lewaversion != null && lewaversion.length() > 0)
+             buffer.append("; " + lewaversion);
+        
         final String base = mContext.getResources().getText(
                 com.android.internal.R.string.web_user_agent).toString();
         return String.format(base, buffer);

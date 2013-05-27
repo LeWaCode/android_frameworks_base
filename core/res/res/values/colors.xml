@@ -119,5 +119,16 @@
     <color name="dragndrop_background">#e0e0e0</color>
     <color name="viewPager_color0">#FFEDEDED</color>
     <color name="viewPager_color1">#00FFFFFF</color>
+    <!--add by luoyongxing for carrier label date and time text color in status bar-->
+    <color name="status_bar_textcolor">#FFFFFFFF</color>
+    <!--add end-->
+    <!--add by luoyongxing for title text color of activity title bar-->
+    <color name="activity_title_bar_textcolor">#FFFFFFFF</color>
+    <!--add end-->
+    <!--add by luoyongxing for title text color of page indicator-->
+    <color name="page_indicator_title_textcolor">#FF000000</color>
+    <color name="page_indicator_title_shadowcolor">#FFFFFFFF</color>
+    <color name="page_indicator_title_unfocus_textcolor">#FF888888</color>
+    <color name="page_indicator_title_unfocus_shadowcolor">#FFFFFFFF</color>
 </resources>
 

@@ -29,6 +29,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AbsListView.LayoutParams;
 
 /**
  * Represents a top-level {@link Preference} that
@@ -82,7 +83,7 @@ public final class PreferenceScreen extends PreferenceGroup implements AdapterVi
     private Dialog mDialog;
 
     private ListView mListView;
-    
+
     /**
      * Do NOT use this constructor, use {@link PreferenceManager#createPreferenceScreen(Context)}.
      * @hide-
@@ -132,7 +133,7 @@ public final class PreferenceScreen extends PreferenceGroup implements AdapterVi
     public void bind(ListView listView) {
         listView.setOnItemClickListener(this);
         listView.setAdapter(getRootAdapter());
-        
+
         onAttachedToActivity();
     }
     
@@ -141,27 +142,24 @@ public final class PreferenceScreen extends PreferenceGroup implements AdapterVi
         if (getIntent() != null || getPreferenceCount() == 0) {
             return;
         }
-        
         showDialog(null);
     }
     
     private void showDialog(Bundle state) {
         Context context = getContext();
-        if (mListView != null) {
-            mListView.setAdapter(null);
-        }
-        mListView = new ListView(context);
-        bind(mListView);
-
         // Set the title bar if title is available, else no title bar
         final CharSequence title = getTitle();
-        Dialog dialog = mDialog = new Dialog(context, TextUtils.isEmpty(title)
-                ? com.android.internal.R.style.Theme_NoTitleBar
-                : com.android.internal.R.style.Theme);
-        dialog.setContentView(mListView);
+        Dialog dialog = mDialog = new Dialog(context, com.android.internal.R.style.Theme_Preference);
+        dialog.setContentView(com.android.internal.R.layout.preference_list_content);
         if (!TextUtils.isEmpty(title)) {
             dialog.setTitle(title);
         }
+        ListView listview = (ListView)dialog.findViewById(android.R.id.list);
+        View view = new View(context);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 10);
+        view.setLayoutParams(params);
+        listview.addFooterView(view, null, false);        
+        bind(listview);
         dialog.setOnDismissListener(this);
         if (state != null) {
             dialog.onRestoreInstanceState(state);
@@ -185,7 +183,7 @@ public final class PreferenceScreen extends PreferenceGroup implements AdapterVi
      */
     public Dialog getDialog() {
         return mDialog;
-    }
+    }   
 
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         Object item = getRootAdapter().getItem(position);

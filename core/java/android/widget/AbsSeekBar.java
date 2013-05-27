@@ -388,4 +388,18 @@ public abstract class AbsSeekBar extends ProgressBar {
         return super.onKeyDown(keyCode, event);
     }
 
+public Rect getThumbBounds(){
+
+    if(mThumb != null)
+    {
+        Rect rect = mThumb.getBounds();
+        return rect;
+    }
+    else
+    {
+        return null;
+    }
+
+}
+
 }

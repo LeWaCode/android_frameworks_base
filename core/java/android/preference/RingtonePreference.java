@@ -19,6 +19,7 @@ package android.preference;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.Settings.System;
@@ -63,6 +64,8 @@ public class RingtonePreference extends Preference implements
         mShowSilent = a.getBoolean(com.android.internal.R.styleable.RingtonePreference_showSilent,
                 true);
         a.recycle();
+        //deleted by chenqiang for bug 4018,4453,20120328
+        //setPreviewValue(getRestoreRingtone());
     }
 
     public RingtonePreference(Context context, AttributeSet attrs) {
@@ -171,8 +174,27 @@ public class RingtonePreference extends Preference implements
      * @param ringtoneUri The chosen ringtone's {@link Uri}. Can be null.
      */
     protected void onSaveRingtone(Uri ringtoneUri) {
-        persistString(ringtoneUri != null ? ringtoneUri.toString() : "");
+        persistString(ringtoneUri != null ? ringtoneUri.toString() : "");        
     }
+
+    // Begin, added by zhumeiquan for new req ROM#3904
+    //same with onRestoreRingtone
+    private Uri getRestoreRingtone() {
+        final String uriString = getPersistedString(null);
+        return !TextUtils.isEmpty(uriString) ? Uri.parse(uriString) : null;
+    }
+
+    public void setPreviewValue(Uri uri) {
+        if (uri != null) {
+            final Ringtone r = RingtoneManager.getRingtone(getContext(), uri);
+            if (r != null) {
+                setSummary(r.getTitle(getContext()));
+            }
+        } else {
+            setSummary(com.android.internal.R.string.ringtone_silent_summary);
+        }
+    }
+    // End
 
     /**
      * Called when the chooser is about to be shown and the current ringtone
@@ -220,6 +242,8 @@ public class RingtonePreference extends Preference implements
         
         preferenceManager.registerOnActivityResultListener(this);
         mRequestCode = preferenceManager.getNextRequestCode();
+        //added by chenqiang for bug 4018,4453,20120328
+        setPreviewValue(onRestoreRingtone());
     }
 
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -228,12 +252,13 @@ public class RingtonePreference extends Preference implements
             
             if (data != null) {
                 Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-                
                 if (callChangeListener(uri != null ? uri.toString() : "")) {
                     onSaveRingtone(uri);
+                    // Begin, added by zhumeiquan for new req ROM#3904
+                    setPreviewValue(uri); 
+                    // End
                 }
-            }
-            
+            }            
             return true;
         }
         

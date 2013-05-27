@@ -51,7 +51,13 @@ import android.widget.QuickContactBadge;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 /**
  * Header used across system for displaying a title bar with contact info. You
  * can bind specific values on the header, or use helper methods like
@@ -257,6 +263,8 @@ public class ContactHeaderWidget extends FrameLayout implements View.OnClickList
                         if (photoBitmap == null) {
                             photoBitmap = loadPlaceholderPhoto(null);
                         }
+                        photoBitmap = toRoundCorner(photoBitmap, 30);
+                        mPhotoView.setScaleType(ImageView.ScaleType.FIT_XY);
                         mPhotoView.setImageBitmap(photoBitmap);
                         if (cookie != null && cookie instanceof Uri) {
                             mPhotoView.assignContactUri((Uri) cookie);
@@ -665,4 +673,25 @@ public class ContactHeaderWidget extends FrameLayout implements View.OnClickList
         return BitmapFactory.decodeResource(mContext.getResources(),
                 mNoPhotoResource, options);
     }
+	
+	public static Bitmap toRoundCorner(Bitmap bitmap, int pixels) {
+		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+		Canvas canvas = new Canvas(output);
+
+		final int color = 0xff424242;
+		final Paint paint = new Paint();
+		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		final RectF rectF = new RectF(rect);
+		final float roundPx = pixels;
+
+		paint.setAntiAlias(true);
+		canvas.drawARGB(0, 0, 0, 0);
+		paint.setColor(color);
+		canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+		paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+		canvas.drawBitmap(bitmap, rect, rect, paint);
+
+		return output;
+	}
 }

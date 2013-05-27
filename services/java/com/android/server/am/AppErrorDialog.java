@@ -12,22 +12,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *
+ * edit by wangfan 2012/04/07
+ * change the style of AppErrorDialog
  */
 
 package com.android.server.am;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SYSTEM_ERROR;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Slog;
+import com.android.internal.R;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.content.Context;
 
 class AppErrorDialog extends BaseErrorDialog {
     private final static String TAG = "AppErrorDialog";
-
+		
     private final AppErrorResult mResult;
     private final ProcessRecord mProc;
 
@@ -42,12 +51,27 @@ class AppErrorDialog extends BaseErrorDialog {
     
     public AppErrorDialog(Context context, AppErrorResult result, ProcessRecord app, boolean showRevoked) {
         super(context);
-
+				
         Resources res = context.getResources();
-
+				           
         mProc = app;
         mResult = result;
         CharSequence name;
+            
+        /***** begin add by wangfan *****/
+        //set custom layout
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.fc_window, null);
+        setView(layout);
+        
+        //show info of the fc app
+        TextView appInfoText = (TextView)layout.findViewById(R.id.fc_app_info);
+        String front = res.getString(R.string.fc_app_info_front);
+        String rear = res.getString(R.string.fc_app_info_rear); 
+		appInfoText.setText(front + context.getPackageManager().getApplicationLabel(app.info).toString() + rear);
+	    /*****        end          *****/
+				
+        /*********** remove by wangfan 
         if ((app.pkgList.size() == 1) &&
                 (name=context.getPackageManager().getApplicationLabel(app.info)) != null) {
             if (showRevoked) {
@@ -71,7 +95,8 @@ class AppErrorDialog extends BaseErrorDialog {
                         name.toString()));
             }
         }
-
+        ***********/
+  
         setCancelable(false);
 
         setButton(DialogInterface.BUTTON_POSITIVE,
@@ -94,10 +119,9 @@ class AppErrorDialog extends BaseErrorDialog {
                     mHandler.obtainMessage(FORCE_QUIT_AND_RESET_PERMS));
         }
 
-        setTitle(res.getText(com.android.internal.R.string.aerr_title));
-        getWindow().addFlags(FLAG_SYSTEM_ERROR);
-        getWindow().setTitle("Application Error: " + app.info.processName);
-
+        //this.getWindow.addFlags(FLAG_SYSTEM_ERROR);
+        setTitle(res.getString(R.string.fc_window_sorry));
+        
         // After the timeout, pretend the user clicked the quit button
         mHandler.sendMessageDelayed(
                 mHandler.obtainMessage(FORCE_QUIT),

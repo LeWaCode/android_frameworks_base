@@ -25,6 +25,8 @@ import android.util.Log;
 import android.app.ActivityManager;
 import android.os.SystemClock;
 
+import android.content.res.lewaface.*;
+
 public class AppsLaunchFailureReceiver extends BroadcastReceiver {
 
     private static final int FAILURES_THRESHOLD = 5;
@@ -57,6 +59,8 @@ public class AppsLaunchFailureReceiver extends BroadcastReceiver {
                     currentConfig.customTheme = new CustomTheme(
                             defaultTheme.getThemeId(),
                             defaultTheme.getThemePackageName());
+// modify for lewatheme by luoyongxing
+					currentConfig.lewaTheme = LewaTheme.getSystemTheme();
                     am.updateConfiguration(currentConfig);
                 }
             }

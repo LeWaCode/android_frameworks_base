@@ -617,6 +617,10 @@
          to enable use of the new Release 9 tables for Indic languages. -->
     <integer-array name="config_sms_enabled_locking_shift_tables"></integer-array>
 
+    <!-- Remote server that can provide NTP responses. -->
+    <string translatable="false" name="config_ntpServer">cn.pool.ntp.org</string>
+    <!-- Timeout to wait for NTP server response. -->
+    <integer name="config_ntpTimeout">20000</integer>
     <!-- Set and Unsets WiMAX -->
     <bool name="config_wimaxEnabled">false</bool>
     <!-- Location of the wimax framwork jar location -->

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<LinearLayout 
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="5dip"
+    	android:layout_marginBottom="5dip"
+		>
+		<TextView
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:paddingLeft="10dip"
+    		android:textSize="18dip"
+    		android:text="@string/set_query_number"
+			/>
+		<EditText android:id="@+id/sms_input_code"
+			android:layout_weight="4"
+			android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_marginRight="10dip"
+    		android:textSize="18dip"
+			/>
+	</LinearLayout>	
+	<LinearLayout 
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="5dip"
+    	android:layout_marginBottom="5dip"
+		>
+		<TextView
+			android:layout_weight="1"
+			android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+			android:paddingLeft="10dip"   		
+    		android:textSize="18dip"
+    		android:text="@string/set_carrier_number"
+			/>
+		<EditText android:id="@+id/sms_input_number"
+			android:layout_weight="4"
+			android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_marginRight="10dip"
+    		android:textSize="18dip"
+    		android:numeric="integer"
+			/>
+	</LinearLayout>	
+	<RelativeLayout 
+		android:layout_width="wrap_content"
+    	android:layout_height="100dip"
+    	android:background="@drawable/android:bottom_bar"
+		>
+		<Button android:id="@+id/button1"
+			android:layout_width="140dip"
+    		android:layout_height="50dip"
+    		android:layout_marginTop="2dip"
+    		android:layout_alignParentLeft="true"
+    		android:layout_alignParentTop="true"
+    		android:text="@string/query" 
+		/>
+		<Button android:id="@+id/button2"
+			android:layout_width="140dip"
+    		android:layout_height="50dip"
+    		android:layout_marginTop="2dip"
+    		android:layout_alignParentRight="true"
+    		android:layout_alignParentTop="true"
+    		android:text="@string/restore_default"   		
+		/>
+		<Button android:id="@+id/button3"
+			android:layout_width="140dip"
+    		android:layout_height="50dip"
+    		android:layout_alignParentLeft="true"
+    		android:layout_alignParentBottom="true"
+    		android:text="@string/save" 
+		/>
+		<Button android:id="@+id/button4"
+			android:layout_width="140dip"
+    		android:layout_height="50dip"
+    		android:layout_alignParentRight="true"
+    		android:layout_alignParentBottom="true"
+    		android:text="@string/cancel" 
+		/>
+	</RelativeLayout>
+	
+</LinearLayout>

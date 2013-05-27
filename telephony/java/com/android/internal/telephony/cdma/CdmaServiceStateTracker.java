@@ -827,6 +827,9 @@ final class CdmaServiceStateTracker extends ServiceStateTracker {
                 String opNames[] = (String[])ar.result;
 
                 if (opNames != null && opNames.length >= 3) {
+				    Log.e(LOG_TAG, "EVENT_POLL_STATE_OPERATOR_CDMA "+ opNames[0] + "|" +opNames[1] + "|" +opNames[0]);
+                    /* if(opNames[2].equals("460003")) //hardcode from ivan,by george,2011-12-22
+                            opNames[2]="46003"; */
                     if (cm.getRadioState().isNVReady()) {
                         // In CDMA in case on NV, the ss.mOperatorAlphaLong is set later with the
                         // ERI text, so here it is ignored what is coming from the modem.

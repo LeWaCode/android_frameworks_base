@@ -50,7 +50,7 @@
 
             <TextView
                 android:id="@+id/text"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="left"
@@ -63,7 +63,7 @@
 
         <android.widget.DateTimeView
             android:id="@+id/time"
-            android:layout_width="wrap_content"
+            android:layout_width="150.0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="right"

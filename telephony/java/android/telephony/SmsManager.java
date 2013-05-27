@@ -489,6 +489,18 @@ public final class SmsManager {
         }
         return messages;
     }
+    
+    // Add by Fanzhong
+    public void setNewSmsIndication(int newPosition){
+      try
+      {
+        ISms iccISms = ISms.Stub.asInterface(ServiceManager.getService("isms"));
+        if (iccISms != null)
+          iccISms.setNewSmsIndication(newPosition);
+      }
+      catch (RemoteException localRemoteException){
+      }
+    }
 
     // see SmsMessage.getStatusOnIcc
 

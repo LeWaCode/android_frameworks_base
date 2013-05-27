@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.content.pm.ApplicationInfo;
 
 import com.android.internal.app.AlertController;
 
@@ -62,6 +63,14 @@ public class AlertDialog extends Dialog implements DialogInterface {
     protected AlertDialog(Context context, int theme) {
         super(context, theme);
         mAlert = new AlertController(context, this, getWindow());
+         
+         ApplicationInfo info =  context.getApplicationInfo();
+         String strCls = info.className;
+         if(strCls != null && strCls.equals("com.google.googlenav.android.AndroidGmmApplication")) {
+            mAlert.mIsLewaBackGround  = false;
+         } else {
+             mAlert.mIsLewaBackGround =  !((info.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0);
+         }
     }
 
     protected AlertDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
@@ -250,7 +259,14 @@ public class AlertDialog extends Dialog implements DialogInterface {
         super.onCreate(savedInstanceState);
         mAlert.installContent();
     }
-
+    //Begin add by panqianbo for new ui 20120409
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAlert.onStart();
+      
+    }
+    //End
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (mAlert.onKeyDown(keyCode, event)) return true;
@@ -277,10 +293,10 @@ public class AlertDialog extends Dialog implements DialogInterface {
         /**
          * Constructor using a context and theme for this builder and
          * the {@link AlertDialog} it creates.
-         * @hide
          */
         public Builder(Context context, int theme) {
             P = new AlertController.AlertParams(context);
+            P.setLewaStyleState();
             mTheme = theme;
         }
         

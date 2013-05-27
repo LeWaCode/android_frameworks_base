@@ -28,6 +28,7 @@ import android.content.Entity;
 import android.content.EntityIterator;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
@@ -41,6 +42,7 @@ import android.view.View;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * <p>
@@ -345,6 +347,16 @@ public final class ContactsContract {
          * <P>Type: INTEGER (0 for false, 1 for true)</P>
          */
         public static final String SEND_TO_VOICEMAIL = "send_to_voicemail";
+
+        //begin for yiliao, add by jxli
+        public static final String CONTACT_TYPE = "contact_type";
+
+        public static final String YL_REMARK = "yl_remark";
+        
+        public static final String YL_STATUS = "yl_status";
+        
+        public static final String SIM = "sim";
+        //end
     }
 
     /**
@@ -376,6 +388,16 @@ public final class ContactsContract {
          * <P>Type: INTEGER REFERENCES data(_id)</P>
          */
         public static final String PHOTO_ID = "photo_id";
+
+	 /**
+         * Photo file ID of the full-size photo.  If present, this will be used to populate
+         * {@link #PHOTO_URI}.  The ID can also be used with
+         * {@link ContactsContract.DisplayPhoto#CONTENT_URI} to create a URI to the photo.
+         * If this is present, {@link #PHOTO_ID} is also guaranteed to be populated.
+         *
+         * <P>Type: INTEGER</P>
+         */
+        public static final String PHOTO_FILE_ID = "photo_file_id";
 
         /**
          * Lookup value that reflects the {@link Groups#GROUP_VISIBLE} state of
@@ -1153,20 +1175,67 @@ public final class ContactsContract {
             public static final String PHOTO = DATA15;
         }
 
-        /**
-         * Opens an InputStream for the contacts's default photo and returns the
-         * photo as a byte stream. If there is not photo null will be returned.
-         *
-         * @param contactUri the contact whose photo should be used
+	 public static final class DisplayPhoto implements BaseColumns, DataColumns {
+            /**
+             * no public constructor since this is a utility class
+             */
+            private DisplayPhoto() {}
+
+            /**
+             * The directory twig for this sub-table
+             */
+            public static final String CONTENT_DIRECTORY = "display_photo";
+
+	     /**
+             * Display photo of the  contact.
+             *
+             */
+
+            public static final String PHOTO_FILE_ID = DATA14;
+	     /**
+             * Thumbnail photo of the raw contact. This is the raw bytes of an image
+             * that could be inflated using {@link android.graphics.BitmapFactory}.
+             * <p>
+             * Type: BLOB
+             */
+            public static final String PHOTO = DATA15;
+        }
+
+	 /**
+         * Opens an InputStream for the contacts's photo and returns the
+         * photo as a byte stream.
+         * @param cr The content resolver to use for querying
+         * @param contactUri the contact whose photo should be used. This can be used with
+         * either a {@link #CONTENT_URI} or a {@link #CONTENT_LOOKUP_URI} URI.
+         * @param preferHighres If this is true and the contact has a higher resolution photo
+         * available, it is returned. If false, this function always tries to get the thumbnail
          * @return an InputStream of the photo, or null if no photo is present
          */
-        public static InputStream openContactPhotoInputStream(ContentResolver cr, Uri contactUri) {
+        public static InputStream openContactPhotoInputStream(ContentResolver cr, Uri contactUri,
+                boolean preferHighres, boolean preferHighresOnly) {
+            if (preferHighres) {
+                final Uri displayPhotoUri = Uri.withAppendedPath(contactUri,
+                        Contacts.DisplayPhoto.CONTENT_DIRECTORY);
+                InputStream inputStream;
+                try {
+                    AssetFileDescriptor fd = cr.openAssetFileDescriptor(displayPhotoUri, "r");
+                    return fd.createInputStream();
+                } catch (IOException e) {
+                	if(preferHighresOnly) {
+				return null;
+            		}											
+                    // fallback to the thumbnail code
+                }
+           }
+
             Uri photoUri = Uri.withAppendedPath(contactUri, Photo.CONTENT_DIRECTORY);
             if (photoUri == null) {
                 return null;
             }
             Cursor cursor = cr.query(photoUri,
-                    new String[]{ContactsContract.CommonDataKinds.Photo.PHOTO}, null, null, null);
+                    new String[] {
+                        ContactsContract.CommonDataKinds.Photo.PHOTO
+                    }, null, null, null);
             try {
                 if (cursor == null || !cursor.moveToNext()) {
                     return null;
@@ -1181,6 +1250,28 @@ public final class ContactsContract {
                     cursor.close();
                 }
             }
+        }
+
+	  /**
+         * Opens an InputStream for the contacts's default photo and returns the
+         * photo as a byte stream. If there is not photo null will be returned.
+         *
+         * @param contactUri the contact whose photo should be used
+         * @return an InputStream of the photo, or null if no photo is present
+         */
+        public static InputStream openContactPhotoInputStream(ContentResolver cr, Uri contactUri,boolean preferHighres) {
+           return openContactPhotoInputStream(cr, contactUri,preferHighres, false);
+        }
+
+        /**
+         * Opens an InputStream for the contacts's default photo and returns the
+         * photo as a byte stream. If there is not photo null will be returned.
+         *
+         * @param contactUri the contact whose photo should be used
+         * @return an InputStream of the photo, or null if no photo is present
+         */
+        public static InputStream openContactPhotoInputStream(ContentResolver cr, Uri contactUri) {
+           return openContactPhotoInputStream(cr, contactUri, false);
         }
     }
 
@@ -1986,6 +2077,51 @@ public final class ContactsContract {
          */
         public static final int CAPABILITY_HAS_CAMERA = 4;
     }
+
+    /**
+     * <p>
+     * Constants for the photo files table, which tracks metadata for hi-res photos
+     * stored in the file system.
+     * </p>
+     *
+     * @hide
+     */
+    public static final class PhotoFiles implements BaseColumns, PhotoFilesColumns {
+        /**
+         * No public constructor since this is a utility class
+         */
+        private PhotoFiles() {
+        }
+    }
+
+    /**
+     * Columns in the PhotoFiles table.
+     *
+     * @see ContactsContract.PhotoFiles
+     *
+     * @hide
+     */
+    protected interface PhotoFilesColumns {
+
+        /**
+         * The height, in pixels, of the photo this entry is associated with.
+         * <P>Type: NUMBER</P>
+         */
+        public static final String HEIGHT = "height";
+
+        /**
+         * The width, in pixels, of the photo this entry is associated with.
+         * <P>Type: NUMBER</P>
+         */
+        public static final String WIDTH = "width";
+
+        /**
+         * The size, in bytes, of the photo stored on disk.
+         * <P>Type: NUMBER</P>
+         */
+        public static final String FILESIZE = "filesize";
+    }
+
 
     /**
      * Columns in the Data table.
@@ -4672,6 +4808,28 @@ public final class ContactsContract {
             public static final String PHOTO = DATA15;
         }
 
+	 public static final class DisplayPhoto implements DataColumnsWithJoins {
+            /**
+             * This utility class cannot be instantiated
+             */
+            private DisplayPhoto() {}
+
+            /** MIME type used when storing this in data table. */
+            public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/display_photo";
+	        /**
+             * Display photo of the  contact.
+             *
+             */
+            public static final String PHOTO_FILE_ID = DATA14;
+	     /**
+             * Thumbnail photo of the raw contact. This is the raw bytes of an image
+             * that could be inflated using {@link android.graphics.BitmapFactory}.
+             * <p>
+             * Type: BLOB
+             */
+            public static final String PHOTO = DATA15;
+        }
+
         /**
          * <p>
          * Notes about the contact.
@@ -6043,5 +6201,103 @@ public final class ContactsContract {
              */
             public static final String IM_ISPRIMARY = "im_isprimary";
         }
+    }
+
+    public interface UserColumns {
+        public static final String USER_ID = "user_id";
+        public static final String PASSWD = "passwd";
+        public static final String NICK_NAME = "nick_name";
+        public static final String PHOTO = "photo";
+        public static final String REMARK = "remark";
+        public static final String EMAIL = "email";
+        public static final String STATUS = "status";
+        public static final String ACCOUNT_TYPE = "account_type";
+	//add by zenghuayin for weibo 
+	public static final String WEIBO_NAME = "weibo_name";
+	public static final String WEIBO_STATUS = "weibo_status";
+
+	//add end
+    }
+
+    public interface RosterColumns {
+        public static final String CONTACT_ID = "contact_id";
+        public static final String NAME_USER_ID = "user_id";
+        public static final String DISPLAY_NAME = "display_name";
+        public static final String SORT_KEY = "sort_key";
+//        public static final String SORT_KEY_ALT = "sort_key_alt";
+        public static final String REMARK = "remark";
+        public static final String PHOTO = "photo";
+        public static final String DURATION = "duration";
+        public static final String IS_DEFAULT = "is_default";
+        public static final String STATUS = "status";
+//        public static final String IS_LOCAL = "is_local";
+    }
+
+    public interface RosterDataColumns {
+        public static final String ROSTER_ID = "roster_id";
+        public static final String ROSTER_USER_ID = "roster_user_id";
+        public static final String NAME_USER_ID = "name_user_id";
+        public static final String NICK_NAME = "nick_name";
+        public static final String DISPLAY_NAME = "display_name";
+        public static final String EMAIL = "email";
+        public static final String PHOTO = "photo";
+        public static final String SORT_KEY = "sort_key";
+//        public static final String SORT_KEY_ALT = "sort_key_alt";
+        public static final String DURATION = "duration";
+        public static final String REMARK = "remark";
+        public static final String STATUS = "status";
+        public static final String IS_PRIMARY = "is_primary";
+//        public static final String IS_LOCAL = "is_local";   //for roster
+    }
+
+    public static final class User implements BaseColumns, UserColumns {
+
+        private User (){
+
+        }
+        
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "user");
+        
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/user";
+
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/user";
+
+        public static final int TYPE_LEWA = 1;
+        public static final int TYPE_YILIAO = 2;
+        public static final int TYPE_GEXIN = 3;
+
+        public static final int STATUS_OFFLINE = 0;
+        public static final int STATUS_ONLINE = 1;
+        
+    }
+
+    public static final class Roster implements BaseColumns, RosterColumns {
+
+        private Roster (){
+
+        }
+        
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "roster");
+
+        public static final Uri CONTENT_FILTER_URI = Uri.withAppendedPath(
+                CONTENT_URI, "filter");
+        
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/roster";
+
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/roster";
+        
+    }
+
+    public static final class RosterData implements BaseColumns, RosterDataColumns {
+
+        private RosterData (){
+
+        }
+        
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "rosterdata");
+        
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/rosterdata";
+
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/rosterdata";
     }
 }

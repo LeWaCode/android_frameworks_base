@@ -356,6 +356,11 @@ public interface WindowManager extends ViewManager {
         public static final int TYPE_SECURE_SYSTEM_OVERLAY = FIRST_SYSTEM_WINDOW+15;
 
         /**
+         * Window type: Top most
+         * @hide
+         */
+        public static final int TYPE_TOP_MOST     = FIRST_SYSTEM_WINDOW+16;
+        /**
          * End of types of system windows.
          */
         public static final int LAST_SYSTEM_WINDOW      = 2999;
@@ -630,8 +635,7 @@ public interface WindowManager extends ViewManager {
          * {@hide} */
         public static final int FLAG_SYSTEM_ERROR = 0x40000000;
 
-        /** Window flag: Overrides default power key behavior
-         * {@hide} */
+        /** Window flag: Overrides default power key behavior */
         public static final int PREVENT_POWER_KEY = 0x80000000;
 
         /**

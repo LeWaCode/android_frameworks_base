@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="36dip"
+    android:windowIsFloating="true"
+    >
+    <LinearLayout 
+    	android:id="@+id/panel" 
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content"
+    	android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+    	android:background="@drawable/lw_bg_vkey_bar"
+    	 >
+		<ImageView
+    		android:id="@+id/home"
+    		android:src="@drawable/lw_ic_vkey_home"	
+    		android:layout_weight="1"
+    		android:layout_width="0dip"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentLeft="true"
+    		android:background="@drawable/keys_select"
+    		 />
+    	<ImageView
+    		android:id="@+id/menu"
+    		android:src="@drawable/lw_ic_vkey_menu"	
+    		android:layout_weight="1"
+    		android:layout_width="0dip"
+    		android:layout_height="wrap_content"
+    		android:layout_centerHorizontal="true"
+    		android:background="@drawable/keys_select"
+    		/>	
+    
+    	<ImageView
+    		android:id="@+id/back"
+    		android:src="@drawable/lw_ic_vkey_back"	
+    		android:layout_weight="1"
+    		android:layout_width="0dip"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentRight="true"
+    		android:background="@drawable/keys_select"
+    		/>
+    </LinearLayout>
+</LinearLayout>

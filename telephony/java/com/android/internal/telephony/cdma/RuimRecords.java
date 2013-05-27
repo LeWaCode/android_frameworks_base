@@ -179,8 +179,11 @@ public final class RuimRecords extends IccRecords {
         // Guess the MNC length based on the MCC if we don't
         // have a valid value in ef[ad]
 
-        int mcc = Integer.parseInt(mImsi.substring(0,3));
-        return mImsi.substring(0, 3 + MccTable.smallestDigitsMccForMnc(mcc));
+       int mcc = Integer.parseInt(mImsi.substring(0,3));
+       String numbric = mImsi.substring(0, 3 + MccTable.smallestDigitsMccForMnc(mcc));
+       Log.d(LOG_TAG, "getRUIMOperatorNumeric "+numbric);
+       //return numbric;
+       return "46003"; // from ivan, by george,2011-12-22,hardcode
     }
 
     @Override

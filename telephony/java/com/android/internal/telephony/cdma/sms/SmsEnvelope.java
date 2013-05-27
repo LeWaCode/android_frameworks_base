@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2010-2011, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +38,8 @@ public final class SmsEnvelope{
     static public final int TELESERVICE_VMN               = 0x1003;
     static public final int TELESERVICE_WAP               = 0x1004;
     static public final int TELESERVICE_WEMT              = 0x1005;
+    static public final int TELESERVICE_CATPT             = 0x1007;
+    static public final int TELESERVICE_CT_WAP            = 0xFDEA;
 
     /**
      * The following are defined as extensions to the standard teleservices
@@ -54,6 +57,14 @@ public final class SmsEnvelope{
      *  maximum lengths for fields as defined in ril_cdma_sms.h
      */
     static public final int SMS_BEARER_DATA_MAX = 255;
+
+    /**
+     * Service categories for Cmas messages
+     * (See 3GPP2 C.R1001G 9.3.3)
+     */
+    static public final int EMERGENCY_MESSAGE_ID_START = 0x1000;
+    static public final int EMERGENCY_MESSAGE_ID_END = 0x1004;
+
 
     /**
      * Provides the type of a SMS message like point to point, broadcast or acknowledge
@@ -120,6 +131,14 @@ public final class SmsEnvelope{
 
     public SmsEnvelope() {
         // nothing to see here
+    }
+
+    public boolean isCmas() {
+        if (serviceCategory >= EMERGENCY_MESSAGE_ID_START &&
+                serviceCategory <= EMERGENCY_MESSAGE_ID_END) {
+            return true;
+        }
+        return false;
     }
 
 }

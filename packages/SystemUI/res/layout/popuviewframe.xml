@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.statusbar.PopuViewFrame xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dip"
+        android:background="#ffe6e6e6"
+        >
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="15sp"
+	        android:textColor="@android:color/preference_primary_text_light"
+	        android:text="@string/poputip_title1"  />
+	    <TextView
+	        android:id="@+id/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="5dip"
+	        android:textColor="#00a9ed"
+	        android:ellipsize="end"
+	        android:singleLine="true"
+	        android:textSize="15sp" />
+	 </LinearLayout>    
+	 
+	 <View
+	      android:layout_width="fill_parent"
+          android:layout_height="1dip"
+          android:background="#ffe6e6e6"/>
+          
+     <LinearLayout 
+        android:id="@+id/app_stop"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="10dip"
+        android:background="@drawable/bg_highlight_s"
+        android:clickable="true"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FF0000"
+            android:text="@string/poputip_title2"  />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/poputip_title3"  />
+     </LinearLayout>      
+     
+     <View
+          android:layout_width="fill_parent"
+          android:layout_height="1dip"
+          android:background="@android:drawable/divider_horizontal_bright"/>
+          
+     <LinearLayout 
+        android:id="@+id/app_info"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/bg_highlight_s"
+        android:clickable="true"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        >     
+          
+     <TextView
+          android:padding="10dip"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:textColor="@android:color/preference_primary_text_light"
+          android:text="@string/poputip_title4"  />    
+           
+     </LinearLayout>     
+</com.android.systemui.statusbar.PopuViewFrame>

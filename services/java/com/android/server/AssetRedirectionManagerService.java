@@ -28,9 +28,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.io.File;
+import java.util.Enumeration;
+import android.content.res.lewaface.*;
+import java.io.InputStream;
+
 public class AssetRedirectionManagerService extends IAssetRedirectionManager.Stub {
     private static final String TAG = "AssetRedirectionManager";
-
+    private static final boolean DEBUG = true;
     private final Context mContext;
 
     /*
@@ -39,11 +47,98 @@ public class AssetRedirectionManagerService extends IAssetRedirectionManager.Stu
      */
     private final HashMap<RedirectionKey, PackageRedirectionMap> mRedirections =
             new HashMap<RedirectionKey, PackageRedirectionMap>();
+// modify for lewatheme by luoyongxing
+	private final HashMap<String, LewaRedirectionMap> mLewaRedirections =
+            new HashMap<String, LewaRedirectionMap>();
 
+    private static ArrayList<String> mLocaleDirName = new ArrayList<String>();
+
+	private String mLewaThemeID;
+	
     public AssetRedirectionManagerService(Context context) {
         mContext = context;
     }
 
+// modify for lewatheme by luoyongxing
+	@Override
+	public LewaRedirectionMap lewaGetPackageRedirectionMap(String packageName, String themeID)
+	throws RemoteException{
+		synchronized(mLewaRedirections){
+			if(mLewaThemeID != null && !mLewaThemeID.equals(themeID)){
+				Log.i(TAG, "clear map, new id="+themeID+" old id="+mLewaThemeID);
+				lewaClearRedirectionMaps();
+			}
+			LewaRedirectionMap map = mLewaRedirections.get(packageName);
+			if(map == null){
+				map = lewaGenerateRedirectionMaps(packageName);
+				if(map == null){
+					return null;
+				}
+				mLewaRedirections.put(packageName, map);
+			}
+			mLewaThemeID = themeID;
+			return map;
+		}
+	}
+	@Override 
+	public void lewaClearRedirectionMaps()
+	throws RemoteException{
+	        if(mLewaThemeID == null){
+                if(DEBUG)Log.i(TAG, "lewaRedirectionMaps already cleared.");
+                return;
+            }
+		 synchronized (mLewaRedirections) {
+		 	for(HashMap.Entry<String, LewaRedirectionMap> entry: mLewaRedirections.entrySet()){
+				entry.getValue().clear();
+			}
+            mLewaRedirections.clear();
+            mLocaleDirName.clear();
+			mLewaThemeID = null;
+        }
+	}
+
+	private LewaRedirectionMap lewaGenerateRedirectionMaps(String packageName){
+	    AssetManager assets = new AssetManager();
+        boolean frameworkAssets = packageName.equals("android") || packageName.equals("framework-res");
+		StringBuilder sb = new StringBuilder(LewaTheme.LEWA_THEME_RES_PATH);
+		String resDirPath;
+	
+		PackageInfo pi = getPackageInfo(mContext, packageName);
+		if(pi == null || pi.applicationInfo == null){
+			 Log.w(TAG, "invalid package:" + packageName);
+			 return null;
+		}
+       
+        if(DEBUG)Log.i(TAG, "redicrection for " + packageName);
+        LewaRedirectionMap resMap = new LewaRedirectionMap(packageName);
+	
+		// TODO: style change
+        /*
+         * Apply a special redirection hack for the highest level <style>
+         * replacing @android:style/Theme.
+         */
+        /*if (frameworkAssets) {
+            int themeResourceId = findThemeResourceId(pi.themeInfos, key.themeId);
+            assets.generateStyleRedirections(resMap.getNativePointer(), android.R.style.Theme,
+                    themeResourceId);
+        }*/
+        if (assets.addAssetPath(pi.applicationInfo.publicSourceDir) == 0 ) {
+            Log.w(TAG, "add framework-res assetspath failed for:" + packageName);
+            return null;
+		}
+		if (frameworkAssets) {   
+			sb.append("framework-res");
+	    }else{   
+			sb.append(packageName);
+		}
+        Resources res = new Resources(assets, null, null);
+        resDirPath = sb.toString();
+		if(lewaBuildRedirectMap(res, resDirPath, packageName, resMap)){
+			return resMap;
+		}
+        return null;
+	}
+	
     @Override
     public void clearRedirectionMapsByTheme(String themePackageName, String themeId)
             throws RemoteException {
@@ -393,5 +488,178 @@ public class AssetRedirectionManagerService extends IAssetRedirectionManager.Stu
         private String getResourceLabel() {
             return "resource #0x" + Integer.toHexString(mResourceId);
         }
+    }
+
+	/////////////////////////////////////////////////
+	public static  boolean lewaBuildRedirectMap(Resources res, String fullPath, String packageName, LewaRedirectionMap rMap)
+    {
+    	String path = fullPath;
+    	
+    	if(path == null || res == null || packageName == null){
+    		return false;
+    	}
+    	
+    	File fHandle = new File(path);
+    	if(fHandle.exists() == false){
+    		return false;
+    	}
+    	else if(fHandle.isFile()){// is a zip file
+    		return lewaParseResZipFile(res, path, packageName, rMap);
+    	}else{
+    	    Log.e(TAG, "model resource is not a zipfile.");
+        }
+    		
+    	return false;
+    }
+
+	
+	private static boolean lewaParseResZipFile(Resources res, String zipFileName, String packageName, LewaRedirectionMap map)
+    {
+    	Enumeration<?> fileList;
+    	ZipFile zipfile = null;
+        InputStream is = null;
+        HashMap<Integer, Long> rMap = map.getRedirectionMap();
+        
+    	try{
+    		zipfile = new ZipFile(zipFileName);
+    	
+        	fileList = zipfile.entries();
+        	ZipEntry entry;
+        	String resName;
+        	
+        	for (fileList = zipfile.entries(); fileList.hasMoreElements();) 
+        	{
+        		entry  = (ZipEntry) fileList.nextElement();
+                if(!entry.isDirectory())
+                {
+                	
+            		String fullname = entry.getName();
+            		int l = fullname.lastIndexOf("/");
+    				if(l == -1){
+    					if(fullname.equals(LewaTheme.LEWA_THEME_VALUES_FILE)){            
+                            is = zipfile.getInputStream(entry);
+                            if(is != null){
+							    ValueParser vp = new ValueParser(is, res, packageName, rMap);
+							    vp.parseValues();
+                                is.close();
+                                is = null;
+                            }
+    						
+    					}else{
+    						Log.e(TAG, "warning! can't find the '/' at "+fullname);
+    					}
+    					continue;
+    				}
+    				l += 1;
+            		int e = fullname.lastIndexOf('.');
+    				if(e == -1){
+    					Log.e(TAG, "ERROR! can't find the '.' at "+fullname);
+    					continue;
+    				}else if(fullname.endsWith(".9.png")){// xxx.9.png 's value name is xxx
+    					e -= 2;
+    				}
+            		resName = "drawable/" + fullname.substring(l,e);
+            		
+            		String tmpStr = fullname.substring(0, l-1);
+            		int ls = tmpStr.lastIndexOf('/');
+    				if(ls == -1){
+    					Log.e(TAG, "ERROR! can't find the '/' at "+tmpStr);
+    					continue;
+    				}
+            		String localeDir = fullname.substring(ls+1, l-1);
+    				if(localeDir == null || localeDir.length() <= 0){
+    					Log.e(TAG, "ERROR! can't find locale dir at "+fullname);
+    					continue;
+    				}
+            		int localeIndex = lewaGetLocaleDirIndex(localeDir, map.getLocaleDirNames());
+    				if(localeIndex < 0)
+    				{
+    					Log.e(TAG, "ERROR! can't index locale dir:"+localeDir);
+    					continue;
+    				}
+            		
+            		int id;
+    				id = res.getIdentifier(resName, null, packageName);
+    				if(id == 0)
+    				{
+    					Log.e(TAG, "ERROR!can't get resid from name:"+resName+", packageName="+packageName);
+    					continue;
+    				}
+    				if(DEBUG)Log.i(TAG, "get resid from name:"+resName+", id=" + Integer.toHexString(id));
+    				Long localeMask = rMap.get(id);
+    				long mask = 0;
+    				if(localeMask != null){
+    					mask = localeMask;
+    				}
+    				mask = mask | (1<<(localeIndex));
+    				rMap.put(id, mask);
+                }
+             
+                           
+            }// for
+        }catch(IOException eio){
+    		eio.printStackTrace();
+    		return false;
+    	}finally{
+    	    try{
+                if(zipfile != null){
+					zipfile.close();
+					zipfile = null;
+				}
+                if(is != null){
+					is.close();
+					is = null;
+				}
+             }catch(IOException e){
+                e.printStackTrace();
+             }
+        }
+        
+        return true;
+    }
+
+
+	 /*
+     *  return is the LocaleDir index, if failed return -1.
+     *  if the mLocaleDirName don't contain this name, add this name to mLocaleDirName, and return the index.
+     */
+	private static int lewaGetLocaleDirIndex(String name, ArrayList<String> localeDirNames)
+    {
+    	
+        if(name == null){
+            return -1;
+        }
+        if(localeDirNames == null){
+            Log.e(TAG, "ERROR! mLocaleDirName == null");
+            return -1;
+        }
+        int size = localeDirNames.size();
+        for(int i = 0; i < size; i++){
+            if(name.equals(localeDirNames.get(i))){
+                return i;
+            }
+        }
+         if(size >= LewaRedirectionMap.LOCALE_DIR_NAME_LIST_MAX_SIZE ){
+            Log.e(TAG, "ERROR!  LocaleDirName list Size > 64.");
+            return -1;
+        }
+        // can't find, add it to array list.
+        if(DEBUG)Log.i(TAG, "add locale dir name:"+name);
+        localeDirNames.add(name);
+        return localeDirNames.size() - 1;
+  
+    }
+
+	public static String lewaGetPackageNamefromPath(String path){
+    	
+    	if(path == null || path.lastIndexOf('/') == (path.length() -1)){
+    		return null;
+    	}
+    	
+    	int start = path.lastIndexOf('/');
+    	if(start == 0){
+    		return null;
+    	}
+    	return path.substring(start+1, path.length());
     }
 }

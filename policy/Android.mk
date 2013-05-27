@@ -8,6 +8,10 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
             
 LOCAL_MODULE := android.policy
 
+LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
+
+LOCAL_PROGUARD_ENABLED := full
+
 include $(BUILD_JAVA_LIBRARY)
 
 # additionally, build unit tests in a separate .apk

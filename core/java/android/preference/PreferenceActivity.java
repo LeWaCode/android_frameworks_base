@@ -24,6 +24,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.AbsListView.LayoutParams;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.Color;
 
 /**
  * Shows a hierarchy of {@link Preference} objects as
@@ -104,10 +108,12 @@ public abstract class PreferenceActivity extends ListActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTheme(com.android.internal.R.style.Theme_Preference);
         setContentView(com.android.internal.R.layout.preference_list_content);
         
         mPreferenceManager = onCreatePreferenceManager();
         getListView().setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        getListView().setScrollingCacheEnabled(false);
     }
 
     @Override
@@ -163,6 +169,19 @@ public abstract class PreferenceActivity extends ListActivity implements
     @Override
     public void onContentChanged() {
         super.onContentChanged();
+        // Begin, Added by zhumeiquan for Settings styles, 20120313
+        ListView listview = getListView();
+        if (listview.getFooterViewsCount() == 0) {
+            View view = new View(this);
+            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 10);
+            view.setLayoutParams(params);
+            listview.addFooterView(view);
+        }
+        listview.setDividerHeight(0);
+        listview.setCacheColorHint(0);
+        listview.setSelector(new ColorDrawable(Color.TRANSPARENT));
+        listview.setAlwaysDrawnWithCacheEnabled(false);
+        // End
         postBindPreferences();
     }
 
@@ -180,6 +199,7 @@ public abstract class PreferenceActivity extends ListActivity implements
     private void bindPreferences() {
         final PreferenceScreen preferenceScreen = getPreferenceScreen();
         if (preferenceScreen != null) {
+            getWindow().setBackgroundDrawableResource(com.android.internal.R.drawable.bg_common);
             preferenceScreen.bind(getListView());
             if (mSavedInstanceState != null) {
                 super.onRestoreInstanceState(mSavedInstanceState);

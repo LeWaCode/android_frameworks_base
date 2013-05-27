@@ -296,7 +296,7 @@ public class KeyguardUpdateMonitor {
         if (isBatteryUpdateInteresting(batteryStatus, batteryLevel)) {
             mBatteryStatus = batteryStatus;
             mBatteryLevel = batteryLevel;
-            final boolean pluggedIn = isPluggedIn(batteryStatus);;
+            final boolean pluggedIn = isPluggedIn(batteryStatus);
             for (int i = 0; i < mInfoCallbacks.size(); i++) {
                 mInfoCallbacks.get(i).onRefreshBatteryInfo(
                         shouldShowBatteryInfo(), pluggedIn, batteryLevel);
@@ -427,7 +427,7 @@ public class KeyguardUpdateMonitor {
      * Callback for general information relevant to lock screen.
      */
     interface InfoCallback {
-        void onRefreshBatteryInfo(boolean showBatteryInfo, boolean pluggedIn, int batteryLevel);
+    	void onRefreshBatteryInfo(boolean showBatteryInfo, boolean pluggedIn, int batteryLevel);
         void onTimeChanged();
         void onMusicChanged();
 
@@ -512,6 +512,12 @@ public class KeyguardUpdateMonitor {
                 || mBatteryLevel >= 100; // in case a particular device doesn't flag it
     }
 
+	//[Begin,for lewa lockscreen,add by fulianwu,20120104]
+	public int getBatteryStatus() {
+        return mBatteryStatus;
+    }
+	//[End]
+	
     public int getBatteryLevel() {
         return mBatteryLevel;
     }
@@ -533,6 +539,13 @@ public class KeyguardUpdateMonitor {
      *   the setup wizard)
      */
     public boolean isDeviceProvisioned() {
+        // Woody Guo @ 2012/04/01
+        // Set the device is provisioned if it's not already set.
+        if (!mDeviceProvisioned) {
+            Settings.Secure.putInt(
+                    mContext.getContentResolver(), Settings.Secure.DEVICE_PROVISIONED, 1);
+            mDeviceProvisioned = true;
+        }
         return mDeviceProvisioned;
     }
 

@@ -177,7 +177,21 @@ public class TypedValue {
      * If the Value came from a resource, this holds the corresponding pixel density.
      * */
     public int density;
-
+	/**
+	 * if this was true, the assetCookie will be set and redirect to the theme resource path.
+	 * add by luoyongxing
+	 **/
+	public boolean lewaIsRedirected;
+    /**
+	 * store the cookie before redircted.
+	 * add by luoyongxing
+	 **/
+    public int lewaOriginalCookie;
+	/**
+	 * if this was true, the getValue() will not try to redirect.
+	 * add by luoyongxing
+	 **/
+	public boolean lewaForceNotRedirect;
     /* ------------------------------------------------------------ */
 
     /** Return the data for this value as a float.  Only use for values
@@ -487,6 +501,9 @@ public class TypedValue {
         if (resourceId != 0) {
             sb.append(" r=0x").append(Integer.toHexString(resourceId));
         }
+        sb.append(" fr=").append(lewaForceNotRedirect);
+        sb.append(" ir=").append(lewaIsRedirected);
+        sb.append(" oa=").append(lewaOriginalCookie);
         sb.append("}");
         return sb.toString();
     }

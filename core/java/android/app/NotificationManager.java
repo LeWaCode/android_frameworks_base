@@ -180,5 +180,15 @@ public class NotificationManager
         }
     }
 
+  public void addBlackList(String[] blockpkgs) {
+  	 INotificationManager service = getService();
+        String pkg = mContext.getPackageName();
+        if (localLOGV) Log.v(TAG, pkg + ": addBlackList()");
+        try {
+            service.addBlackList(pkg,blockpkgs);
+        } catch (RemoteException e) {
+        }
+  }
+
     private Context mContext;
 }

@@ -73,8 +73,6 @@ import static android.provider.Settings.System.WINDOW_ANIMATION_SCALE;
 import static android.provider.Settings.System.TRANSITION_ANIMATION_SCALE;
 import static android.provider.Settings.System.TORCH_STATE;
 
-import com.android.internal.app.ThemeUtils;
-
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -203,7 +201,6 @@ class PowerManagerService extends IPowerManager.Stub
     private Intent mScreenOnIntent;
     private LightsService mLightsService;
     private Context mContext;
-    private Context mUiContext;
     private LightsService.Light mLcdLight;
     private LightsService.Light mButtonLight;
     private LightsService.Light mKeyboardLight;
@@ -263,6 +260,10 @@ class PowerManagerService extends IPowerManager.Stub
     private int mAnimationSetting = ANIM_SETTING_OFF;
     private boolean mFlashlightAffectsLightSensor;
     private boolean mIgnoreLightSensor;
+
+    // Woody Guo @ 2012/05/03
+    // If the button brightness is less than mMinButtonValue, just turn the button light off
+    private int mMinButtonValue;
 
     // Must match with the ISurfaceComposer constants in C++.
     private static final int ANIM_SETTING_ON = 0x01;
@@ -673,8 +674,10 @@ class PowerManagerService extends IPowerManager.Stub
             mLightSensorWarmupTime = resources.getInteger(
                     com.android.internal.R.integer.config_lightSensorWarmupTime);
         }
+        mMinButtonValue = resources.getInteger(
+                com.android.internal.R.integer.config_min_button_brightness);
 
-       ContentResolver resolver = mContext.getContentResolver();
+        ContentResolver resolver = mContext.getContentResolver();
         Cursor settingsCursor = resolver.query(Settings.System.CONTENT_URI, null,
                 "(" + Settings.System.NAME + "=?) or ("
                         + Settings.System.NAME + "=?) or ("
@@ -2701,7 +2704,7 @@ class PowerManagerService extends IPowerManager.Stub
         Runnable runnable = new Runnable() {
             public void run() {
                 synchronized (this) {
-                    ShutdownThread.reboot(getUiContext(), finalReason, false);
+                    ShutdownThread.reboot(mContext, finalReason, false);
                 }
                 
             }
@@ -2736,13 +2739,6 @@ class PowerManagerService extends IPowerManager.Stub
         } catch (InterruptedException e) {
             Log.wtf(TAG, e);
         }
-    }
-
-    private Context getUiContext() {
-        if (mUiContext == null) {
-            mUiContext = ThemeUtils.createUiContext(mContext);
-        }
-        return mUiContext != null ? mUiContext : mContext;
     }
 
     private void goToSleepLocked(long time, int reason) {
@@ -2871,8 +2867,17 @@ class PowerManagerService extends IPowerManager.Stub
         mLightSettingsTag = tag;
         mCustomLightEnabled = Settings.System.getInt(cr,
                 Settings.System.LIGHT_SENSOR_CUSTOM, 0) != 0;
+
+        // Modified by YangHaifeng [2012.05.09 13:47:47]
+        // Fix bug: #5800
+
+        //mLightDecrease = Settings.System.getInt(cr,
+        //        Settings.System.LIGHT_DECREASE, 0) != 0;
         mLightDecrease = Settings.System.getInt(cr,
-                Settings.System.LIGHT_DECREASE, 0) != 0;
+                Settings.System.LIGHT_DECREASE, 1) != 0;
+
+        // Ended by YangHaifeng [2012.05.09 13:48:43]
+
         mLightHysteresis = Settings.System.getInt(cr,
                 Settings.System.LIGHT_HYSTERESIS, 50) / 100f;
         mLightFilterEnabled = Settings.System.getInt(cr,
@@ -3197,7 +3202,15 @@ class PowerManagerService extends IPowerManager.Stub
             brightness = Math.max(brightness, mScreenDim);
             mLcdLight.setBrightness(brightness);
             mKeyboardLight.setBrightness(mKeyboardVisible ? brightness : 0);
-            mButtonLight.setBrightness(brightness);
+
+            // Woody Guo @ 2012/05/03
+            // Turn off the button light if 'brightness' is less than the minimal value
+            if (0 == mMinButtonValue || mMinButtonValue <= brightness) {
+                mButtonLight.setBrightness(brightness);
+            } else {
+                mButtonLight.turnOff();
+            }
+
             long identity = Binder.clearCallingIdentity();
             try {
                 mBatteryStats.noteScreenBrightness(brightness);

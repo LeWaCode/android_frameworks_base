@@ -18,7 +18,6 @@
 package com.android.server.am;
 
 import com.android.internal.R;
-import com.android.internal.app.ThemeUtils;
 import com.android.internal.os.BatteryStatsImpl;
 import com.android.server.AttributeCache;
 import com.android.server.IntentResolver;
@@ -145,6 +144,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import  android.content.res.lewaface.*;
+
 public final class ActivityManagerService extends ActivityManagerNative
         implements Watchdog.Monitor, BatteryStatsImpl.BatteryCallback {
     static final String TAG = "ActivityManager";
@@ -254,7 +255,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     static final int MAX_SERVICE_INACTIVITY = 30*60*1000;
     
     // How long we wait until we timeout on key dispatching.
-    static final int KEY_DISPATCHING_TIMEOUT = 5*1000;
+    static final int KEY_DISPATCHING_TIMEOUT = 8*1000;
 
     // The minimum time we allow between crashes, for us to consider this
     // application to be bad and stop and its services and reject broadcasts.
@@ -791,7 +792,6 @@ public final class ActivityManagerService extends ActivityManagerNative
     boolean mLaunchWarningShown = false;
 
     Context mContext;
-    Context mUiContext;
 
     int mFactoryTest;
 
@@ -1008,7 +1008,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                                 }
                             }
                         }
-                        Dialog d = new AppErrorDialog(getUiContext(), res, proc, hasRevoked);
+                        Dialog d = new AppErrorDialog(mContext, res, proc, hasRevoked);
                         d.show();
                         proc.crashDialog = d;
                     } else {
@@ -1038,7 +1038,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                             false, false, MY_PID, Process.SYSTEM_UID);
 
                     Dialog d = new AppNotRespondingDialog(ActivityManagerService.this,
-                            getUiContext(), proc, (ActivityRecord)data.get("activity"));
+                            mContext, proc, (ActivityRecord)data.get("activity"));
                     d.show();
                     proc.anrDialog = d;
                 }
@@ -1059,7 +1059,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     }
                     AppErrorResult res = (AppErrorResult) data.get("result");
                     if (!mSleeping && !mShuttingDown) {
-                        Dialog d = new StrictModeViolationDialog(getUiContext(), res, proc);
+                        Dialog d = new StrictModeViolationDialog(mContext, res, proc);
                         d.show();
                         proc.crashDialog = d;
                     } else {
@@ -1072,7 +1072,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             } break;
             case SHOW_FACTORY_ERROR_MSG: {
                 Dialog d = new FactoryErrorDialog(
-                    getUiContext(), msg.getData().getCharSequence("msg"));
+                    mContext, msg.getData().getCharSequence("msg"));
                 d.show();
                 ensureBootCompleted();
             } break;
@@ -1092,7 +1092,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                         if (!app.waitedForDebugger) {
                             Dialog d = new AppWaitingForDebuggerDialog(
                                     ActivityManagerService.this,
-                                    getUiContext(), app);
+                                    mContext, app);
                             app.waitDialog = d;
                             app.waitedForDebugger = true;
                             d.show();
@@ -1141,7 +1141,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             } break;
             case SHOW_UID_ERROR_MSG: {
                 // XXX This is a temporary dialog, no need to localize.
-                AlertDialog d = new BaseErrorDialog(getUiContext());
+                AlertDialog d = new BaseErrorDialog(mContext);
                 d.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
                 d.setCancelable(false);
                 d.setTitle("System UIDs Inconsistent");
@@ -1210,7 +1210,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     notification.defaults = 0; // please be quiet
                     notification.sound = null;
                     notification.vibrate = null;
-                    notification.setLatestEventInfo(getUiContext(), text,
+                    notification.setLatestEventInfo(context, text,
                             mContext.getText(R.string.heavy_weight_notification_detail),
                             PendingIntent.getActivity(mContext, 0, root.intent,
                                     PendingIntent.FLAG_CANCEL_CURRENT));
@@ -1618,15 +1618,6 @@ public final class ActivityManagerService extends ActivityManagerNative
             synchronized(mPidsSelfLocked) {
                 mOnBattery = DEBUG_POWER ? true : onBattery;
             }
-        }
-    }
-
-    private Context getUiContext() {
-        synchronized (this) {
-            if (mUiContext == null && mBooted) {
-                mUiContext = ThemeUtils.createUiContext(mContext);
-            }
-            return mUiContext != null ? mUiContext : mContext;
         }
     }
 
@@ -2607,7 +2598,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                     if (localLOGV) Slog.v(
                         TAG, "Removing this entry!  frozen=" + r.haveState
                         + " finishing=" + r.finishing);
-                    r.makeFinishing();
                     mMainStack.mHistory.remove(i);
 
                     r.inHistory = false;
@@ -3020,7 +3010,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 @Override
                 public void run() {
                     synchronized (ActivityManagerService.this) {
-                        final Dialog d = new LaunchWarningWindow(getUiContext(), cur, next);
+                        final Dialog d = new LaunchWarningWindow(mContext, cur, next);
                         d.show();
                         mHandler.postDelayed(new Runnable() {
                             @Override
@@ -3732,12 +3722,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                 }
             }
         }, pkgFilter);
-        ThemeUtils.registerThemeChangeReceiver(mContext, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mUiContext = null;
-            }
-        });
         
         synchronized (this) {
             // Ensure that any processes we had put on hold are now started
@@ -6468,7 +6452,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     if (r.state == ActivityState.RESUMED
                             || r.state == ActivityState.PAUSING
                             || r.state == ActivityState.PAUSED) {
-                        if (!r.isHomeActivity || mHomeProcess != r.app) {
+                        if (!r.isHomeActivity) {
                             Slog.w(TAG, "  Force finishing activity "
                                     + r.intent.getComponent().flattenToShortString());
                             r.stack.finishActivityLocked(r, index,
@@ -11475,6 +11459,11 @@ public final class ActivityManagerService extends ActivityManagerNative
                     saveThemeResourceLocked(values.customTheme,
                             !values.customTheme.equals(mConfiguration.customTheme));
                 }
+// modify for lewatheme by luoyongxing
+				if(values.lewaTheme != null){
+					saveLewaThemeResourceLocked(values.lewaTheme,
+												!values.lewaTheme.equals(mConfiguration.lewaTheme));
+				}
 
                 mConfigurationSeq++;
                 if (mConfigurationSeq <= 0) {
@@ -11566,6 +11555,12 @@ public final class ActivityManagerService extends ActivityManagerNative
         if(isDiff){
             SystemProperties.set(Configuration.THEME_ID_PERSISTENCE_PROPERTY, t.getThemeId());
             SystemProperties.set(Configuration.THEME_PACKAGE_NAME_PERSISTENCE_PROPERTY, t.getThemePackageName());  
+        }
+    }
+// modify for lewatheme by luoyongxing
+	private void saveLewaThemeResourceLocked(LewaTheme t, boolean isDiff){
+        if(isDiff){
+			t.save();
         }
     }
 

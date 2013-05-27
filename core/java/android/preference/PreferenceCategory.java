@@ -19,7 +19,11 @@ package android.preference;
 import java.util.Map;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * Used to group {@link Preference} objects
@@ -38,6 +42,31 @@ public class PreferenceCategory extends PreferenceGroup {
 
     public PreferenceCategory(Context context) {
         this(context, null);
+    }
+
+    @Override
+    public View getView(View convertView, ViewGroup parent) {
+        View view = super.getView(convertView, parent);
+        TextView textview = (TextView)view.findViewById(com.android.internal.R.id.title);
+        View emptyView = view.findViewById(android.R.id.empty);
+        if (textview != null && emptyView != null) {            
+            if(TextUtils.isEmpty(getTitle())) {
+                if(textview.getVisibility() != View.GONE) {
+                    textview.setVisibility(View.GONE);
+                }
+                if(emptyView.getVisibility() != View.VISIBLE) {
+                    emptyView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                if(textview.getVisibility() != View.VISIBLE) {
+                    textview.setVisibility(View.VISIBLE);
+                }
+                if(emptyView.getVisibility() != View.GONE) {
+                    emptyView.setVisibility(View.GONE);
+                }
+            }
+        }
+        return view;
     }
     
     @Override

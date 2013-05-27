@@ -58,9 +58,14 @@ public class StatusBarManager {
      * Re-enable all of the status bar features that you've disabled.
      */
     public static final int DISABLE_NONE = 0x00000000;
-
+    
+    // Begin, added by zhumeiquan for statusbar transparent, 20120315
+    public static final int DISABLE_BACKGROUND = 0x02000000;  
+    // End
+    
     private Context mContext;
-    private IStatusBarService mService;
+    //modify by zhangxianjia, 20120830, make mservice to static for statusbar change background
+    private static IStatusBarService mService;
     private IBinder mToken = new Binder();
 
     StatusBarManager(Context context) {
@@ -68,6 +73,19 @@ public class StatusBarManager {
         mService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
     }
+	
+    //Begin modify by zhangxianjia, 20120830, make getService() to static for statusbar change background
+    public static synchronized IStatusBarService getService() {
+        if (mService == null) {
+            mService = IStatusBarService.Stub.asInterface(
+                    ServiceManager.getService(Context.STATUS_BAR_SERVICE));
+            if (mService == null) {
+
+            }
+        }
+        return mService;
+    }
+    //End
 
     /**
      * Disable some features in the status bar.  Pass the bitwise-or of the DISABLE_* flags.
@@ -81,7 +99,18 @@ public class StatusBarManager {
             throw new RuntimeException(ex);
         }
     }
-    
+     /**
+     * reset all icons of the statusbar 
+     * by luoyongxing
+     */
+     public void resetStatusBar(){
+     	 try {
+            mService.resetStatusBar();
+        } catch (RemoteException ex) {
+            // system process is dead anyway.
+            throw new RuntimeException(ex);
+        }
+     }
     /**
      * Expand the status bar.
      */

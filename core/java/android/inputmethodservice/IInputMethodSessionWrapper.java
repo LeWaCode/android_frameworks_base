@@ -79,53 +79,82 @@ class IInputMethodSessionWrapper extends IInputMethodSession.Stub
     public void executeMessage(Message msg) {
         switch (msg.what) {
             case DO_FINISH_INPUT:
-                mInputMethodSession.finishInput();
+                //liuhao fix bug #4519, merger from MTK platform source code
+                //protect NullPointException
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.finishInput();
+                }
                 return;
             case DO_DISPLAY_COMPLETIONS:
-                mInputMethodSession.displayCompletions((CompletionInfo[])msg.obj);
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.displayCompletions((CompletionInfo[])msg.obj);
+                }
                 return;
             case DO_UPDATE_EXTRACTED_TEXT:
-                mInputMethodSession.updateExtractedText(msg.arg1,
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.updateExtractedText(msg.arg1,
                         (ExtractedText)msg.obj);
+                }
                 return;
             case DO_DISPATCH_KEY_EVENT: {
                 HandlerCaller.SomeArgs args = (HandlerCaller.SomeArgs)msg.obj;
-                mInputMethodSession.dispatchKeyEvent(msg.arg1,
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.dispatchKeyEvent(msg.arg1,
                         (KeyEvent)args.arg1,
                         new InputMethodEventCallbackWrapper(
                                 (IInputMethodCallback)args.arg2));
+                }
                 mCaller.recycleArgs(args);
                 return;
             }
             case DO_DISPATCH_TRACKBALL_EVENT: {
                 HandlerCaller.SomeArgs args = (HandlerCaller.SomeArgs)msg.obj;
-                mInputMethodSession.dispatchTrackballEvent(msg.arg1,
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.dispatchTrackballEvent(msg.arg1,
                         (MotionEvent)args.arg1,
                         new InputMethodEventCallbackWrapper(
                                 (IInputMethodCallback)args.arg2));
+                }
                 mCaller.recycleArgs(args);
                 return;
             }
             case DO_UPDATE_SELECTION: {
                 HandlerCaller.SomeArgs args = (HandlerCaller.SomeArgs)msg.obj;
-                mInputMethodSession.updateSelection(args.argi1, args.argi2,
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.updateSelection(args.argi1, args.argi2,
                         args.argi3, args.argi4, args.argi5, args.argi6);
+                }
                 mCaller.recycleArgs(args);
                 return;
             }
             case DO_UPDATE_CURSOR: {
-                mInputMethodSession.updateCursor((Rect)msg.obj);
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.updateCursor((Rect)msg.obj);
+                }
                 return;
             }
             case DO_APP_PRIVATE_COMMAND: {
                 HandlerCaller.SomeArgs args = (HandlerCaller.SomeArgs)msg.obj;
-                mInputMethodSession.appPrivateCommand((String)args.arg1,
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.appPrivateCommand((String)args.arg1,
                         (Bundle)args.arg2);
+                }
                 mCaller.recycleArgs(args);
                 return;
             }
             case DO_TOGGLE_SOFT_INPUT: {
-                mInputMethodSession.toggleSoftInput(msg.arg1, msg.arg2);
+                if (mInputMethodSession != null)
+                {
+                    mInputMethodSession.toggleSoftInput(msg.arg1, msg.arg2);
+                }
                 return;
             }
             case DO_FINISH_SESSION: {

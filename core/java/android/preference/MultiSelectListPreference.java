@@ -22,9 +22,6 @@ import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-/**
- * @hide
-*/
 public class MultiSelectListPreference extends ListPreference {
 
     private static final String SEPARATOR = "OV=I=XseparatorX=I=VO";

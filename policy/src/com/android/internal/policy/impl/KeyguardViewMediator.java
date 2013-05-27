@@ -34,6 +34,7 @@ import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.LocalPowerManager;
@@ -895,21 +896,47 @@ public class KeyguardViewMediator implements KeyguardViewCallback,
     }
 
     private boolean isWakeKeyWhenKeyguardShowing(int keyCode) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-            case KeyEvent.KEYCODE_MUTE:
-            case KeyEvent.KEYCODE_HEADSETHOOK:
-            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-            case KeyEvent.KEYCODE_MEDIA_STOP:
-            case KeyEvent.KEYCODE_MEDIA_NEXT:
-            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-            case KeyEvent.KEYCODE_MEDIA_REWIND:
-            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
-            case KeyEvent.KEYCODE_CAMERA:
-                return false;
-        }
-        return true;
+	if("n880s".equals(Build.DEVICE)){	//add by shenqi for add wake up keyCode
+	        switch (keyCode) {
+	            case KeyEvent.KEYCODE_VOLUME_UP:
+	            case KeyEvent.KEYCODE_VOLUME_DOWN:
+		     case KeyEvent.KEYCODE_BACK:
+	           /*case KeyEvent.KEYCODE_MUTE:
+	            case KeyEvent.KEYCODE_HEADSETHOOK:
+	            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+	            case KeyEvent.KEYCODE_MEDIA_STOP:
+	            case KeyEvent.KEYCODE_MEDIA_NEXT:
+	            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+	            case KeyEvent.KEYCODE_MEDIA_REWIND:
+	            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+	            case KeyEvent.KEYCODE_CAMERA:*/
+				case KeyEvent.KEYCODE_MENU:
+				case KeyEvent.KEYCODE_HOME:
+				case KeyEvent.KEYCODE_POWER:
+	                return true;
+	        }
+	        return false;
+	}
+	else {
+		 switch (keyCode) {
+	          /*  case KeyEvent.KEYCODE_VOLUME_UP:
+	            case KeyEvent.KEYCODE_VOLUME_DOWN:
+	            case KeyEvent.KEYCODE_MUTE:
+	            case KeyEvent.KEYCODE_HEADSETHOOK:
+	            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+	            case KeyEvent.KEYCODE_MEDIA_STOP:
+	            case KeyEvent.KEYCODE_MEDIA_NEXT:
+	            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+	            case KeyEvent.KEYCODE_MEDIA_REWIND:
+	            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+	            case KeyEvent.KEYCODE_CAMERA:
+				case KeyEvent.KEYCODE_MENU:*/
+				case KeyEvent.KEYCODE_HOME:
+				case KeyEvent.KEYCODE_POWER:
+	                return true;
+	        }
+	        return false;
+	}
     }
 
     /**

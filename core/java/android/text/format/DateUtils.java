@@ -28,6 +28,7 @@ import java.util.Formatter;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.text.SimpleDateFormat;
 
 /**
  * This class contains various date-related utilities for creating text for things like
@@ -335,6 +336,14 @@ public class DateUtils
         Resources r = Resources.getSystem();
         return r.getString(sAmPm[ampm - Calendar.AM]);
     }
+
+    // Begin, Added by zhumeiquan for Bug 7333, 20120607
+    public static String getChineseAMPMString(Calendar c) {
+        int ampm = c.get(Calendar.AM_PM);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        return SimpleDateFormat.getAMPMString(hour, null, (ampm == 0 ? "AM" : "PM")); 
+    }
+    // End
 
     /**
      * Return a localized string for the month of the year.

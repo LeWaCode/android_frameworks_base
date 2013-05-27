@@ -1896,8 +1896,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback, Accessibility
         // Used for debug only
         //++sInstanceCount;
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-
-        setOverScrollMode(OVER_SCROLL_IF_CONTENT_SCROLLS);
+        // Begin, Modified by zhumeiquan, always show over scroll effect, 20111219
+        setOverScrollMode(OVER_SCROLL_ALWAYS);//OVER_SCROLL_IF_CONTENT_SCROLLS);
+        // End
     }
 
     /**

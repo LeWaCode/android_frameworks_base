@@ -32,6 +32,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.AsyncResult;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
@@ -63,16 +64,20 @@ import static android.telephony.SmsManager.RESULT_ERROR_FDN_CHECK_FAILURE;
 
 public abstract class SMSDispatcher extends Handler {
     private static final String TAG = "SMS";
-    private static final String SEND_NEXT_MSG_EXTRA = "SendNextMsg";
+	
+    private static final String SEND_NEXT_MSG_EXTRA      = "SendNextMsg";
 
     /** Default checking period for SMS sent without user permit */
-    private static final int DEFAULT_SMS_CHECK_PERIOD = 3600000;
+    private static final int DEFAULT_SMS_CHECK_PERIOD    = 3600000;
 
     /** Default number of SMS sent in checking period without user permit */
-    private static final int DEFAULT_SMS_MAX_COUNT = 100;
+    private static final int DEFAULT_SMS_MAX_COUNT       = 1000;
 
     /** Default timeout for SMS sent query */
-    private static final int DEFAULT_SMS_TIMEOUT = 6000;
+    private static final int DEFAULT_SMS_TIMEOUT         = 6000;
+	
+	//added by chenhengheng,2011-12-09,add lewa's sms receviced
+    private static final String LEWA_SMS_RECEIVED_ACTION = "android.provider.Telephony.LEWA_SMS_RECEIVED";
 
     protected static final String[] RAW_PROJECTION = new String[] {
         "pdu",
@@ -419,9 +424,42 @@ public abstract class SMSDispatcher extends Handler {
         // Hold a wake lock for WAKE_LOCK_TIMEOUT seconds, enough to give any
         // receivers time to take their own wake locks.
         mWakeLock.acquire(WAKE_LOCK_TIMEOUT);
-        mContext.sendOrderedBroadcast(intent, permission, mResultReceiver,
-                this, Activity.RESULT_OK, null, null);
+		
+	//--zhangwei---add--20111228			
+	//lwDispatch(intent, permission);
+	mContext.sendOrderedBroadcast(intent, permission, mResultReceiver,
+								this, Activity.RESULT_OK, null, null);
+	//--zhangwei---add--20111228	
     }
+
+    //--zhangwei---add--20111228	
+    private int lwDispatch(Intent intent, String permission){
+	 String action =  intent.getAction();
+	 int ret = -1;
+
+	 if (action.equals("android.provider.Telephony.SMS_RECEIVED")){
+	 	Intent smsIntent = new Intent(intent);
+		smsIntent.setAction(Intents.SMS_LW_RECIVER_ACTION);
+	        mContext.sendOrderedBroadcast(smsIntent, permission, mResultReceiver,
+	                this, Activity.RESULT_OK, null, null);
+			
+			ret = 0;
+	 	
+	 }else if (action.equals("android.provider.Telephony.WAP_PUSH_RECEIVED")){
+		String mimeType = intent.getType();
+		
+	 	if (mimeType.equals(WspTypeDecoder.CONTENT_MIME_TYPE_B_MMS)){
+			Intent mmsIntent = new Intent(intent);
+			mmsIntent.setAction(Intents.WAP_LW_PUSH_RECEIVED_ACTION);
+			mContext.sendOrderedBroadcast(mmsIntent, permission, mResultReceiver,
+					this, Activity.RESULT_OK, null, null);			
+			
+			ret = 0;
+		}	 	
+	 }
+	 return ret;
+    }
+    //--zhangwei---add--20111228		
 
     /**
      * Called when SIM_FULL message is received from the RIL.  Notifies interested
@@ -643,13 +681,32 @@ public abstract class SMSDispatcher extends Handler {
             if (portAddrs.destPort == SmsHeader.PORT_WAP_PUSH) {
                 // Build up the data stream
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                for (int i = 0; i < concatRef.msgCount; i++) {
-                    SmsMessage msg = SmsMessage.createFromPdu(pdus[i]);
+                
+                if(true) {
+                    Bundle mBundle = new Bundle();
+                    SmsMessage msg = SmsMessage.createFromPdu(pdus[0]);
                     byte[] data = msg.getUserData();
-                    output.write(data, 0, data.length);
+                    output.write(data,0,data.length);
+
+                    mBundle.putString("sender",msg.getOriginatingAddress());
+                    mBundle.putString("service_center",msg.getServiceCenterAddress());
+
+                    for (int i = 1; i < concatRef.msgCount; i++) {
+                        msg = SmsMessage.createFromPdu(pdus[i]);
+                        data = msg.getUserData();
+                        output.write(data,0,data.length);
+                    }
+                    // Handle the PUSH
+                    return mWapPush.dispatchWapPdu(output.toByteArray(),mBundle);
+                } else {
+                    for (int i = 0; i < concatRef.msgCount; i++) {
+                        SmsMessage msg = SmsMessage.createFromPdu(pdus[i]);
+                        byte[] data = msg.getUserData();
+                        output.write(data, 0, data.length);
+                    }
+                    // Handle the PUSH
+                    return mWapPush.dispatchWapPdu(output.toByteArray());
                 }
-                // Handle the PUSH
-                return mWapPush.dispatchWapPdu(output.toByteArray());
             } else {
                 // The messages were sent to a port, so concoct a URI for it
                 dispatchPortAddressedPdus(pdus, portAddrs.destPort);
@@ -667,9 +724,17 @@ public abstract class SMSDispatcher extends Handler {
      * @param pdus The raw PDUs making up the message
      */
     protected void dispatchPdus(byte[][] pdus) {
-        Intent intent = new Intent(Intents.SMS_RECEIVED_ACTION);
-        intent.putExtra("pdus", pdus);
-        dispatch(intent, "android.permission.RECEIVE_SMS");
+        if(true){
+           // modify chenhengheng,2011-12-09,add lewa's sms receviced
+           Intent intent = new Intent(LEWA_SMS_RECEIVED_ACTION);
+           intent.putExtra("pdus", pdus);
+           mWakeLock.acquire(WAKE_LOCK_TIMEOUT);
+           mContext.sendOrderedBroadcast(intent,"android.permission.RECEIVE_SMS", mLewaResultReceiver,this, Activity.RESULT_OK, null, null);
+        }else{
+           Intent intent = new Intent(Intents.SMS_RECEIVED_ACTION);
+           intent.putExtra("pdus", pdus);
+           dispatch(intent, "android.permission.RECEIVE_SMS");
+        }
     }
 
     /**
@@ -928,8 +993,7 @@ public abstract class SMSDispatcher extends Handler {
         public PendingIntent mSentIntent;
         public PendingIntent mDeliveryIntent;
 
-        SmsTracker(HashMap data, PendingIntent sentIntent,
-                PendingIntent deliveryIntent) {
+        SmsTracker(HashMap data, PendingIntent sentIntent,PendingIntent deliveryIntent) {
             mData = data;
             mSentIntent = sentIntent;
             mDeliveryIntent = deliveryIntent;
@@ -944,7 +1008,6 @@ public abstract class SMSDispatcher extends Handler {
 
     private DialogInterface.OnClickListener mListener =
         new DialogInterface.OnClickListener() {
-
             public void onClick(DialogInterface dialog, int which) {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
                     Log.d(TAG, "click YES to send out sms");
@@ -971,10 +1034,27 @@ public abstract class SMSDispatcher extends Handler {
                 int rc = getResultCode();
                 boolean success = (rc == Activity.RESULT_OK)
                         || (rc == Intents.RESULT_SMS_HANDLED);
-
                 // For a multi-part message, this only ACKs the last part.
                 // Previous parts were ACK'd as they were received.
                 acknowledgeLastIncomingSms(success, rc, null);
+            }
+        }
+    };
+
+    // add by chenhengheng,2011-12-09
+    private BroadcastReceiver mLewaResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e(TAG,"DISPATCH PDUS AFTER");
+            if (intent.getAction().equals(LEWA_SMS_RECEIVED_ACTION)) {
+                //rebroadcast the real sms received action
+                int rc = getResultCode();
+                if(rc == Activity.RESULT_CANCELED){				   	   
+                    acknowledgeLastIncomingSms(true, Activity.RESULT_OK, null);				   
+                    return;				
+                }
+                intent.setAction(Intents.SMS_RECEIVED_ACTION);                
+                dispatch(intent, "android.permission.RECEIVE_SMS");
             }
         }
     };
@@ -998,4 +1078,7 @@ public abstract class SMSDispatcher extends Handler {
             dispatch(intent, "android.permission.RECEIVE_SMS");
         }
     }
+    
+    //Add by FanZhong
+    protected abstract void setNewSmsIndicationConfig(int paramInt, Message paramMessage);
 }

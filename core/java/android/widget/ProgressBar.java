@@ -153,6 +153,7 @@ public class ProgressBar extends View {
     private long mLastDrawTime;
 
     private boolean mInDrawing;
+    private int mProgressBarMinHeght;
 
     /**
      * Create a new progress bar with range 0...100 and initial progress of 0.
@@ -193,6 +194,9 @@ public class ProgressBar extends View {
         mMaxHeight = a.getDimensionPixelSize(R.styleable.ProgressBar_maxHeight, mMaxHeight);
 
         mBehavior = a.getInt(R.styleable.ProgressBar_indeterminateBehavior, mBehavior);
+        //Begin add by panqianbo for new ui 20120423
+	mProgressBarMinHeght = context.getResources().getDimensionPixelSize(R.dimen.progressbar_min_height);
+	//End
 
         final int resID = a.getResourceId(
                 com.android.internal.R.styleable.ProgressBar_interpolator, 
@@ -812,6 +816,7 @@ public class ProgressBar extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         // onDraw will translate the canvas so we draw starting at 0,0
+		
         int right = w - mPaddingRight - mPaddingLeft;
         int bottom = h - mPaddingBottom - mPaddingTop;
 
@@ -820,7 +825,12 @@ public class ProgressBar extends View {
         }
         
         if (mProgressDrawable != null) {
-            mProgressDrawable.setBounds(0, 0, right, bottom);
+
+			if (mProgressDrawable.getIntrinsicHeight() == mProgressBarMinHeght) {
+            	mProgressDrawable.setBounds(0, 0, right, mProgressBarMinHeght);
+			} else {
+			    mProgressDrawable.setBounds(0, 0, right, bottom);
+			}
         }
     }
 

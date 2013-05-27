@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+	xmlns:android="http://schemas.android.com/apk/res/android" >
+	<PreferenceCategory 
+		xmlns:android="http://schemas.android.com/apk/res/android" >
+		<PreferenceScreen  
+			android:title="@string/monthly_data" 
+			android:key="monthlydata_key"/>
+		<CheckBoxPreference 
+			android:title="@string/reminder_me"
+			android:defaultValue="false"
+			android:summary="@string/reminder_data"
+			android:key="remindme_key">
+		</CheckBoxPreference>
+		
+	    <ListPreference 
+			android:title="@string/start_date" 
+			android:key="startdate_key"
+			android:defaultValue="1">
+		</ListPreference>
+		
+	    <Preference  
+			android:title="@string/sms_query" 
+			android:key="smsquery_key">
+		</Preference>
+		
+		<Preference  
+			android:title="@string/clear_history" 
+			android:key="clearhistory_key">        
+		</Preference>
+		
+		<EditTextPreference  
+			android:title="@string/verify_data" 
+			android:key="verifydata_key"
+			android:dialogTitle="@string/please_input_used_data"
+			android:inputType="numberDecimal">
+		</EditTextPreference>
+	</PreferenceCategory>
+</PreferenceScreen>

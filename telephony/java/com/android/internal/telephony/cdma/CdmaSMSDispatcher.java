@@ -45,6 +45,7 @@ import com.android.internal.telephony.TelephonyProperties;
 import com.android.internal.telephony.WspTypeDecoder;
 import com.android.internal.telephony.cdma.sms.SmsEnvelope;
 import com.android.internal.telephony.cdma.sms.UserData;
+import com.android.internal.util.BitwiseInputStream;
 import com.android.internal.util.HexDump;
 
 import java.io.ByteArrayOutputStream;
@@ -163,6 +164,20 @@ final class CdmaSMSDispatcher extends SMSDispatcher {
             return processCdmaWapPdu(sms.getUserData(), sms.messageRef,
                     sms.getOriginatingAddress());
         }
+        Log.e(TAG, "dispatchMessage teleService=" + teleService);
+        if (SmsEnvelope.TELESERVICE_CT_WAP == teleService) {
+            byte [] userData = sms.getUserData();
+            try {
+                BitwiseInputStream bis = new BitwiseInputStream(userData);
+                bis.skip(69); // skip head data
+                userData = bis.readByteArray(userData.length * 8 - 72);
+            } catch (Exception e) {
+                Log.e(TAG, "dispatchMessage e=" + e);
+            }
+            return processCdmaWapPdu(userData, sms.messageRef,
+                    sms.getOriginatingAddress());
+        }
+        
 
         // Reject (NAK) any messages with teleservice ids that have
         // not yet been handled and also do not correspond to the two
@@ -411,7 +426,10 @@ final class CdmaSMSDispatcher extends SMSDispatcher {
             uData.payloadStr = parts.get(i);
             uData.userDataHeader = smsHeader;
             if (encoding == android.telephony.SmsMessage.ENCODING_7BIT) {
-                uData.msgEncoding = UserData.ENCODING_GSM_7BIT_ALPHABET;
+		  //zhangwei 20120612		
+		  uData.msgEncoding = UserData.ENCODING_7BIT_ASCII;
+                //uData.msgEncoding = UserData.ENCODING_GSM_7BIT_ALPHABET;
+                 //zhangwei 20120612
             } else { // assume UTF-16
                 uData.msgEncoding = UserData.ENCODING_UNICODE_16;
             }
@@ -542,4 +560,10 @@ final class CdmaSMSDispatcher extends SMSDispatcher {
         }
         return false;
     }
+
+	@Override
+	protected void setNewSmsIndicationConfig(int paramInt, Message paramMessage) {
+		// TODO Auto-generated method stub
+		
+	}
 }

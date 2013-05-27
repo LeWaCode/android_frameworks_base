@@ -369,4 +369,8 @@ class SipCommandInterface extends BaseCommands implements CommandsInterface {
 
     public void exitEmergencyCallbackMode(Message response) {
     }
+    
+    // Add by Fanzhong
+    public void setNewSmsIndication(int paramInt, Message paramMessage){
+    }
 }

@@ -70,8 +70,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 
-import com.android.internal.app.ThemeUtils;
-
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -104,7 +102,6 @@ public class NotificationManagerService extends INotificationManager.Stub
     private static final int DEFAULT_STREAM_TYPE = AudioManager.STREAM_NOTIFICATION;
 
     final Context mContext;
-    Context mUiContext;
     final IActivityManager mAm;
     final IBinder mForegroundToken = new Binder();
 
@@ -206,6 +203,10 @@ public class NotificationManagerService extends INotificationManager.Stub
     private boolean mQuietHoursStill = true;
     // Dim LED if hardware supports it.
     private boolean mQuietHoursDim = true;
+
+    //blacklist for notification add by shenqi
+    //parm String package name
+    private Map<String, String> mBlacklist = new HashMap<String, String>();
 
     private static final int BATTERY_LOW_ARGB = 0xFFFF0000; // Charging Low - red solid on
     private static final int BATTERY_MEDIUM_ARGB = 0xFFFFFF00;    // Charging - orange solid on
@@ -425,13 +426,6 @@ public class NotificationManagerService extends INotificationManager.Stub
         }
     };
 
-    private BroadcastReceiver mThemeChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mUiContext = null;
-        }
-    };
-
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -440,17 +434,11 @@ public class NotificationManagerService extends INotificationManager.Stub
             boolean queryRestart = false;
 
             if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-                int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
-                        BatteryManager.BATTERY_STATUS_UNKNOWN);
-                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                boolean batteryCharging = status == BatteryManager.BATTERY_STATUS_CHARGING;
+                boolean batteryCharging = (intent.getIntExtra("plugged", 0) != 0);
+                int level = intent.getIntExtra("level", -1);
                 boolean batteryLow = (level >= 0 && level <= Power.LOW_BATTERY_THRESHOLD);
+                int status = intent.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
                 boolean batteryFull = (status == BatteryManager.BATTERY_STATUS_FULL || level >= 90);
-
-                /* also treat a full battery with connected charger as 'charging' */
-                if (batteryFull && intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0) {
-                    batteryCharging = true;
-                }
 
                 if (batteryCharging != mBatteryCharging ||
                         batteryLow != mBatteryLow ||
@@ -819,8 +807,6 @@ public class NotificationManagerService extends INotificationManager.Stub
         IntentFilter ledFilter = new IntentFilter(ACTION_UPDATE_LED);
         mContext.registerReceiver(mIntentReceiver, ledFilter);
 
-        ThemeUtils.registerThemeChangeReceiver(mContext, mThemeChangeReceiver);
-
         SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
 
@@ -1051,6 +1037,11 @@ public class NotificationManagerService extends INotificationManager.Stub
     public void enqueueNotificationInternal(String pkg, int callingUid, int callingPid,
             String tag, int id, Notification notification, int[] idOut)
     {
+
+	 if(checkBlockCall(pkg)) {
+	 	EventLog.writeEvent(EventLogTags.NOTIFICATION_ENQUEUE, pkg, id, notification.toString());
+		return;
+	 }
         checkIncomingCall(pkg);
 
         // Limit the number of notifications that any given package except the android
@@ -1260,6 +1251,18 @@ public class NotificationManagerService extends INotificationManager.Stub
         }
 
         idOut[0] = id;
+    }
+
+    public void addBlackList(String pkg,String[] blackList) {
+	 //if (!pkg.equals("com.android.systemui")) {
+            EventLog.writeEvent(EventLogTags.NOTIFICATION_ADD_BLACKLIST, pkg);
+        //}
+        synchronized (mBlacklist) {
+		mBlacklist.clear();
+	       for(String blockpkg :blackList) {
+		   	mBlacklist.put(blockpkg,blockpkg);
+	       }
+        }
     }
 
     private int adjustForQuietHours(int color) {
@@ -1497,6 +1500,17 @@ public class NotificationManagerService extends INotificationManager.Stub
         }
     }
 
+   boolean checkBlockCall(String pkg) {
+        synchronized (mBlacklist) {
+		if(mBlacklist.containsKey(pkg)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+        }
+    }
+
     void cancelAll() {
         synchronized (mNotificationList) {
             final int N = mNotificationList.size();
@@ -1611,7 +1625,7 @@ public class NotificationManagerService extends INotificationManager.Stub
 
         // Battery low always shows, other states only show if charging.
         if (mBatteryLow) {
-            int color = adjustForQuietHours(BATTERY_LOW_ARGB);
+	    int color = adjustForQuietHours(BATTERY_LOW_ARGB);
             if (mBatteryCharging) {
                 mBatteryLight.setColor(color);
             } else {
@@ -1777,7 +1791,7 @@ public class NotificationManagerService extends INotificationManager.Stub
     private void updateAdbNotification(boolean usbEnabled, boolean networkEnabled) {
         if ("0".equals(SystemProperties.get("persist.adb.notify")) ||
                         Settings.Secure.getInt(mContext.getContentResolver(),
-                        Settings.Secure.ADB_NOTIFY, 1) == 0) {
+                        Settings.Secure.ADB_NOTIFY, 0) == 0) {
             usbEnabled = false;
             networkEnabled = false;
         }
@@ -1826,12 +1840,14 @@ public class NotificationManagerService extends INotificationManager.Stub
                     // Note: we are hard-coding the component because this is
                     // an important security UI that we don't want anyone
                     // intercepting.
+                    // Begin, Modified by zhumeiquan for settings, 20111121
                     intent.setComponent(new ComponentName("com.android.settings",
-                            "com.android.settings.DevelopmentSettings"));
+                            "com.android.settings.ApplicationSettings"));
+                    // End
                     PendingIntent pi = PendingIntent.getActivity(mContext, 0,
                             intent, 0);
 
-                    mAdbNotification.setLatestEventInfo(getUiContext(), title, message, pi);
+                    mAdbNotification.setLatestEventInfo(mContext, title, message, pi);
 
                     mAdbNotificationShown = true;
                     mAdbNotificationIsUsb = !networkEnabled;
@@ -1847,13 +1863,6 @@ public class NotificationManagerService extends INotificationManager.Stub
                 notificationManager.cancel(mAdbNotification.icon);
             }
         }
-    }
-
-    private Context getUiContext() {
-        if (mUiContext == null) {
-            mUiContext = ThemeUtils.createUiContext(mContext);
-        }
-        return mUiContext != null ? mUiContext : mContext;
     }
 
     private void updateNotificationPulse() {

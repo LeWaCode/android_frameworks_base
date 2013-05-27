@@ -3591,4 +3591,20 @@ public class RIL extends BaseCommands implements CommandsInterface {
 
         send(rr);
     }
+    
+    //Add by Fanzhong
+    static final int ZTE_RIL_REQUEST_NEW_SMS_INDICATION = reValueZTERequestNumber(6,1);
+    
+    private static int reValueZTERequestNumber(int paramInt1, int paramInt2){
+      return paramInt2 + (700 + 40 * (paramInt1 - 1));
+    }
+	@Override
+	public void setNewSmsIndication(int paramInt, Message paramMessage) {
+	    RILRequest localRILRequest = RILRequest.obtain(ZTE_RIL_REQUEST_NEW_SMS_INDICATION, paramMessage);
+	    riljLog(localRILRequest.serialString() + "> " + requestToString(localRILRequest.mRequest));
+	    localRILRequest.mp.writeInt(1);
+	    localRILRequest.mp.writeInt(paramInt);
+	    send(localRILRequest);
+		
+	}
 }

@@ -17,13 +17,16 @@
 package com.android.internal.policy.impl;
 
 import android.content.res.Configuration;
+import android.content.Intent;
 
 /**
  * Within a keyguard, there may be several screens that need a callback
  * to the host keyguard view.
  */
 public interface KeyguardScreenCallback extends KeyguardViewCallback {
-
+    //Begin, add by fulianwu, for into application by shutcut 2011-12-27
+    void setPendingIntent(Intent intent);
+    //End
     /**
      * Transition to the lock screen.
      */

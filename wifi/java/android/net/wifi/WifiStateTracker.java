@@ -59,7 +59,6 @@ import android.util.EventLog;
 import android.util.Log;
 import android.util.Config;
 import com.android.internal.app.IBatteryStats;
-import com.android.internal.app.ThemeUtils;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -201,8 +200,6 @@ public class WifiStateTracker extends NetworkStateTracker {
 
     public static final int SUPPL_SCAN_HANDLING_NORMAL = 1;
     public static final int SUPPL_SCAN_HANDLING_LIST_ONLY = 2;
-
-    private Context mUiContext;
 
     private WifiMonitor mWifiMonitor;
     private WifiInfo mWifiInfo;
@@ -423,13 +420,6 @@ public class WifiStateTracker extends NetworkStateTracker {
                     }
                 }
             },new IntentFilter(ACTION_DHCP_RENEW));
-
-        ThemeUtils.registerThemeChangeReceiver(mContext, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mUiContext = null;
-            }
-        });
 
         PowerManager powerManager = (PowerManager)mContext.getSystemService(Context.POWER_SERVICE);
         mDhcpRenewWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
@@ -1607,7 +1597,7 @@ public class WifiStateTracker extends NetworkStateTracker {
         if (ActivityManagerNative.isSystemReady()) {
             Intent intent = new Intent(WifiManager.RSSI_CHANGED_ACTION);
             intent.putExtra(WifiManager.EXTRA_NEW_RSSI, newRssi);
-            mContext.sendBroadcast(intent);
+            mContext.sendStickyBroadcast(intent);
         }
     }
 
@@ -2409,7 +2399,7 @@ public class WifiStateTracker extends NetworkStateTracker {
             CharSequence details = mContext.getResources().getQuantityText(
                     com.android.internal.R.plurals.wifi_available_detailed, numNetworks);
             mNotification.tickerText = title;
-            mNotification.setLatestEventInfo(getUiContext(), title, details, mNotification.contentIntent);
+            mNotification.setLatestEventInfo(mContext, title, details, mNotification.contentIntent);
             
             mNotificationRepeatTime = System.currentTimeMillis() + NOTIFICATION_REPEAT_DELAY_MS;
 
@@ -2440,14 +2430,7 @@ public class WifiStateTracker extends NetworkStateTracker {
         mNotificationRepeatTime = 0;
         mNumScansSinceNetworkStateChange = 0;
     }
-
-    private Context getUiContext() {
-        if (mUiContext == null) {
-            mUiContext = ThemeUtils.createUiContext(mContext);
-        }
-        return mUiContext != null ? mUiContext : mContext;
-    }
-
+    
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();

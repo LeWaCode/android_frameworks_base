@@ -30,5 +30,7 @@ oneway interface IStatusBar
     void disable(int state);
     void animateExpand();
     void animateCollapse();
+	// add by luoyongxing for lewa theme.
+	void resetStatusBar();
 }
 

@@ -61,6 +61,8 @@ public class RecentApplicationsDialog extends Dialog implements OnClickListener 
     View mNoAppsText;
     IntentFilter mBroadcastIntentFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
 
+    private VisibilityListener mVisibilityListener = null;
+
     Handler mHandler = new Handler();
     Runnable mCleanup = new Runnable() {
         public void run() {
@@ -74,8 +76,9 @@ public class RecentApplicationsDialog extends Dialog implements OnClickListener 
 
     private int mIconSize;
 
-    public RecentApplicationsDialog(Context context) {
+    public RecentApplicationsDialog(Context context, VisibilityListener listener) {
         super(context, com.android.internal.R.style.Theme_Dialog_RecentApplications);
+        mVisibilityListener = listener;
     }
 
     /**
@@ -134,6 +137,9 @@ public class RecentApplicationsDialog extends Dialog implements OnClickListener 
     @Override
     public void onStart() {
         super.onStart();
+        if (null != mVisibilityListener) {
+            mVisibilityListener.onShow();
+        }
         updateConfig();
         reloadButtons();
         showHideRecentTitle();
@@ -153,6 +159,9 @@ public class RecentApplicationsDialog extends Dialog implements OnClickListener 
     @Override
     public void onStop() {
         super.onStop();
+        if (null != mVisibilityListener) {
+            mVisibilityListener.onHide();
+        }
 
         if (sStatusBar != null) {
             sStatusBar.disable(StatusBarManager.DISABLE_NONE);
@@ -376,4 +385,9 @@ public class RecentApplicationsDialog extends Dialog implements OnClickListener 
             }
         }
     };
+
+    public interface VisibilityListener {
+        public void onShow();
+        public void onHide();
+    }
 }

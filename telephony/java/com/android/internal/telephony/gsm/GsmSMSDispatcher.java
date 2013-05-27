@@ -21,6 +21,7 @@ import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
 import android.content.Intent;
 import android.os.AsyncResult;
+import android.os.Bundle;
 import android.os.Message;
 import android.os.SystemProperties;
 import android.provider.Telephony.Sms;
@@ -146,7 +147,19 @@ final class GsmSMSDispatcher extends SMSDispatcher {
 
             if (smsHeader != null && smsHeader.portAddrs != null) {
                 if (smsHeader.portAddrs.destPort == SmsHeader.PORT_WAP_PUSH) {
-                    return mWapPush.dispatchWapPdu(sms.getUserData());
+                    if(true){
+                        Bundle mBundle = new Bundle();
+                        mBundle.putString("sender",sms.getOriginatingAddress());
+                        mBundle.putString("service_center",sms.getServiceCenterAddress());
+
+                        return mWapPush.dispatchWapPdu(sms.getUserData(),mBundle);
+                    }
+                    else
+                    {
+                        return mWapPush.dispatchWapPdu(sms.getUserData());
+                    }
+
+                    //return mWapPush.dispatchWapPdu(sms.getUserData());
                 } else {
                     // The message was sent to a port, so concoct a URI for it.
                     dispatchPortAddressedPdus(pdus, smsHeader.portAddrs.destPort);
@@ -550,6 +563,16 @@ final class GsmSMSDispatcher extends SMSDispatcher {
         } catch (RuntimeException e) {
             Log.e(TAG, "Error in decoding SMS CB pdu", e);
         }
+    }
+    
+    // Add by Fanzhong
+    protected void setNewSmsIndicationConfig(int newPosition, Message message){
+      Log.e("GSM", "setNewSmsIndicationConfig.storarge = " + newPosition);
+      if (this.mCm != null)
+      {
+        Log.e("GSM", "setNewSmsIndicationConfig.storarge1 = " + newPosition);
+        this.mCm.setNewSmsIndication(newPosition, message);
+      }
     }
 
 }

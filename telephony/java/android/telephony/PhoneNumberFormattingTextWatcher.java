@@ -61,7 +61,8 @@ public class PhoneNumberFormattingTextWatcher implements TextWatcher {
                 }
             }
 
-            PhoneNumberUtils.formatNumber(text, sFormatType);
+	    //remove by jxli, for remove '-'
+            //PhoneNumberUtils.formatNumber(text, sFormatType);
 
             mFormatting = false;
         }

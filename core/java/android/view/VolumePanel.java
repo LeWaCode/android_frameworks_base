@@ -332,18 +332,26 @@ public class VolumePanel extends Handler
      * @param index The volume index, where 0 means muted.
      */
     private void setSmallIcon(int index) {
-        mLargeStreamIcon.setVisibility(View.GONE);
-        mSmallStreamIcon.setVisibility(View.VISIBLE);
+        //Begin modify by panqianbo for new ui 20120405
+        //mLargeStreamIcon.setVisibility(View.GONE);
+        //mSmallStreamIcon.setVisibility(View.VISIBLE);
 
         if (mAudioManager.isWiredHeadsetOn()) {
-            mSmallStreamIcon.setImageResource(index == 0
-                    ? com.android.internal.R.drawable.ic_volume_headset_off_small
-                            : com.android.internal.R.drawable.ic_volume_headset_small);
+            //mSmallStreamIcon.setImageResource(index == 0
+             //       ? com.android.internal.R.drawable.ic_volume_headset_off_small
+             //               : com.android.internal.R.drawable.ic_volume_headset_small);
+             setLargeIcon(index == 0
+                    ? com.android.internal.R.drawable.ic_volume_headset_off
+                            : com.android.internal.R.drawable.ic_volume_headset);
         } else {
-            mSmallStreamIcon.setImageResource(index == 0
-                    ? com.android.internal.R.drawable.ic_volume_off_small
-                            : com.android.internal.R.drawable.ic_volume_small);
+            //mSmallStreamIcon.setImageResource(index == 0
+            //        ? com.android.internal.R.drawable.ic_volume_off_small
+            //                : com.android.internal.R.drawable.ic_volume_small);
+            setLargeIcon(index == 0
+                    ? com.android.internal.R.drawable.ic_volume_off
+                            : com.android.internal.R.drawable.ic_volume);
         }
+      //End
     }
 
     /**

@@ -333,7 +333,6 @@ public abstract class PhoneBase extends Handler implements Phone {
     public void registerForNewRingingConnection(
             Handler h, int what, Object obj) {
         checkCorrectThread(h);
-
         mNewRingingConnectionRegistrants.addUnique(h, what, obj);
     }
 
@@ -366,7 +365,6 @@ public abstract class PhoneBase extends Handler implements Phone {
     public void registerForIncomingRing(
             Handler h, int what, Object obj) {
         checkCorrectThread(h);
-
         mIncomingRingRegistrants.addUnique(h, what, obj);
     }
 

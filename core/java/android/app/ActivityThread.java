@@ -100,6 +100,8 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import android.content.res.lewaface.*;
+
 final class SuperNotCalledException extends AndroidRuntimeException {
     public SuperNotCalledException(String msg) {
         super(msg);
@@ -1231,7 +1233,14 @@ public final class ActivityThread {
             if (!TextUtils.isEmpty(config.customTheme.getThemePackageName())) {
                 attachThemeAssets(assets, config.customTheme);
             }
+			
         }
+		if(config != null && config.lewaTheme == null){
+			config.lewaTheme = LewaTheme.getBootTheme();
+		}
+		if(config != null && config.lewaTheme != null && config.lewaTheme.isValid()){
+				lewaAttachThemeAssets(assets, config.lewaTheme);
+		}
 
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
         DisplayMetrics metrics = getDisplayMetricsLocked(false);
@@ -1332,7 +1341,64 @@ public final class ActivityThread {
         }
         return false;
     }
+	private boolean lewaAttachThemeAssets(AssetManager assets, LewaTheme theme) {
 
+		
+		IAssetRedirectionManager rm = getAssetRedirectionManager();
+		if(rm == null){
+			  return false;
+		}
+		
+
+        int N = assets.getBasePackageCount();
+	   	LewaRedirectionMap map;
+        for (int i = 0; i < N; i++) {
+            String packageName = assets.getBasePackageName(i);
+            int packageId = assets.getBasePackageId(i);
+
+            /*
+             * For now, we only consider redirections coming from the
+             * framework or regular android packages. This excludes
+             * themes and other specialty APKs we are not aware of.
+             */
+            if (packageId != 0x01 && packageId != 0x7f) {
+                continue;
+            }
+			
+			if(theme != null && theme.isValid()){// current config support lewa theme.
+				
+				map = lewaGetResMap(packageName, theme);
+				StringBuilder sb = new StringBuilder(LewaTheme.LEWA_THEME_RES_PATH);
+				if (map != null) {
+				    if(packageName.equals("android")){
+					    sb.append("framework-res");
+                    }else{
+                        sb.append(packageName);
+                    }
+					
+                    int cookie = assets.addAssetPath(sb.toString());
+					if ( cookie == 0) {
+		                Log.e(TAG, "add assetspath failed for:" + sb.toString());
+		                break;
+			   		}else{
+                        assets.lewaAddRedirections(map, cookie, packageName);
+                    }
+				
+				}else{
+					if(DEBUG)Log.i(TAG, "don't need to redirection for "+packageName);
+				}
+	
+			}
+			
+        }
+   
+        return true;
+    }
+   private void lewaDetachThemeAssets(AssetManager assets) {
+
+	    assets.lewaClearRedirections();
+	  
+    }
     /**
      * Creates the top level resources for the given package.
      */
@@ -3073,6 +3139,39 @@ public final class ActivityThread {
         }
     }
 
+    private void lewaClearCachedMaps(){
+        IAssetRedirectionManager rm = getAssetRedirectionManager();
+        if(rm == null){
+			  return;
+		}
+        try{
+			rm.lewaClearRedirectionMaps();
+		} catch (RemoteException e) {
+			 	Log.e(TAG, "clear cached maps failed, remoteExcetptions.");
+		}
+    }
+	private LewaRedirectionMap lewaGetResMap(String modelName, LewaTheme theme){
+
+		if(modelName == null && theme == null){
+			return null;
+		}
+		if(!theme.isSupportTheme(modelName)){
+			return null;
+		}
+		
+		IAssetRedirectionManager rm = getAssetRedirectionManager();
+		
+		if(rm == null){
+			  return null;
+		}
+		
+		try{
+			 return rm.lewaGetPackageRedirectionMap(modelName, theme.getId());
+		} catch (RemoteException e) {
+			 	Log.e(TAG, "Failure accessing package redirection map, removing theme support.");
+		}
+		return null;
+	}
     /*
      * Original code returned a boolean here to denote whether changes were
      * detected.  But T-Mobile must know what specifically has changed to check
@@ -3121,8 +3220,22 @@ public final class ActivityThread {
                         }
                     }
                 }
+// modify for lewatheme by luoyongxing
+				boolean lewaThemeChanged = (changes & ActivityInfo.CONFIG_LEWATHEME_RESOURCE) != 0;
+				if (lewaThemeChanged) {
+                    AssetManager am = r.getAssets();
+                   
+                    lewaDetachThemeAssets(am);
+                    if (config.lewaTheme != null && config.lewaTheme.isValid()) {
+                        lewaAttachThemeAssets(am, config.lewaTheme);
+                    }else if(config.lewaTheme != null && !config.lewaTheme.isValid()){
+                        if(DEBUG)Log.i(TAG, "try to clear cached maps.");
+                        lewaClearCachedMaps();// invalid theme,but has theme name, it mean that this theme without models, then clear the cached maps.
+                    }
+                    
+                }
                 r.updateConfiguration(config, dm);
-                if (themeChanged) {
+                if (themeChanged || lewaThemeChanged) {
                     r.updateStringCache();
                 }
                 //Slog.i(TAG, "Updated app resources " + v.getKey()
@@ -3174,14 +3287,28 @@ public final class ActivityThread {
 
                 // We removed the old resources object from the mActiveResources
                 // cache, now we need to trigger an update for each application.
-                if ((diff & ActivityInfo.CONFIG_THEME_RESOURCE) != 0) {
-                    if (cb instanceof ContextWrapper) {
+                if ((diff & ActivityInfo.CONFIG_THEME_RESOURCE) != 0 || (diff & ActivityInfo.CONFIG_LEWATHEME_RESOURCE) != 0) {
+                    if (cb instanceof Activity || cb instanceof Application) {
                         Context context = ((ContextWrapper)cb).getBaseContext();
                         if (context instanceof ContextImpl) {
                             ((ContextImpl)context).refreshResourcesIfNecessary();
                         }
                     }
                 }
+
+				// add by luoyongxing for lewa theme
+				// try to re-load the statusbar icons.
+				if((diff & ActivityInfo.CONFIG_LEWATHEME_RESOURCE) != 0){
+					if (cb instanceof Activity || cb instanceof Application) {
+						Context context = ((ContextWrapper)cb).getBaseContext();
+		
+	                    if (context instanceof ContextImpl && context.getPackageName().equals("com.android.systemui")) {
+					StatusBarManager mStatusBarManager = (StatusBarManager)((ContextImpl)context).getSystemService(Context.STATUS_BAR_SERVICE);
+	                       	mStatusBarManager.resetStatusBar();
+	                    }
+					}
+					
+				}
 
                 performConfigurationChanged(cb, config);
             }

@@ -24,11 +24,14 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Binder;
-import android.os.FileUtils;
-import android.os.IBinder;
 import android.os.DropBoxManager;
+import android.os.FileUtils;
+import android.os.Handler;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
@@ -133,7 +136,65 @@ class BatteryService extends Binder {
 
         // set initial status
         update();
+
+        // Woody Guo @ 2012/05/04
+        // Watch for setting changes
+        ContentResolver resolver = mContext.getContentResolver();
+        mChangeModeOn = Settings.System.getInt(resolver
+                , Settings.System.CHANGE_POWER_MODE_IF_LOW_BATTERY, 0) == 1;
+        mChangeModeLevel = Settings.System.getInt(resolver
+                , Settings.System.CHANGE_POWER_MODE_BATTERY_LEVEL, 20);
+
+        mObserver = new ChangeModeSettingsObserver(new Handler());
+        mObserver.observe();
+        // END
     }
+
+    // Woody Guo @ 2012/05/04
+    private ChangeModeSettingsObserver mObserver;
+
+    private final static String ACTION_CHANGE_POWER_MODE = "action_change_power_mode";
+    private final static String ACTION_BATTERY_ALMOST_FULL = "com.lewa.action.BATTERY_ALMOST_FULL";
+    private final static String EXTRA_CHARGING = "extra_charging";
+
+    private boolean mChangeModeOn;  // Whether or not we should change power mode
+    private int mChangeModeLevel;   // Change power mode when battery level is below this level
+
+    private class ChangeModeSettingsObserver extends ContentObserver {
+        public ChangeModeSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        public void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.CHANGE_POWER_MODE_IF_LOW_BATTERY), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.CHANGE_POWER_MODE_BATTERY_LEVEL), false, this);
+        }
+
+        public void unobserve() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChangeUri(Uri uri, boolean selfChange) {
+            ContentResolver resolver = mContext.getContentResolver();
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.CHANGE_POWER_MODE_IF_LOW_BATTERY))) {
+                mChangeModeOn = Settings.System.getInt(resolver
+                        , Settings.System.CHANGE_POWER_MODE_IF_LOW_BATTERY, 0) == 1;
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.CHANGE_POWER_MODE_BATTERY_LEVEL))) {
+                mChangeModeLevel = Settings.System.getInt(resolver
+                        , Settings.System.CHANGE_POWER_MODE_BATTERY_LEVEL, 20);
+            }
+            // Slog.d("WOODY", "Switch: " + mChangeModeOn + "; Level: " + mChangeModeLevel);
+        }
+    }
+    // END
 
     final boolean isPowered() {
         // assume we are powered if battery state is unknown so the "stay on while plugged in" option will work.
@@ -322,6 +383,33 @@ class BatteryService extends Binder {
                 mContext.sendBroadcast(statusIntent);
             }
 
+            // Woody Guo @ 2012/05/04
+            // Send broadcast if we should change power mode when battery level is lower/higher
+            // than the configured level the first time
+            if (mChangeModeOn) {
+                if (mBatteryLevel < mChangeModeLevel && mLastBatteryLevel >= mChangeModeLevel) {
+                    statusIntent.setAction(ACTION_CHANGE_POWER_MODE);
+                    statusIntent.putExtra(EXTRA_CHARGING, false);
+                    mContext.sendBroadcast(statusIntent);
+                    // Slog.d("WOODY", "Broadcast sent with extra Charging=false");
+                } else if (mBatteryLevel >= mChangeModeLevel && mLastBatteryLevel < mChangeModeLevel) {
+                    statusIntent.setAction(ACTION_CHANGE_POWER_MODE);
+                    statusIntent.putExtra(EXTRA_CHARGING, true);
+                    mContext.sendBroadcast(statusIntent);
+                    // Slog.d("WOODY", "Broadcast sent with extra Charging=true");
+                }
+            }
+            // END
+            // -----------start-----------------
+            // luoyongxing @2012/06/18
+            // send broadcast when charging and battery level == 100
+            
+            if(mBatteryLevel == 100 && 
+                (mLastBatteryLevel < 100 || (mBatteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && mLastBatteryStatus != BatteryManager.BATTERY_STATUS_CHARGING))){
+                statusIntent.setAction(ACTION_BATTERY_ALMOST_FULL);
+                mContext.sendBroadcast(statusIntent);
+            }
+            // -----------end-------------------
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
             if (logOutlier && dischargeDuration != 0) {
                 logOutlier(dischargeDuration);

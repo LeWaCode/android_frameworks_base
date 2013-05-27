@@ -1,0 +1,140 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.systemui"
+    android:sharedUserId="android.uid.system"
+    android:process="system">
+
+    <!--begin add by zhuyaopeng,2012/05/21-->
+	<supports-screens 
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:anyDensity="true"
+     />
+	 <!--end add by zhuyaopeng,2012/05/21-->
+
+    <uses-permission android:name="android.permission.STATUS_BAR_SERVICE" />
+    <uses-permission android:name="android.permission.MANAGE_USB" />
+    <!-- start DataMonitorActivity add by zhangbo begin-->
+    <uses-permission android:name="android.permission.RESTART_PACKAGES"/>	
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
+    <uses-permission android:name="android.permission.REBOOT" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.HARDWARE_TEST" />
+    <!-- start DataMonitorActivity add by zhangbo end-->
+
+    <application android:persistent="true"
+        android:allowClearUserData="false"
+        android:label="@string/app_label"
+        android:icon="@drawable/ic_launcher_settings"
+        android:theme="@android:style/Theme.Light">
+
+        <service android:name=".statusbar.StatusBarService"
+            android:exported="false" />
+        <service android:enabled="true" android:name=".statusbar.switchwidget.RenderFXService" />
+
+        <activity android:name=".usb.UsbStorageActivity"
+            android:excludeFromRecents="true">
+        </activity>
+        
+        <activity android:theme="@style/USBModeTheme" 
+            android:name=".usb.UsbModeSelection" 
+            android:excludeFromRecents="true" />
+
+        <activity android:name="com.android.internal.app.ExternalMediaFormatActivity"
+            android:theme="@*android:style/Theme.Dialog.Alert"
+            android:excludeFromRecents="true">
+        </activity>
+
+        <!-- started from UsbDeviceSettingsManager -->
+        <activity android:name=".usb.UsbConfirmActivity"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_USB"
+            android:theme="@*android:style/Theme.Dialog.Alert"
+            android:finishOnCloseSystemDialogs="true"
+            android:excludeFromRecents="true">
+        </activity>
+
+        <!-- started from UsbDeviceSettingsManager -->
+        <activity android:name=".usb.UsbPermissionActivity"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_USB"
+            android:theme="@*android:style/Theme.Dialog.Alert"
+            android:finishOnCloseSystemDialogs="true"
+            android:excludeFromRecents="true">
+        </activity>
+
+        <!-- started from UsbDeviceSettingsManager -->
+        <activity android:name=".usb.UsbResolverActivity"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_USB"
+            android:theme="@*android:style/Theme.Dialog.Alert"
+            android:finishOnCloseSystemDialogs="true"
+            android:excludeFromRecents="true">
+        </activity>
+
+        <!-- started from UsbDeviceSettingsManager -->
+        <activity android:name=".usb.UsbAccessoryUriActivity"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_USB"
+            android:theme="@*android:style/Theme.Dialog.Alert"
+            android:finishOnCloseSystemDialogs="true"
+            android:excludeFromRecents="true">
+        </activity>
+        
+        <!-- start DataMonitorActivity add by zhangbo begin-->
+        <activity android:name=".statusbar.ErrorReportActivity">
+        		<intent-filter>
+                <action android:name="android.intent.action.APP_ERROR" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter> 
+        </activity>
+
+
+		<activity android:name=".statusbar.WhiteListActivity" 
+		    android:label="@string/memory_protect" 
+		    android:screenOrientation="portrait" 
+		    android:theme="@android:style/Theme.Light"/>
+
+		<activity android:name=".statusbar.DatamonitorMainActivity" 
+		    android:label="@string/data_monitor" 
+		    android:screenOrientation="portrait" 
+		    android:theme="@android:style/Theme.Light.NoTitleBar" />
+
+		<activity android:name=".statusbar.FirewallActivity" 
+		    android:label="@string/firewall" 
+		    android:screenOrientation="portrait"
+		    android:theme="@android:style/Theme.Light"/>
+
+		<activity android:name=".statusbar.MonitorSetupActivity" 
+		    android:label="@string/monitor_setup" 
+		    android:screenOrientation="portrait"
+		    android:theme="@android:style/Theme.Light"/>
+
+		<activity android:name=".statusbar.DataActivity" 
+		    android:label="@string/data_activity" 
+		    android:screenOrientation="portrait" />
+
+        <activity android:name=".statusbar.SelectDateActivity" 
+            android:label="@string/select_start_date" />
+
+        <service android:enabled="true" android:name=".statusbar.DataMonitorService"/>
+
+		<receiver android:name=".statusbar.powerwidget.LockScreenAdmin" 
+		    android:label="@string/app_label"
+			android:description="@string/app_label" 
+			android:permission="android.permission.BIND_DEVICE_ADMIN">
+			<meta-data android:name="android.app.device_admin"
+			    android:resource="@xml/device_admin" />
+			<intent-filter>
+			    <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+			</intent-filter>
+		</receiver>
+
+        <!-- start DataMonitorActivity add by zhangbo end-->
+        <meta-data android:value="4e675e8c5270156169000017" android:name="UMENG_APPKEY" />
+		<meta-data android:name="ga-tracking-key" android:value="UA-23917437-3"></meta-data>
+		<service android:enabled="true" android:name=".statusbar.powerwidget.RenderFXService" />
+    </application>
+</manifest>

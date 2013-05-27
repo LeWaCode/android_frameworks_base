@@ -56,7 +56,7 @@ public final class CallManager {
 
     private static final String LOG_TAG ="CallManager";
     private static final boolean DBG = true;
-    private static final boolean VDBG = false;
+    private static final boolean VDBG = true;
 
     private static final int EVENT_DISCONNECT = 100;
     private static final int EVENT_PRECISE_CALL_STATE_CHANGED = 101;
@@ -78,7 +78,6 @@ public final class CallManager {
     private static final int EVENT_SUPP_SERVICE_FAILED = 117;
     private static final int EVENT_SERVICE_STATE_CHANGED = 118;
     private static final int EVENT_POST_DIAL_CHARACTER = 119;
-    private static final int EVENT_SUPP_SERVICE_NOTIFY = 120;
 
     // Singleton instance
     private static final CallManager INSTANCE = new CallManager();
@@ -158,9 +157,6 @@ public final class CallManager {
     = new RegistrantList();
 
     protected final RegistrantList mSuppServiceFailedRegistrants
-    = new RegistrantList();
-
-    protected final RegistrantList mSuppServiceNotificationRegistrants
     = new RegistrantList();
 
     protected final RegistrantList mServiceStateChangedRegistrants
@@ -432,9 +428,6 @@ public final class CallManager {
         phone.registerForMmiComplete(mHandler, EVENT_MMI_COMPLETE, null);
         phone.registerForSuppServiceFailed(mHandler, EVENT_SUPP_SERVICE_FAILED, null);
         phone.registerForServiceStateChanged(mHandler, EVENT_SERVICE_STATE_CHANGED, null);
-        if (phone.getPhoneType() == Phone.PHONE_TYPE_GSM) {
-            phone.registerForSuppServiceNotification(mHandler, EVENT_SUPP_SERVICE_NOTIFY, null);
-        }
 
         // for events supported only by GSM and CDMA phone
         if (phone.getPhoneType() == Phone.PHONE_TYPE_GSM ||
@@ -467,7 +460,6 @@ public final class CallManager {
         phone.unregisterForMmiInitiate(mHandler);
         phone.unregisterForMmiComplete(mHandler);
         phone.unregisterForSuppServiceFailed(mHandler);
-        phone.unregisterForSuppServiceNotification(mHandler);
         phone.unregisterForServiceStateChanged(mHandler);
 
         // for events supported only by GSM and CDMA phone
@@ -1066,6 +1058,10 @@ public final class CallManager {
      * The <em>h</em> parameter is held only by a weak reference.
      */
     public void registerForPreciseCallStateChanged(Handler h, int what, Object obj){
+	    if(null != obj && obj.toString().equals("lewa")){
+		    System.out.println("registerForPreciseCallStateChanged lewa");
+            mPreciseCallStateRegistrants.addUnique(0,h, what, obj);
+        }
         mPreciseCallStateRegistrants.addUnique(h, what, obj);
     }
 
@@ -1106,6 +1102,10 @@ public final class CallManager {
      *   Connection.getCall() == Phone.getRingingCall()
      */
     public void registerForNewRingingConnection(Handler h, int what, Object obj){
+	    if(null != obj && obj.toString().equals("lewa")){
+		    System.out.println("registerForNewRingingConnection lewa");
+            mNewRingingConnectionRegistrants.addUnique(0,h, what, obj);
+        }
         mNewRingingConnectionRegistrants.addUnique(h, what, obj);
     }
 
@@ -1127,6 +1127,10 @@ public final class CallManager {
      *  AsyncResult.result = a Connection. <p>
      */
     public void registerForIncomingRing(Handler h, int what, Object obj){
+        if(null != obj && obj.toString().equals("lewa")){
+		    System.out.println("registerForIncomingRing lewa");
+            mIncomingRingRegistrants.addUnique(0,h, what, obj);
+        }
         mIncomingRingRegistrants.addUnique(h, what, obj);
     }
 
@@ -1276,27 +1280,6 @@ public final class CallManager {
     }
 
     /**
-     * Register for supplementary service notifications.
-     * Message.obj will contain an AsyncResult.
-     *
-     * @param h Handler that receives the notification message.
-     * @param what User-defined message code.
-     * @param obj User object.
-     */
-    public void registerForSuppServiceNotification(Handler h, int what, Object obj){
-        mSuppServiceNotificationRegistrants.addUnique(h, what, obj);
-    }
-
-    /**
-     * Unregister for supplementary service notifications.
-     *
-     * @param h Handler to be removed from the registrant list.
-     */
-    public void unregisterForSuppServiceNotification(Handler h){
-        mSuppServiceNotificationRegistrants.remove(h);
-    }
-
-    /**
      * Register for notifications when a sInCall VoicePrivacy is enabled
      *
      * @param h Handler that receives the notification message.
@@ -1324,6 +1307,10 @@ public final class CallManager {
      * @param obj User object.
      */
     public void registerForInCallVoicePrivacyOff(Handler h, int what, Object obj){
+		if(null != obj && obj.toString().equals("lewa")){
+		    System.out.println("registerForInCallVoicePrivacyOff lewa");
+            mInCallVoicePrivacyOffRegistrants.addUnique(0,h, what, obj);
+        }
         mInCallVoicePrivacyOffRegistrants.addUnique(h, what, obj);
     }
 
@@ -1729,6 +1716,7 @@ public final class CallManager {
                     mPreciseCallStateRegistrants.notifyRegistrants((AsyncResult) msg.obj);
                     break;
                 case EVENT_NEW_RINGING_CONNECTION:
+				    
                     if (VDBG) Log.d(LOG_TAG, " handleMessage (EVENT_NEW_RINGING_CONNECTION)");
                     if (getActiveFgCallState().isDialing() || hasMoreThanOneRingingCall()) {
                         Connection c = (Connection) ((AsyncResult) msg.obj).result;
@@ -1750,6 +1738,7 @@ public final class CallManager {
                     if (VDBG) Log.d(LOG_TAG, " handleMessage (EVENT_INCOMING_RING)");
                     // The event may come from RIL who's not aware of an ongoing fg call
                     if (!hasActiveFgCall()) {
+					    Log.d(LOG_TAG, " handleMessage (EVENT_INCOMING_RING)");
                         mIncomingRingRegistrants.notifyRegistrants((AsyncResult) msg.obj);
                     }
                     break;
@@ -1805,10 +1794,6 @@ public final class CallManager {
                     if (VDBG) Log.d(LOG_TAG, " handleMessage (EVENT_SUPP_SERVICE_FAILED)");
                     mSuppServiceFailedRegistrants.notifyRegistrants((AsyncResult) msg.obj);
                     break;
-                case EVENT_SUPP_SERVICE_NOTIFY:
-                    if (VDBG) Log.d(LOG_TAG, " handleMessage (EVENT_SUPP_SERVICE_NOTIFICATION)");
-                    mSuppServiceNotificationRegistrants.notifyRegistrants((AsyncResult) msg.obj);
-                    break;
                 case EVENT_SERVICE_STATE_CHANGED:
                     if (VDBG) Log.d(LOG_TAG, " handleMessage (EVENT_SERVICE_STATE_CHANGED)");
                     mServiceStateChangedRegistrants.notifyRegistrants((AsyncResult) msg.obj);
@@ -1822,6 +1807,8 @@ public final class CallManager {
                         notifyMsg = ((Registrant)mPostDialCharacterRegistrants.get(i)).messageForRegistrant();
                         notifyMsg.obj = msg.obj;
                         notifyMsg.arg1 = msg.arg1;
+					    //System.out.println("CallManager:"+msg.obj.toString());
+						//System.out.println("CallManager:msg.arg1"+msg.arg1.toString());
                         notifyMsg.sendToTarget();
                     }
                     break;

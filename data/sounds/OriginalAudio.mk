@@ -8,6 +8,15 @@
 
 LOCAL_PATH:= frameworks/base/data/sounds
 
+# added by ioz9 for small camera_click voice
+ifeq ($(TARGET_PRODUCT),cyanogen_c8650)
+PRODUCT_COPY_FILES += \
+        $(LOCAL_PATH)/effects/camera_click_small.ogg:system/media/audio/ui/camera_click.ogg
+else
+PRODUCT_COPY_FILES += \
+        $(LOCAL_PATH)/effects/camera_click.ogg:system/media/audio/ui/camera_click.ogg       
+endif
+
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/F1_MissedCall.ogg:system/media/audio/notifications/F1_MissedCall.ogg \
 	$(LOCAL_PATH)/F1_New_MMS.ogg:system/media/audio/notifications/F1_New_MMS.ogg \
@@ -65,6 +74,5 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/effects/KeypressDelete.ogg:system/media/audio/ui/KeypressDelete.ogg \
 	$(LOCAL_PATH)/effects/KeypressReturn.ogg:system/media/audio/ui/KeypressReturn.ogg \
 	$(LOCAL_PATH)/effects/VideoRecord.ogg:system/media/audio/ui/VideoRecord.ogg \
-	$(LOCAL_PATH)/effects/camera_click.ogg:system/media/audio/ui/camera_click.ogg \
 	$(LOCAL_PATH)/newwavelabs/CrazyDream.ogg:system/media/audio/ringtones/CrazyDream.ogg \
 	$(LOCAL_PATH)/newwavelabs/DreamTheme.ogg:system/media/audio/ringtones/DreamTheme.ogg

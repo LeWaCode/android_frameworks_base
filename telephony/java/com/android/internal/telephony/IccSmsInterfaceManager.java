@@ -213,5 +213,10 @@ public abstract class IccSmsInterfaceManager extends ISms.Stub {
     }
 
     protected abstract void log(String msg);
+    
+    //Add by Fanzhong
+    public void setNewSmsIndication(int newPosition){
+    	this.mDispatcher.setNewSmsIndicationConfig(newPosition, null);
+    }
 
 }

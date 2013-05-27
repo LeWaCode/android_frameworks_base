@@ -456,12 +456,18 @@ public class DateFormat {
 
             switch (c) {
                 case AM_PM:
-                    replacement = DateUtils.getAMPMString(inDate.get(Calendar.AM_PM));
+                    // Begin, Modified by zhumeiquan, 20120607
+                    //replacement = DateUtils.getAMPMString(inDate.get(Calendar.AM_PM));
+                    replacement = DateUtils.getChineseAMPMString(inDate);
+                    // End
                     break;
                                         
                 case CAPITAL_AM_PM:
                     //FIXME: this is the same as AM_PM? no capital?
-                    replacement = DateUtils.getAMPMString(inDate.get(Calendar.AM_PM));
+                    // Begin, Modified by zhumeiquan, 20120607                    
+                    //replacement = DateUtils.getAMPMString(inDate.get(Calendar.AM_PM));
+                    replacement = DateUtils.getChineseAMPMString(inDate);
+                    // End                    
                     break;
                 
                 case DATE:

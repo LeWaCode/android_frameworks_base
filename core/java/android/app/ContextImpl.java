@@ -83,6 +83,7 @@ import android.net.wifi.WifiManager;
 import android.net.wimax.WimaxHelper;
 import android.net.wimax.WimaxManagerConstants;
 import android.nfc.NfcManager;
+import android.os.Build;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.DropBoxManager;
@@ -1736,7 +1737,12 @@ class ContextImpl extends Context {
                 throws NameNotFoundException {
             try {
                 PackageInfo pi = mPM.getPackageInfo(packageName, flags);
+			  // modify by shenqi for UMen statistics
                 if (pi != null) {
+			if(packageName != null && (packageName.startsWith("com.lewa") || packageName.equals("com.android.systemui"))){
+				pi.versionName = Build.DISPLAY;
+			}
+			 // modify end
                     return pi;
                 }
             } catch (RemoteException e) {

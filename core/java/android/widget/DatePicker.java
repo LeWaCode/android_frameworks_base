@@ -293,7 +293,10 @@ public class DatePicker extends FrameLayout {
                 // Set the OnTextChangedListener to first two NumberPickers
                 listOfNumberPickers[index].setOnTextChangeListener(new OnTextChangedListener() {
                     public void onTextChanged(String text) {
-                        if ((!isMediumDateFormat && text.length() == 2) || (isMediumDateFormat && (listOfNumberPickersType[index] == MONTH_PICKER && text.length() == 3) || (listOfNumberPickersType[index] != MONTH_PICKER && text.length() == 2))) {
+                        if ((listOfNumberPickersType[index] == MONTH_PICKER
+                                 && ((!isMediumDateFormat && text.length() == 2) || (isMediumDateFormat && text.length() == 3))) 
+                                || (listOfNumberPickersType[index] == YEAR_PICKER && text.length() == 4)
+                                || (listOfNumberPickersType[index] == DAY_PICKER && text.length() == 2)) {
                             listOfNumberPickers[index+1].requestTextFocus();
                         }
                     }

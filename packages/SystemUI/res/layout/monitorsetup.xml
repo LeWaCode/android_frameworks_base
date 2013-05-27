@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+>  
+
+    <RelativeLayout android:id="@+id/monthly_data_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"        
+        android:paddingLeft="15dip"
+        android:paddingRight="6dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip"   
+        android:background="@drawable/list_selector_background"
+        >
+        <TextView android:id="@+id/monthly_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"                        
+            android:text="@string/monthly_data"
+            android:singleLine="true"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:textSize="20sp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"             
+            />
+        <TextView android:id="@+id/monthly_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/monthly_data"            
+            android:text="@string/monthly_total"            
+            android:layout_alignLeft="@id/monthly_data"
+            android:textColor="@android:color/preference_secondary_text_light"
+        	android:textSize="16sp"            
+            />
+        <ImageView
+            android:id="@+id/monicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"            
+            android:layout_alignParentRight="true"
+            android:background="@drawable/android:btn_circle_normal"
+            android:src="@drawable/android:ic_btn_round_more_normal"
+            />            
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+
+    <RelativeLayout android:id="@+id/reminder_me_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"    
+        android:paddingLeft="15dip"
+        android:paddingRight="6dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip" 
+        android:background="@drawable/list_selector_background"
+        >
+        <TextView android:id="@+id/reminder_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reminder_me"
+            android:singleLine="true"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:textSize="20sp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"             
+            />
+        <TextView android:id="@+id/reminder_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/reminder_me"
+            android:text="@string/reminder_data"
+            android:layout_alignLeft="@id/reminder_me"
+            android:textColor="@android:color/preference_secondary_text_light"
+        	android:textSize="16sp" 
+            />
+        <CheckBox android:id="@+id/reminder_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"            
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="0dip" 
+            />        
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+
+    <RelativeLayout android:id="@+id/start_date_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"    
+        android:paddingLeft="15dip"
+        android:paddingRight="6dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip" 
+        android:background="@drawable/list_selector_background"
+        >
+        <TextView android:id="@+id/start_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_date"
+            android:singleLine="true"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:textSize="20sp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"             
+            />
+        <TextView android:id="@+id/start_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/start_date"
+            android:text="@string/start_from"
+            android:layout_alignLeft="@id/start_date"
+            android:textColor="@android:color/preference_secondary_text_light"
+        	android:textSize="16sp"           
+            />
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"            
+            android:layout_alignParentRight="true"
+            android:background="@drawable/android:btn_circle_normal"
+            android:src="@drawable/android:ic_btn_round_more_normal"
+            />        
+    </RelativeLayout>    
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+
+    <RelativeLayout android:id="@+id/sms_query_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"    
+        android:paddingLeft="15dip"
+        android:paddingRight="6dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip"
+        android:background="@drawable/list_selector_background"
+        >
+        <TextView android:id="@+id/sms_query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sms_query"
+            android:singleLine="true"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:textSize="20sp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"      
+            />
+        <TextView android:id="@+id/sms_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sms_query"
+            android:text="@string/sms_number"
+            android:layout_alignLeft="@id/sms_query"
+            android:textColor="@android:color/preference_secondary_text_light"
+        	android:textSize="16sp"             
+            />
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"            
+            android:layout_alignParentRight="true"            
+            android:background="@drawable/android:btn_circle_normal"
+            android:src="@drawable/android:ic_btn_round_more_normal"
+            />        
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+
+    <RelativeLayout android:id="@+id/clear_history_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"    
+        android:paddingLeft="15dip"
+        android:paddingRight="6dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip" 
+        android:background="@drawable/list_selector_background"
+        >
+        <TextView android:id="@+id/clear_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_history"
+            android:singleLine="true"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:textSize="20sp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"      
+            />
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/clear_history"
+            android:layout_alignLeft="@id/clear_history"
+            android:textColor="@android:color/preference_secondary_text_light"
+        	android:textSize="16sp" 
+            />
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"            
+            android:layout_alignParentRight="true"
+            android:background="@drawable/android:btn_circle_normal"
+            android:src="@drawable/android:ic_btn_round_more_normal"
+            />        
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+
+    <RelativeLayout android:id="@+id/verify_data_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dip"
+        android:paddingRight="6dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="6dip"      
+        android:background="@drawable/list_selector_background"
+        >
+        <TextView android:id="@+id/verify_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_data"
+            android:singleLine="true"
+            android:textColor="@android:color/preference_primary_text_light"
+            android:textSize="20sp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal" 
+            />  
+        <TextView android:id="@+id/verify_data_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/verify_data"
+            android:text="@string/verify_data_by"
+            android:layout_alignLeft="@id/verify_data"
+            android:textColor="@android:color/preference_secondary_text_light"
+        	android:textSize="16sp"      
+            />
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"            
+            android:layout_alignParentRight="true"
+            android:background="@drawable/android:btn_circle_normal"
+            android:src="@drawable/android:ic_btn_round_more_normal"
+            />    
+    </RelativeLayout>    
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?android:attr/listDivider"
+        />
+</LinearLayout>

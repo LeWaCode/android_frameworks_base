@@ -976,8 +976,11 @@ public final class CdmaCallTracker extends CallTracker {
             break;
 
             case EVENT_REPOLL_AFTER_DELAY:
-            case EVENT_CALL_STATE_CHANGE:
                 pollCallsWhenSafe();
+            break;
+
+            case EVENT_CALL_STATE_CHANGE:
+                pollCallsAfterDelay();
             break;
 
             case EVENT_RADIO_AVAILABLE:

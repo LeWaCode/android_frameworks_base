@@ -50,7 +50,6 @@ import android.view.KeyEvent;
 import android.view.VolumePanel;
 import android.os.SystemProperties;
 
-import com.android.internal.app.ThemeUtils;
 import com.android.internal.telephony.ITelephony;
 
 import java.io.FileDescriptor;
@@ -77,6 +76,9 @@ import java.util.Stack;
  */
 public class AudioService extends IAudioService.Stub {
 
+	//add by Fanzhong
+    private static final String SYSTEM_SETTING_LIGHT_TEMP_SETTINGS = "ro.product.network";
+
     private static final String TAG = "AudioService";
 
     /** How long to delay before persisting a change in volume/ringer mode. */
@@ -88,8 +90,6 @@ public class AudioService extends IAudioService.Stub {
 
     /** The UI */
     private VolumePanel mVolumePanel;
-    private Context mUiContext;
-    private Handler mHandler;
 
     // sendMsg() flags
     /** Used when a message should be shared across all stream types. */
@@ -293,13 +293,13 @@ public class AudioService extends IAudioService.Stub {
     public AudioService(Context context) {
         mContext = context;
         mContentResolver = context.getContentResolver();
-        mHandler = new Handler();
 
        // Intialized volume
         MAX_STREAM_VOLUME[AudioSystem.STREAM_VOICE_CALL] = SystemProperties.getInt(
             "ro.config.vc_call_vol_steps",
            MAX_STREAM_VOLUME[AudioSystem.STREAM_VOICE_CALL]);
 
+        mVolumePanel = new VolumePanel(context, this);
         mSettingsObserver = new SettingsObserver();
         mForcedUseForComm = AudioSystem.FORCE_NONE;
         createAudioSystemThread();
@@ -339,13 +339,6 @@ public class AudioService extends IAudioService.Stub {
         intentFilter.addAction(Intent.ACTION_DOCK_EVENT);
         intentFilter.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
         context.registerReceiver(mReceiver, intentFilter);
-
-        ThemeUtils.registerThemeChangeReceiver(context, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mUiContext = null;
-            }
-        });
 
         // Register for media button intent broadcasts.
         intentFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
@@ -462,8 +455,8 @@ public class AudioService extends IAudioService.Stub {
                     && !AudioSystem.isStreamActive(AudioSystem.STREAM_MUSIC))
                     && streamType != AudioSystem.STREAM_RING) {
                 flags &= ~AudioManager.FLAG_PLAY_SOUND;
-            }
         }
+}
 
         adjustStreamVolume(streamType, direction, flags);
     }
@@ -507,7 +500,7 @@ public class AudioService extends IAudioService.Stub {
             index = streamState.mIndex;
         }
         // UI
-        showVolumeChangeUi(streamType, flags);
+        mVolumePanel.postVolumeChanged(streamType, flags);
         // Broadcast Intent
         sendVolumeUpdate(streamType, oldIndex, index);
     }
@@ -525,7 +518,7 @@ public class AudioService extends IAudioService.Stub {
         index = (streamState.muteCount() != 0) ? streamState.mLastAudibleIndex : streamState.mIndex;
 
         // UI, etc.
-        showVolumeChangeUi(streamType, flags);
+        mVolumePanel.postVolumeChanged(streamType, flags);
         // Broadcast Intent
         sendVolumeUpdate(streamType, oldIndex, index);
     }
@@ -1281,6 +1274,15 @@ public class AudioService extends IAudioService.Stub {
             // Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC...");
             return AudioSystem.STREAM_MUSIC;
         } else if (suggestedStreamType == AudioManager.USE_DEFAULT_STREAM_TYPE) {
+            // No suggest stream, use stream_fm if fm is on
+			if("TD".equalsIgnoreCase(SystemProperties.get(SYSTEM_SETTING_LIGHT_TEMP_SETTINGS))){
+            	if  ((AudioSystem.getDeviceConnectionState(AudioSystem.DEVICE_OUT_FM_HEADPHONE, "")
+                	== AudioSystem.DEVICE_STATE_AVAILABLE) ||
+                	(AudioSystem.getDeviceConnectionState(AudioSystem.DEVICE_OUT_FM_SPEAKER, "")
+                	== AudioSystem.DEVICE_STATE_AVAILABLE)){
+                	return AudioSystem.STREAM_FM;
+            	}
+			}
             // Log.v(TAG, "getActiveStreamType: Forcing STREAM_RING...");
             return (mDefaultVolumeMedia == 0) ? AudioSystem.STREAM_RING : AudioSystem.STREAM_MUSIC;
         } else {
@@ -2474,25 +2476,6 @@ public class AudioService extends IAudioService.Stub {
         }
     }
 
-    private void showVolumeChangeUi(final int streamType, final int flags) {
-        if (mUiContext != null && mVolumePanel != null) {
-            mVolumePanel.postVolumeChanged(streamType, flags);
-        } else {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mUiContext == null) {
-                        mUiContext = ThemeUtils.createUiContext(mContext);
-                    }
-
-                    final Context context = mUiContext != null ? mUiContext : mContext;
-                    mVolumePanel = new VolumePanel(context, AudioService.this);
-                    mVolumePanel.postVolumeChanged(streamType, flags);
-                }
-            });
-        }
-    }
-
     //==========================================================================================
     // RemoteControl
     //==========================================================================================
@@ -2524,7 +2507,8 @@ public class AudioService extends IAudioService.Stub {
                     if (!mRCStack.empty()) {
                         // create a new intent specifically aimed at the current registered listener
                         Intent targetedIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-                        String permission = intent.getStringExtra("permission");
+                        String permission = intent.getStringExtra("permission");// add by luoyongxing for lewa lockscreen only contral lewa music player.
+                     
                         targetedIntent.putExtras(intent.getExtras());
                         targetedIntent.setComponent(mRCStack.peek().mReceiverComponent);
                         // trap the current broadcast

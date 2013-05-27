@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (c) 2010-2012, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +21,12 @@ import static android.telephony.SmsMessage.ENCODING_16BIT;
 import static android.telephony.SmsMessage.MAX_USER_DATA_BYTES;
 import static android.telephony.SmsMessage.MAX_USER_DATA_BYTES_WITH_HEADER;
 
-import android.os.SystemProperties;
-
 import android.util.Log;
 
 import android.telephony.SmsMessage;
+import android.telephony.EmergencyMessage.Severity;
+import android.telephony.EmergencyMessage.Urgency;
+import android.telephony.EmergencyMessage.Certainty;
 
 import android.text.format.Time;
 
@@ -196,6 +198,11 @@ public final class BearerData {
     public static final int ERROR_UNDEFINED              = 0xFF;
     public static final int STATUS_UNDEFINED             = 0xFF;
 
+    /* Cmas record types TIA 1149 4.3*/
+    public static final int CMAS_RECORD_TYPE_0           = 0x0;
+    public static final int CMAS_RECORD_TYPE_1           = 0x1;
+    public static final int CMAS_RECORD_TYPE_2           = 0x2;
+
     public boolean messageStatusSet = false;
     public int errorClass = ERROR_UNDEFINED;
     public int messageStatus = STATUS_UNDEFINED;
@@ -340,7 +347,7 @@ public final class BearerData {
      */
     public CdmaSmsAddress callbackNumber;
 
-    private static class CodingException extends Exception {
+    public static class CodingException extends Exception {
         public CodingException(String s) {
             super(s);
         }
@@ -444,7 +451,7 @@ public final class BearerData {
         return ted;
     }
 
-    private static byte[] encode7bitAscii(String msg, boolean force)
+    public static byte[] encode7bitAscii(String msg, boolean force)
         throws CodingException
     {
         try {
@@ -514,6 +521,21 @@ public final class BearerData {
         }
     }
 
+    private static void packSmsChar(byte[] packedChars, int bitOffset, int value) 
+	{
+	   int   t_pos = bitOffset % 8;
+	   int   bits	= 8 - t_pos;
+	   int   dst_start = (bitOffset + 7)/8;
+	
+	   dst_start--;
+	   packedChars[dst_start] &= (byte) ~((0xff >> t_pos) & (0xff << (8 - (t_pos + bits))));
+	   packedChars[dst_start] |= (byte) (((0xff >> t_pos) & (0xff << (8 - (t_pos + bits)))) & (value >> (8 - bits)));
+
+	   dst_start++;
+	   packedChars[dst_start] &= (byte) ~((0xff) & (0xff << bits));
+	   packedChars[dst_start] |= (byte) (((0xff) & (0xff << bits)) & (value << bits));
+	}
+
     private static void encode7bitEms(UserData uData, byte[] udhData, boolean force)
         throws CodingException
     {
@@ -527,7 +549,40 @@ public final class BearerData {
         uData.payload[0] = (byte)udhData.length;
         System.arraycopy(udhData, 0, uData.payload, 1, udhData.length);
     }
+    private static void encode7bitAsciiEms(UserData uData, byte[] udhData, boolean force)
+        throws CodingException
+    {
+        byte[] payload = encode7bitAscii(uData.payloadStr, force);
+        int udhBytes = udhData.length + 1;  // Add length octet.
+        int udhSeptets = ((udhBytes * 8) + 6) / 7;
+		int fill_bits = (udhBytes * 8) % 7;
+		int need_pad = 0;
+		
+		if (fill_bits != 0)
+		{
+		  fill_bits = 7 - fill_bits;
+		}
 
+        uData.msgEncoding = UserData.ENCODING_7BIT_ASCII;
+        uData.msgEncodingSet = true;
+        uData.numFields = udhSeptets + uData.payloadStr.length();
+		if(((uData.payloadStr.length())% 8) == 0)
+	    {
+	        need_pad = 1;
+	    }
+        uData.payload = new byte[udhBytes + payload.length + need_pad];
+        uData.payload[0] = (byte)udhData.length;
+		byte[] smspackload = new byte[payload.length + 1];
+        for (int i = 0, bitOffset = fill_bits;
+                 i < payload.length;
+                 i++, bitOffset += 8) 
+		{
+            packSmsChar(smspackload, bitOffset, payload[i]);
+        }
+        System.arraycopy(udhData, 0, uData.payload, 1, udhData.length);				 
+        System.arraycopy(smspackload, 0, uData.payload, udhBytes, payload.length + need_pad);		
+    }
+	
     private static void encode16bitEms(UserData uData, byte[] udhData)
         throws CodingException
     {
@@ -554,13 +609,16 @@ public final class BearerData {
                 encode7bitEms(uData, headerData, true);
             } else if (uData.msgEncoding == UserData.ENCODING_UNICODE_16) {
                 encode16bitEms(uData, headerData);
-            } else {
+            } else if (uData.msgEncoding == UserData.ENCODING_7BIT_ASCII) {
+                encode7bitAsciiEms(uData, headerData, true);
+            }
+			  else {
                 throw new CodingException("unsupported EMS user data encoding (" +
                                           uData.msgEncoding + ")");
             }
         } else {
             try {
-                encode7bitEms(uData, headerData, false);
+                encode7bitAsciiEms(uData, headerData, false);
             } catch (CodingException ex) {
                 encode16bitEms(uData, headerData);
             }
@@ -587,6 +645,7 @@ public final class BearerData {
                     uData.payload = new byte[0];
                     uData.numFields = 0;
                 } else {
+                    uData.payload = uData.payload;
                     uData.numFields = uData.payload.length;
                 }
             } else {
@@ -878,19 +937,10 @@ public final class BearerData {
             paramBits -= EXPECTED_PARAM_SIZE;
             decodeSuccess = true;
             bData.messageType = inStream.read(4);
-            // Samsung Fascinate parses messageId differently than other devices
-            // fix it here so that incoming sms works correctly
-            if ("fascinatemtd".equals(SystemProperties.get("ro.cm.device"))) {
-                inStream.skip(4);
-                bData.messageId = inStream.read(8) << 8;
-                bData.messageId |= inStream.read(8);
-                bData.hasUserDataHeader = (inStream.read(8) == 1);
-            } else {
-                bData.messageId = inStream.read(8) << 8;
-                bData.messageId |= inStream.read(8);
-                bData.hasUserDataHeader = (inStream.read(1) == 1);
-                inStream.skip(3);
-            }
+            bData.messageId = inStream.read(8) << 8;
+            bData.messageId |= inStream.read(8);
+            bData.hasUserDataHeader = (inStream.read(1) == 1);
+            inStream.skip(3);
         }
         if ((! decodeSuccess) || (paramBits > 0)) {
             Log.d(LOG_TAG, "MESSAGE_IDENTIFIER decode " +
@@ -922,7 +972,7 @@ public final class BearerData {
         return true;
     }
 
-    private static String decodeUtf8(byte[] data, int offset, int numFields)
+    public static String decodeUtf8(byte[] data, int offset, int numFields)
         throws CodingException
     {
         try {
@@ -945,14 +995,20 @@ public final class BearerData {
         }
     }
 
-    private static String decode7bitAscii(byte[] data, int offset, int numFields)
+    public static String decode7bitAscii(byte[] data, int offset, int numFields)
         throws CodingException
     {
         try {
-            offset *= 8;
+	     int udhSeptets =((offset * 8) / 7) + ((((offset * 8) % 7) > 0) ? 1 : 0); //udhSeptets
+	     int wantedBits = numFields * 7;
+	     numFields -= udhSeptets;
+	     offset= udhSeptets*7;
+		 
+            //offset *= 8;
             StringBuffer strBuf = new StringBuffer(numFields);
             BitwiseInputStream inStream = new BitwiseInputStream(data);
-            int wantedBits = (offset * 8) + (numFields * 7);
+            //int wantedBits = (offset) + (numFields * 7);
+
             if (inStream.available() < wantedBits) {
                 throw new CodingException("insufficient data (wanted " + wantedBits +
                                           " bits, but only have " + inStream.available() + ")");
@@ -994,13 +1050,134 @@ public final class BearerData {
         return result;
     }
 
-    private static String decodeLatin(byte[] data, int offset, int numFields)
+    public static String decodeLatin(byte[] data, int offset, int numFields)
         throws CodingException
     {
         try {
             return new String(data, offset, numFields - offset, "ISO-8859-1");
         } catch (java.io.UnsupportedEncodingException ex) {
             throw new CodingException("ISO-8859-1 decode failed: " + ex);
+        }
+    }
+
+    private static boolean decodeCmaeRecordType0(UserData userData,
+            BitwiseInputStream inStream, int recordLen)
+    throws BitwiseInputStream.AccessException {
+        int bitsLeft = recordLen * 8;
+        // C.R1001 9.1-1
+        int cmaeCharSet = inStream.read(5);
+        bitsLeft -= 5;
+        byte[] cmaeAlertTextData = inStream.readByteArray(bitsLeft);
+
+        try {
+            switch(cmaeCharSet) {
+                case UserData.ENCODING_7BIT_ASCII:
+                    int numChars = cmaeAlertTextData.length * 8 / 7;
+                    userData.payloadStr = decode7bitAscii(cmaeAlertTextData, 0, numChars);
+                    break;
+                default:
+                    throw new CodingException("Cmae encoding not supported: " + cmaeCharSet);
+            }
+        } catch (CodingException e) {
+            Log.e(LOG_TAG, "Cmae record type 0 coding exception: " + e);
+        }
+        return true;
+    }
+
+    private static boolean decodeCmaeRecordType1(UserData userData,
+            BitwiseInputStream inStream, int recordLen)
+    throws BitwiseInputStream.AccessException {
+        int bitsLeft = recordLen * 8;
+        if (recordLen < 4) {
+            // This record has to be at least 4 bytes long
+            inStream.skip(bitsLeft);
+            return false;
+        }
+        // TIA 1149 4.3
+        int cmaeCategory = inStream.read(8);
+        bitsLeft -= 8;
+        int cmaeResponseType = inStream.read(8);
+        bitsLeft -= 8;
+        userData.severity = Severity.values()[inStream.read(4)];
+        bitsLeft -= 4;
+        userData.urgency = Urgency.values()[inStream.read(4)];
+        bitsLeft -= 4;
+        userData.certainty = Certainty.values()[inStream.read(4)];
+        bitsLeft -= 4;
+
+        inStream.skip(bitsLeft);
+        return true;
+    }
+
+    private static boolean decodeCmaeRecordType2(UserData userData,
+            BitwiseInputStream inStream, int recordLen)
+    throws BitwiseInputStream.AccessException {
+        int bitsLeft = recordLen * 8;
+        if (recordLen < 10) {
+            // This record has to be at least 10 bytes long
+            inStream.skip(bitsLeft);
+            return false;
+        }
+        // TIA 1149 4.3
+        int cmaeIdentifier = inStream.read(8) << 8 | inStream.read(8);
+        bitsLeft -= 16;
+        int cmaeAlertHandling = inStream.read(8);
+        bitsLeft -= 8;
+        // TIA 1149 4.3 Table 4-9
+        int cmaeExpiresYear = inStream.read(8);    //0 - 99 UTC
+        int cmaeExpiresMonth = inStream.read(8);   //1 - 12 UTC
+        int cmaeExpiresDay = inStream.read(8);     //1 - 31 UTC
+        int cmaeExpiresHours = inStream.read(8);   //0 - 23 UTC
+        int cmaeExpiresMinutes = inStream.read(8); //0 - 59 UTC
+        int cmaeExpiresSeconds = inStream.read(8); //0 - 59 UTC
+        bitsLeft -= 48;
+        userData.language = inStream.read(8); // can only be english
+        bitsLeft -= 8;
+
+        inStream.skip(bitsLeft);
+        return true;
+    }
+
+    private static void decodeCmasUserDataPayload(UserData userData)
+    throws CodingException
+    {
+        try {
+            BitwiseInputStream inStream = new BitwiseInputStream(userData.payload);
+            // Decode as per TIA 1149 4.3
+            int cmaeProtocolVersion = inStream.read(8);
+            if (cmaeProtocolVersion != 0) {
+                // Only version 0 supported
+                throw new CodingException("unsupported cmae protocol version ("
+                        + cmaeProtocolVersion + ")");
+            }
+
+            boolean typeZeroFound = false; // Cmas user data has to have type 0 record
+            while (inStream.available() > 2 * 8) {
+                int recordType = inStream.read(8);
+                int recordLen = inStream.read(8);
+                switch (recordType) {
+                    case CMAS_RECORD_TYPE_0:
+                        typeZeroFound = true;
+                        decodeCmaeRecordType0(userData, inStream, recordLen);
+                        break;
+                    case CMAS_RECORD_TYPE_1:
+                        decodeCmaeRecordType1(userData, inStream, recordLen);
+                        break;
+                    case CMAS_RECORD_TYPE_2:
+                        decodeCmaeRecordType2(userData, inStream, recordLen);
+                        break;
+                    default:
+                        throw new CodingException("unsupported cmas user data record type ("
+                                + recordType + ")");
+                }
+            }
+            if (!typeZeroFound) {
+                throw new CodingException("missing type 0 record");
+            }
+        } catch (BitwiseInputStream.AccessException ex) {
+            Log.e(LOG_TAG, "Cmae user data decode failed: " + ex);
+        } catch (CodingException ex) {
+            Log.e(LOG_TAG, "Cmae user data decode failed: " + ex);
         }
     }
 
@@ -1274,7 +1451,12 @@ public final class BearerData {
     private static boolean decodeCallbackNumber(BearerData bData, BitwiseInputStream inStream)
         throws BitwiseInputStream.AccessException, CodingException
     {
+        final int EXPECTED_PARAM_SIZE = 1 * 8; //at least
         int paramBits = inStream.read(8) * 8;
+        if (paramBits < EXPECTED_PARAM_SIZE) {
+            inStream.skip(paramBits);
+            return false;
+        }
         CdmaSmsAddress addr = new CdmaSmsAddress();
         addr.digitMode = inStream.read(1);
         byte fieldBits = 4;
@@ -1460,6 +1642,9 @@ public final class BearerData {
             decodeSuccess = true;
             bData.language = inStream.read(8);
         }
+        else if(paramBits == 0) {
+            decodeSuccess = true;
+        }
         if ((! decodeSuccess) || (paramBits > 0)) {
             Log.d(LOG_TAG, "LANGUAGE_INDICATOR decode " +
                       (decodeSuccess ? "succeeded" : "failed") +
@@ -1526,6 +1711,9 @@ public final class BearerData {
             bData.alert = inStream.read(2);
             inStream.skip(6);
         }
+        else if(paramBits == 0) {
+            decodeSuccess = true;
+        }
         if ((! decodeSuccess) || (paramBits > 0)) {
             Log.d(LOG_TAG, "ALERT_ON_MESSAGE_DELIVERY decode " +
                       (decodeSuccess ? "succeeded" : "failed") +
@@ -1565,7 +1753,7 @@ public final class BearerData {
      *
      * @return an instance of BearerData.
      */
-    public static BearerData decode(byte[] smsData) {
+    public static BearerData decode(byte[] smsData, boolean isCmas) {
         try {
             BitwiseInputStream inStream = new BitwiseInputStream(smsData);
             BearerData bData = new BearerData();
@@ -1652,6 +1840,8 @@ public final class BearerData {
                               foundSubparamMask + ")");
                     }
                     decodeIs91(bData);
+                } else if (isCmas) {
+                    decodeCmasUserDataPayload(bData.userData);
                 } else {
                     decodeUserDataPayload(bData.userData, bData.hasUserDataHeader);
                 }
@@ -1664,4 +1854,8 @@ public final class BearerData {
         }
         return null;
     }
+
+    public static BearerData decode(byte[] smsData) {		
+		return decode(smsData, false);
+    }	
 }

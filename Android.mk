@@ -194,8 +194,7 @@ LOCAL_SRC_FILES += \
 	vpn/java/android/net/vpn/IVpnService.aidl \
 	voip/java/android/net/sip/ISipSession.aidl \
 	voip/java/android/net/sip/ISipSessionListener.aidl \
-	voip/java/android/net/sip/ISipService.aidl \
-	core/java/com/authentec/TrueSuiteMobile/RelayReceiverService.aidl
+	voip/java/android/net/sip/ISipService.aidl
 #
 
 
@@ -254,6 +253,7 @@ aidl_files := \
 	frameworks/base/core/java/android/content/IntentSender.aidl \
 	frameworks/base/core/java/android/content/PeriodicSync.aidl \
 	frameworks/base/core/java/android/content/SyncStats.aidl \
+	frameworks/base/core/java/android/content/res/lewaface/LewaRedirectionMap.aidl \
 	frameworks/base/core/java/android/content/res/Configuration.aidl \
 	frameworks/base/core/java/android/appwidget/AppWidgetProviderInfo.aidl \
 	frameworks/base/core/java/android/net/Uri.aidl \

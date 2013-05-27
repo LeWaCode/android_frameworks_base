@@ -90,6 +90,7 @@ AssetManager::~AssetManager(void)
     delete[] mLocale;
     delete[] mVendor;
 }
+// modify for lewatheme by luoyongxing
 bool AssetManager::isLewaThemePath(const char *path)
 {
    char *t;

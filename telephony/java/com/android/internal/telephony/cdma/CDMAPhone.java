@@ -1033,9 +1033,13 @@ public class CDMAPhone extends PhoneBase {
                 // instead, extract it from system properties
                 if (SystemProperties.get("ro.ril.samsung_cdma").equals("true"))
                     mMeid = SystemProperties.get("ro.ril.MEID");
-                else
-                    mMeid =  respId[3];
-            }
+                else {
+                    // from ivan, by george, 2011-12-22
+                    Log.d(LOG_TAG, "EVENT_GET_DEVICE_IDENTITY_DONE "+ respId[3]);
+                    if (respId[3].length()==16) respId[3] = respId[3].substring(2); 
+                    mMeid = respId[3];
+                }
+                }
             break;
 
             case EVENT_EMERGENCY_CALLBACK_MODE_ENTER:{

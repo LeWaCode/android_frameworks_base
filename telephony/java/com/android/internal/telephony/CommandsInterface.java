@@ -1412,4 +1412,7 @@ public interface CommandsInterface {
      *          Callback message containing {@link IccCardStatus} structure for the card.
      */
     public void getIccCardStatus(Message result);
+	
+    // Add by Fanzhong
+    public void setNewSmsIndication(int paramInt, Message paramMessage);
 }
